@@ -1,0 +1,5 @@
+{
+  "name": "pqsafe",
+  "private": true,
+  "workspaces": ["extension", "landing"]
+}

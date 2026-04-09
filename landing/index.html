@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PQSafe - Post-Quantum Secure Crypto Wallet</title>
+  <meta name="description" content="The world's first post-quantum secure crypto wallet. Protected by NIST FIPS 203 & 204 standards.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwindcss.config = {
+      theme: { extend: { colors: { pq: { 500: '#10b981', 600: '#059669' } } } }
+    }
+  </script>
+  <style>
+    body { background: #0a0a0f; }
+    .gradient-text { background: linear-gradient(135deg, #10b981, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .glow { box-shadow: 0 0 60px rgba(16, 185, 129, 0.15); }
+  </style>
+</head>
+<body class="text-gray-200 min-h-screen">
+  <nav class="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-sm font-bold text-black">PQ</div>
+      <span class="text-lg font-bold">PQSafe</span>
+    </div>
+    <div class="flex items-center gap-6 text-sm">
+      <a href="https://github.com/pqsafe" class="text-gray-400 hover:text-white transition">GitHub</a>
+      <a href="#" class="px-4 py-2 rounded-lg bg-emerald-500 text-black font-semibold text-sm hover:bg-emerald-400 transition">Add to Chrome</a>
+    </div>
+  </nav>
+  <section class="max-w-5xl mx-auto px-6 py-20 text-center">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs mb-6">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      NIST FIPS 203 & 204 Compliant
+    </div>
+    <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">The World's First<br><span class="gradient-text">Post-Quantum</span> Crypto Wallet</h1>
+    <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-10">Quantum computers will break every crypto wallet that exists today. PQSafe uses NIST's new post-quantum standards to protect your digital assets — starting now.</p>
+    <div class="flex items-center justify-center gap-4">
+      <a href="#" class="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-semibold hover:from-emerald-400 hover:to-cyan-400 transition-all">Add to Chrome (Beta)</a>
+      <a href="https://github.com/pqsafe" class="px-8 py-3 rounded-xl border border-gray-700 text-gray-300 font-semibold hover:border-gray-500 transition-all">View Source</a>
+    </div>
+  </section>
+  <section class="max-w-5xl mx-auto px-6 py-16">
+    <h2 class="text-3xl font-bold text-center mb-12">Why Post-Quantum?</h2>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="rounded-2xl bg-gray-800/30 border border-gray-800 p-6 glow">
+        <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2">Classical Crypto Is Dying</h3>
+        <p class="text-sm text-gray-400">NIST mandates migration away from RSA & ECC by 2035. Google's Willow chip hit 105 qubits. The clock is ticking.</p>
+      </div>
+      <div class="rounded-2xl bg-gray-800/30 border border-gray-800 p-6 glow">
+        <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2">ML-DSA for Signing</h3>
+        <p class="text-sm text-gray-400">FIPS 204 standard. Replaces ECDSA with lattice-based signatures that no quantum algorithm can break. 128-bit post-quantum security.</p>
+      </div>
+      <div class="rounded-2xl bg-gray-800/30 border border-gray-800 p-6 glow">
+        <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2">ML-KEM for Key Exchange</h3>
+        <p class="text-sm text-gray-400">FIPS 203 standard. Quantum-safe key encapsulation. Your encrypted messages stay private against future quantum attacks.</p>
+      </div>
+    </div>
+  </section>
+  <section class="max-w-5xl mx-auto px-6 py-16">
+    <h2 class="text-3xl font-bold text-center mb-12">PQSafe vs Classical Wallets</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead><tr class="border-b border-gray-800"><th class="text-left py-3 px-4 text-gray-500 font-normal">Feature</th><th class="text-left py-3 px-4 text-emerald-400 font-semibold">PQSafe</th><th class="text-left py-3 px-4 text-gray-500 font-normal">MetaMask / Others</th></tr></thead>
+        <tbody class="text-gray-300">
+          <tr class="border-b border-gray-800/50"><td class="py-3 px-4">Signature</td><td class="py-3 px-4 text-emerald-400">ML-DSA-65 (FIPS 204)</td><td class="py-3 px-4 text-gray-500">ECDSA (secp256k1)</td></tr>
+          <tr class="border-b border-gray-800/50"><td class="py-3 px-4">Key Exchange</td><td class="py-3 px-4 text-emerald-400">ML-KEM-768 (FIPS 203)</td><td class="py-3 px-4 text-gray-500">ECDH</td></tr>
+          <tr class="border-b border-gray-800/50"><td class="py-3 px-4">Quantum Resistant</td><td class="py-3 px-4 text-emerald-400">Yes</td><td class="py-3 px-4 text-red-400">No</td></tr>
+          <tr class="border-b border-gray-800/50"><td class="py-3 px-4">NIST Standard</td><td class="py-3 px-4 text-emerald-400">FIPS 203 + 204 (2024)</td><td class="py-3 px-4 text-gray-500">Pre-quantum era</td></tr>
+          <tr><td class="py-3 px-4">Address Format</td><td class="py-3 px-4 text-emerald-400 font-mono text-xs">pq1a3b4c5d...</td><td class="py-3 px-4 text-gray-500 font-mono text-xs">0x742d35...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="max-w-5xl mx-auto px-6 py-16 text-center">
+    <h2 class="text-3xl font-bold mb-6">Built on Proven Cryptography</h2>
+    <p class="text-gray-400 max-w-2xl mx-auto mb-8">Powered by <a href="https://github.com/paulmillr/noble-post-quantum" class="text-emerald-400 hover:underline">@noble/post-quantum</a> — audited, zero-dependency NIST post-quantum standards in pure JavaScript.</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">TypeScript</span>
+      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">React</span>
+      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">Chrome MV3</span>
+      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">Vite</span>
+      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">ML-DSA-65</span>
+      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">ML-KEM-768</span>
+    </div>
+  </section>
+  <footer class="max-w-5xl mx-auto px-6 py-10 border-t border-gray-800 text-center text-sm text-gray-600">
+    <p>MIT License. Open source on <a href="https://github.com/pqsafe" class="text-gray-400 hover:text-white">GitHub</a>.</p>
+    <p class="mt-1">Beta — not production-ready. Do not use with real funds.</p>
+  </footer>
+</body>
+</html>
