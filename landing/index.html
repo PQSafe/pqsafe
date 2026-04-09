@@ -3,99 +3,1417 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PQSafe - Post-Quantum Secure Crypto Wallet</title>
-  <meta name="description" content="The world's first post-quantum secure crypto wallet. Protected by NIST FIPS 203 & 204 standards.">
+  <title>PQSafe — Post-Quantum Crypto Wallet</title>
+  <meta name="description" content="The world's first post-quantum crypto wallet. Protected by NIST FIPS 203 & 204 (ML-DSA-65, ML-KEM-768). Open source Chrome extension.">
+  <meta name="keywords" content="post-quantum cryptography, crypto wallet, ML-DSA, ML-KEM, NIST FIPS 203, FIPS 204, quantum safe, Chrome extension">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="PQSafe — The World's First Post-Quantum Crypto Wallet">
+  <meta property="og:description" content="Quantum computers will break ECDSA. PQSafe uses NIST FIPS 203 & 204 (ML-DSA-65 + ML-KEM-768) to protect your assets today. Open source Chrome extension.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pqsafe.xyz">
+  <meta property="og:image" content="https://pqsafe.xyz/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PQSafe — Post-Quantum Crypto Wallet">
+  <meta name="twitter:description" content="Quantum computers will break ECDSA. Be ready. ML-DSA-65 + ML-KEM-768 secured.">
+
+  <!-- Favicon (green square) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2310b981'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='bold' font-size='14' fill='white'>PQ</text></svg>">
+
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwindcss.config = {
-      theme: { extend: { colors: { pq: { 500: '#10b981', 600: '#059669' } } } }
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
+            cyan: { 400: '#22d3ee', 500: '#06b6d4' }
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.7s ease forwards',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'glow-pulse': 'glowPulse 2s ease-in-out infinite alternate',
+          }
+        }
+      }
     }
   </script>
+
   <style>
-    body { background: #0a0a0f; }
-    .gradient-text { background: linear-gradient(135deg, #10b981, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .glow { box-shadow: 0 0 60px rgba(16, 185, 129, 0.15); }
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #0f0f1a;
+      --bg-card2: #12121f;
+      --emerald: #10b981;
+      --cyan: #06b6d4;
+      --emerald-dim: rgba(16,185,129,0.15);
+      --cyan-dim: rgba(6,182,212,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: #e2e8f0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .gradient-text-warm {
+      background: linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Glow effects */
+    .card-glow {
+      box-shadow: 0 0 0 1px rgba(16,185,129,0.2), 0 8px 40px rgba(16,185,129,0.08), 0 0 80px rgba(16,185,129,0.04);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .card-glow:hover {
+      box-shadow: 0 0 0 1px rgba(16,185,129,0.4), 0 8px 60px rgba(16,185,129,0.18), 0 0 120px rgba(16,185,129,0.08);
+      transform: translateY(-3px);
+    }
+    .card-glow-cyan {
+      box-shadow: 0 0 0 1px rgba(6,182,212,0.2), 0 8px 40px rgba(6,182,212,0.08);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .card-glow-cyan:hover {
+      box-shadow: 0 0 0 1px rgba(6,182,212,0.4), 0 8px 60px rgba(6,182,212,0.18);
+      transform: translateY(-3px);
+    }
+
+    /* Button */
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: #000;
+      font-weight: 700;
+      padding: 0.75rem 1.75rem;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 20px rgba(16,185,129,0.3);
+      text-decoration: none;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 40px rgba(16,185,129,0.5);
+      transform: translateY(-1px);
+      filter: brightness(1.1);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.05);
+      color: #e2e8f0;
+      font-weight: 600;
+      padding: 0.75rem 1.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(255,255,255,0.12);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(16,185,129,0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Scroll fade-in */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Stagger delays */
+    .delay-100 { transition-delay: 0.1s; }
+    .delay-200 { transition-delay: 0.2s; }
+    .delay-300 { transition-delay: 0.3s; }
+    .delay-400 { transition-delay: 0.4s; }
+    .delay-500 { transition-delay: 0.5s; }
+
+    /* Terminal block */
+    .terminal {
+      background: #080810;
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 0.75rem;
+      font-family: 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+      overflow: hidden;
+    }
+    .terminal-header {
+      background: #0d0d1a;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(16,185,129,0.15);
+    }
+    .terminal-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+    }
+
+    /* PQ Logo block */
+    .pq-logo {
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: #000;
+      font-weight: 900;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.35rem;
+      display: inline-block;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Nav */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1rem 0;
+      transition: background 0.3s, backdrop-filter 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Stats bar gradient */
+    .stats-bar {
+      background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(6,182,212,0.06) 100%);
+      border-top: 1px solid rgba(16,185,129,0.15);
+      border-bottom: 1px solid rgba(6,182,212,0.15);
+    }
+
+    /* Step number */
+    .step-num {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: #000;
+      font-weight: 900;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(16,185,129,0.35);
+    }
+
+    /* Comparison table */
+    .comp-table th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    .comp-table td {
+      padding: 0.875rem 1rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.9rem;
+    }
+    .comp-table tr:hover td { background: rgba(255,255,255,0.025); }
+
+    /* Check/cross */
+    .check { color: #10b981; font-weight: 700; }
+    .cross { color: #ef4444; font-weight: 700; }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 2rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    .badge-emerald {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: #34d399;
+    }
+    .badge-cyan {
+      background: rgba(6,182,212,0.12);
+      border: 1px solid rgba(6,182,212,0.3);
+      color: #22d3ee;
+    }
+    .badge-violet {
+      background: rgba(139,92,246,0.12);
+      border: 1px solid rgba(139,92,246,0.3);
+      color: #a78bfa;
+    }
+    .badge-blue {
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: #93c5fd;
+    }
+    .badge-orange {
+      background: rgba(249,115,22,0.12);
+      border: 1px solid rgba(249,115,22,0.3);
+      color: #fb923c;
+    }
+
+    /* FIPS badge */
+    .fips-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border: 1px solid rgba(16,185,129,0.35);
+      border-radius: 2rem;
+      background: rgba(16,185,129,0.07);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #34d399;
+      letter-spacing: 0.04em;
+    }
+
+    /* Extension mock */
+    .ext-mock {
+      background: #12121f;
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 1rem;
+      width: 320px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(16,185,129,0.1), 0 20px 60px rgba(0,0,0,0.6), 0 0 80px rgba(16,185,129,0.08);
+    }
+    .ext-header {
+      background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.1));
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(16,185,129,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ext-body { padding: 1.25rem; }
+
+    /* Scanline animation for terminal */
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100vh); }
+    }
+    .scanline {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(transparent, rgba(16,185,129,0.04), transparent);
+      pointer-events: none;
+      animation: scanline 8s linear infinite;
+    }
+
+    /* Glowing border animation */
+    @keyframes borderGlow {
+      0%, 100% { border-color: rgba(16,185,129,0.3); }
+      50% { border-color: rgba(16,185,129,0.7); }
+    }
+
+    /* Hero headline */
+    .hero-headline {
+      font-size: clamp(2.2rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    /* Section headers */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #10b981;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Divider */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(16,185,129,0.2), rgba(6,182,212,0.2), transparent);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a0f; }
+    ::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(16,185,129,0.5); }
+
+    /* Canvas */
+    #particleCanvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    /* Grid bg */
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(16,185,129,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16,185,129,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* Pulse ring */
+    @keyframes pulseRing {
+      0% { transform: scale(0.8); opacity: 0.8; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+    .pulse-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(16,185,129,0.4);
+      animation: pulseRing 2.5s ease-out infinite;
+    }
+
+    /* Chinese section */
+    .chinese-section {
+      background: linear-gradient(135deg, rgba(16,185,129,0.05) 0%, rgba(6,182,212,0.04) 50%, rgba(139,92,246,0.04) 100%);
+      border-top: 1px solid rgba(16,185,129,0.12);
+      border-bottom: 1px solid rgba(16,185,129,0.12);
+    }
+
+    /* Responsive flex column on mobile */
+    @media (max-width: 640px) {
+      .ext-mock { width: 100%; max-width: 320px; }
+      .hero-headline { font-size: 2rem; }
+    }
   </style>
 </head>
-<body class="text-gray-200 min-h-screen">
-  <nav class="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-sm font-bold text-black">PQ</div>
-      <span class="text-lg font-bold">PQSafe</span>
-    </div>
-    <div class="flex items-center gap-6 text-sm">
-      <a href="https://github.com/pqsafe" class="text-gray-400 hover:text-white transition">GitHub</a>
-      <a href="#" class="px-4 py-2 rounded-lg bg-emerald-500 text-black font-semibold text-sm hover:bg-emerald-400 transition">Add to Chrome</a>
+
+<body class="min-h-screen">
+
+  <!-- ====== NAV ====== -->
+  <nav id="navbar">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 no-underline">
+        <span class="pq-logo">PQ</span>
+        <span class="font-bold text-lg text-white tracking-tight">PQSafe</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener"
+           class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="btn-primary text-sm py-2 px-4">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          Add to Chrome (Beta)
+        </a>
+      </div>
     </div>
   </nav>
-  <section class="max-w-5xl mx-auto px-6 py-20 text-center">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs mb-6">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-      NIST FIPS 203 & 204 Compliant
-    </div>
-    <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">The World's First<br><span class="gradient-text">Post-Quantum</span> Crypto Wallet</h1>
-    <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-10">Quantum computers will break every crypto wallet that exists today. PQSafe uses NIST's new post-quantum standards to protect your digital assets — starting now.</p>
-    <div class="flex items-center justify-center gap-4">
-      <a href="#" class="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-semibold hover:from-emerald-400 hover:to-cyan-400 transition-all">Add to Chrome (Beta)</a>
-      <a href="https://github.com/pqsafe" class="px-8 py-3 rounded-xl border border-gray-700 text-gray-300 font-semibold hover:border-gray-500 transition-all">View Source</a>
-    </div>
-  </section>
-  <section class="max-w-5xl mx-auto px-6 py-16">
-    <h2 class="text-3xl font-bold text-center mb-12">Why Post-Quantum?</h2>
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="rounded-2xl bg-gray-800/30 border border-gray-800 p-6 glow">
-        <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 mb-4">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        </div>
-        <h3 class="font-semibold mb-2">Classical Crypto Is Dying</h3>
-        <p class="text-sm text-gray-400">NIST mandates migration away from RSA & ECC by 2035. Google's Willow chip hit 105 qubits. The clock is ticking.</p>
+
+  <!-- ====== HERO ====== -->
+  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <!-- Particle canvas -->
+    <canvas id="particleCanvas"></canvas>
+    <!-- Scanline -->
+    <div class="scanline"></div>
+    <!-- Grid background -->
+    <div class="absolute inset-0 grid-bg opacity-60"></div>
+    <!-- Radial glow center -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
+         style="background: radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 70%); pointer-events: none;"></div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+      <!-- FIPS Badge -->
+      <div class="flex justify-center mb-8 fade-in-up">
+        <span class="fips-badge">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          NIST FIPS 203 &amp; 204 Certified Algorithms
+        </span>
       </div>
-      <div class="rounded-2xl bg-gray-800/30 border border-gray-800 p-6 glow">
-        <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <h3 class="font-semibold mb-2">ML-DSA for Signing</h3>
-        <p class="text-sm text-gray-400">FIPS 204 standard. Replaces ECDSA with lattice-based signatures that no quantum algorithm can break. 128-bit post-quantum security.</p>
+
+      <!-- Main heading -->
+      <h1 class="hero-headline fade-in-up delay-100">
+        <span class="text-white">The World's First</span><br>
+        <span class="gradient-text-warm">Post-Quantum</span><br>
+        <span class="text-white">Crypto Wallet</span>
+      </h1>
+
+      <p class="mt-8 text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed fade-in-up delay-200">
+        Quantum computers will break ECDSA and secp256k1 — the algorithms protecting <em>every</em> crypto wallet today.
+        PQSafe uses <strong class="text-emerald-400">ML-DSA-65</strong> and <strong class="text-cyan-400">ML-KEM-768</strong>
+        to protect your assets before the threat arrives.
+      </p>
+
+      <!-- CTAs -->
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 fade-in-up delay-300">
+        <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="btn-primary text-base px-6 py-3">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          Add to Chrome — Free
+        </a>
+        <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="btn-secondary text-base px-6 py-3">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+          </svg>
+          View Source
+        </a>
       </div>
-      <div class="rounded-2xl bg-gray-800/30 border border-gray-800 p-6 glow">
-        <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 mb-4">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+
+      <!-- Sub-badges -->
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3 fade-in-up delay-400">
+        <span class="badge badge-emerald">ML-DSA-65</span>
+        <span class="badge badge-cyan">ML-KEM-768</span>
+        <span class="badge badge-violet">Chrome MV3</span>
+        <span class="badge badge-blue">TypeScript</span>
+        <span class="badge badge-orange">100% Open Source</span>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="mt-20 flex justify-center fade-in-up delay-500">
+        <div class="flex flex-col items-center gap-2 text-gray-600 text-xs">
+          <span>Scroll to explore</span>
+          <div class="w-px h-8 bg-gradient-to-b from-gray-600 to-transparent"></div>
         </div>
-        <h3 class="font-semibold mb-2">ML-KEM for Key Exchange</h3>
-        <p class="text-sm text-gray-400">FIPS 203 standard. Quantum-safe key encapsulation. Your encrypted messages stay private against future quantum attacks.</p>
       </div>
     </div>
   </section>
-  <section class="max-w-5xl mx-auto px-6 py-16">
-    <h2 class="text-3xl font-bold text-center mb-12">PQSafe vs Classical Wallets</h2>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead><tr class="border-b border-gray-800"><th class="text-left py-3 px-4 text-gray-500 font-normal">Feature</th><th class="text-left py-3 px-4 text-emerald-400 font-semibold">PQSafe</th><th class="text-left py-3 px-4 text-gray-500 font-normal">MetaMask / Others</th></tr></thead>
-        <tbody class="text-gray-300">
-          <tr class="border-b border-gray-800/50"><td class="py-3 px-4">Signature</td><td class="py-3 px-4 text-emerald-400">ML-DSA-65 (FIPS 204)</td><td class="py-3 px-4 text-gray-500">ECDSA (secp256k1)</td></tr>
-          <tr class="border-b border-gray-800/50"><td class="py-3 px-4">Key Exchange</td><td class="py-3 px-4 text-emerald-400">ML-KEM-768 (FIPS 203)</td><td class="py-3 px-4 text-gray-500">ECDH</td></tr>
-          <tr class="border-b border-gray-800/50"><td class="py-3 px-4">Quantum Resistant</td><td class="py-3 px-4 text-emerald-400">Yes</td><td class="py-3 px-4 text-red-400">No</td></tr>
-          <tr class="border-b border-gray-800/50"><td class="py-3 px-4">NIST Standard</td><td class="py-3 px-4 text-emerald-400">FIPS 203 + 204 (2024)</td><td class="py-3 px-4 text-gray-500">Pre-quantum era</td></tr>
-          <tr><td class="py-3 px-4">Address Format</td><td class="py-3 px-4 text-emerald-400 font-mono text-xs">pq1a3b4c5d...</td><td class="py-3 px-4 text-gray-500 font-mono text-xs">0x742d35...</td></tr>
-        </tbody>
-      </table>
+
+  <!-- ====== STATS BAR ====== -->
+  <section class="stats-bar py-6 fade-in-up">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-2xl font-black gradient-text">128-bit</span>
+          <span class="text-sm text-gray-400 font-medium">Post-Quantum Security Level</span>
+        </div>
+        <div class="flex flex-col items-center gap-1 sm:border-l sm:border-r border-gray-800">
+          <span class="text-2xl font-black gradient-text">FIPS 203 &amp; 204</span>
+          <span class="text-sm text-gray-400 font-medium">NIST Standardized Algorithms</span>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-2xl font-black gradient-text">100%</span>
+          <span class="text-sm text-gray-400 font-medium">Open Source — MIT License</span>
+        </div>
+      </div>
     </div>
   </section>
-  <section class="max-w-5xl mx-auto px-6 py-16 text-center">
-    <h2 class="text-3xl font-bold mb-6">Built on Proven Cryptography</h2>
-    <p class="text-gray-400 max-w-2xl mx-auto mb-8">Powered by <a href="https://github.com/paulmillr/noble-post-quantum" class="text-emerald-400 hover:underline">@noble/post-quantum</a> — audited, zero-dependency NIST post-quantum standards in pure JavaScript.</p>
-    <div class="flex flex-wrap justify-center gap-3">
-      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">TypeScript</span>
-      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">React</span>
-      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">Chrome MV3</span>
-      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">Vite</span>
-      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">ML-DSA-65</span>
-      <span class="px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs">ML-KEM-768</span>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== HOW IT WORKS ====== -->
+  <section id="how" class="py-24 max-w-5xl mx-auto px-6">
+    <div class="text-center mb-16 fade-in-up">
+      <div class="section-label">How It Works</div>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">Up and running in minutes</h2>
+      <p class="mt-4 text-gray-400 max-w-xl mx-auto">Three simple steps to quantum-safe crypto management.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Step 1 -->
+      <div class="relative fade-in-up delay-100">
+        <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow h-full">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="step-num flex-shrink-0">1</div>
+            <div>
+              <h3 class="font-bold text-white text-lg leading-tight">Install Extension</h3>
+              <p class="text-xs text-gray-500 mt-0.5">2 minutes</p>
+            </div>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Clone the repo, run <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">npm install && npm run build</code>,
+            then load the <code class="text-cyan-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">dist/</code> folder
+            as an unpacked Chrome extension. No Chrome Web Store account needed.
+          </p>
+          <div class="mt-5">
+            <div class="w-full h-1 rounded-full bg-gray-800 overflow-hidden">
+              <div class="h-full w-1/3 rounded-full" style="background: linear-gradient(90deg, #10b981, #06b6d4);"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Connector arrow (hidden on mobile) -->
+        <div class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 rounded-full bg-[#0a0a0f] text-emerald-500">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="relative fade-in-up delay-200">
+        <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow h-full">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="step-num flex-shrink-0">2</div>
+            <div>
+              <h3 class="font-bold text-white text-lg leading-tight">Create Wallet</h3>
+              <p class="text-xs text-gray-500 mt-0.5">30 seconds</p>
+            </div>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Click "Create New Wallet" — PQSafe generates an <strong class="text-emerald-400">ML-DSA-65</strong> keypair
+            using CRYSTALS-Dilithium. Your 3309-byte public key and address are derived entirely client-side. Nothing ever leaves your browser.
+          </p>
+          <div class="mt-5">
+            <div class="w-full h-1 rounded-full bg-gray-800 overflow-hidden">
+              <div class="h-full w-2/3 rounded-full" style="background: linear-gradient(90deg, #10b981, #06b6d4);"></div>
+            </div>
+          </div>
+        </div>
+        <div class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 rounded-full bg-[#0a0a0f] text-emerald-500">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="fade-in-up delay-300">
+        <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow h-full">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="step-num flex-shrink-0">3</div>
+            <div>
+              <h3 class="font-bold text-white text-lg leading-tight">Sign &amp; Verify</h3>
+              <p class="text-xs text-gray-500 mt-0.5">Instant</p>
+            </div>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Type any message, click Sign — you get a <strong class="text-cyan-400">3293-byte ML-DSA signature</strong>
+            that no quantum computer can forge. Paste any public key + signature to verify authenticity in real time.
+          </p>
+          <div class="mt-5">
+            <div class="w-full h-1 rounded-full bg-gray-800 overflow-hidden">
+              <div class="h-full w-full rounded-full" style="background: linear-gradient(90deg, #10b981, #06b6d4);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
-  <footer class="max-w-5xl mx-auto px-6 py-10 border-t border-gray-800 text-center text-sm text-gray-600">
-    <p>MIT License. Open source on <a href="https://github.com/pqsafe" class="text-gray-400 hover:text-white">GitHub</a>.</p>
-    <p class="mt-1">Beta — not production-ready. Do not use with real funds.</p>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== WHY POST-QUANTUM ====== -->
+  <section id="why" class="py-24 max-w-5xl mx-auto px-6">
+    <div class="text-center mb-16 fade-in-up">
+      <div class="section-label">Why Post-Quantum?</div>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">The threat is real.<br>
+        <span class="gradient-text">The solution is here.</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Card 1 -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow fade-in-up delay-100">
+        <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center"
+             style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25);">
+          <svg width="22" height="22" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-white text-lg mb-3">Classical Crypto Is Dying</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          NIST issued a mandate in 2024 to migrate away from RSA and ECDSA. Google's Willow chip demonstrated
+          quantum supremacy. Shor's algorithm will crack secp256k1 — the key curve used by Bitcoin, Ethereum,
+          and every major wallet — once fault-tolerant quantum hardware arrives.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="text-xs px-2 py-1 rounded bg-red-900/30 text-red-400 border border-red-800/40">ECDSA: Vulnerable</span>
+          <span class="text-xs px-2 py-1 rounded bg-red-900/30 text-red-400 border border-red-800/40">RSA: Vulnerable</span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow fade-in-up delay-200">
+        <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center"
+             style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);">
+          <svg width="22" height="22" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-white text-lg mb-3">ML-DSA for Signing</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          <strong class="text-emerald-400">CRYSTALS-Dilithium (ML-DSA-65)</strong> is NIST FIPS 204 standardized.
+          Based on hard lattice problems — unbreakable by Shor's algorithm. 3309-byte public keys, 3293-byte signatures.
+          Security Level 3: equivalent to AES-192. Built for real-world production use.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="badge badge-emerald">FIPS 204</span>
+          <span class="badge badge-emerald">Security Level 3</span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow fade-in-up delay-300">
+        <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center"
+             style="background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25);">
+          <svg width="22" height="22" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-white text-lg mb-3">ML-KEM for Key Exchange</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          <strong class="text-cyan-400">CRYSTALS-Kyber (ML-KEM-768)</strong> is NIST FIPS 203 standardized — the
+          post-quantum Key Encapsulation Mechanism. Enables quantum-safe encrypted key exchange. AES-192 equivalent security.
+          Already deployed by Apple, Google, and Cloudflare.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="badge badge-cyan">FIPS 203</span>
+          <span class="badge badge-cyan">KEM-768</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== TECH SPECS ====== -->
+  <section id="specs" class="py-24 max-w-5xl mx-auto px-6">
+    <div class="text-center mb-16 fade-in-up">
+      <div class="section-label">Technical Specifications</div>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">Under the hood</h2>
+    </div>
+
+    <div class="terminal fade-in-up delay-100">
+      <div class="terminal-header">
+        <div class="terminal-dot bg-red-500 opacity-80"></div>
+        <div class="terminal-dot bg-yellow-500 opacity-80"></div>
+        <div class="terminal-dot bg-green-500 opacity-80"></div>
+        <span class="ml-3 text-xs text-gray-500">pqsafe — cryptographic specifications</span>
+      </div>
+      <div class="p-6 sm:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- ML-DSA block -->
+          <div>
+            <div class="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+              ML-DSA-65 (Digital Signature)
+            </div>
+            <div class="space-y-3 text-sm font-mono">
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Standard</span>
+                <span class="text-emerald-300">NIST FIPS 204</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Algorithm</span>
+                <span class="text-white">CRYSTALS-Dilithium</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Security Level</span>
+                <span class="text-emerald-300">3 (AES-192 equiv.)</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Public Key Size</span>
+                <span class="text-white">1952 bytes</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Private Key Size</span>
+                <span class="text-white">4000 bytes</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Signature Size</span>
+                <span class="text-white">3293 bytes</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Hard Problem</span>
+                <span class="text-white">Module-LWE + SIS</span>
+              </div>
+              <div class="flex justify-between pb-2">
+                <span class="text-gray-500">Quantum Resistant</span>
+                <span class="text-emerald-400">✓ Yes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ML-KEM block -->
+          <div>
+            <div class="text-cyan-400 text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-cyan-400"></span>
+              ML-KEM-768 (Key Encapsulation)
+            </div>
+            <div class="space-y-3 text-sm font-mono">
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Standard</span>
+                <span class="text-cyan-300">NIST FIPS 203</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Algorithm</span>
+                <span class="text-white">CRYSTALS-Kyber</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Security Level</span>
+                <span class="text-cyan-300">3 (AES-192 equiv.)</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Public Key Size</span>
+                <span class="text-white">1184 bytes</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Private Key Size</span>
+                <span class="text-white">2400 bytes</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Ciphertext Size</span>
+                <span class="text-white">1088 bytes</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-500">Hard Problem</span>
+                <span class="text-white">Module-LWE</span>
+              </div>
+              <div class="flex justify-between pb-2">
+                <span class="text-gray-500">Quantum Resistant</span>
+                <span class="text-cyan-400">✓ Yes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Library used -->
+        <div class="mt-8 pt-6 border-t border-gray-800">
+          <div class="text-gray-500 text-xs font-mono mb-3"># Implementation</div>
+          <div class="flex flex-wrap gap-3 text-sm font-mono">
+            <span class="px-3 py-1.5 rounded-lg bg-black/60 border border-gray-700 text-gray-300">
+              <span class="text-emerald-400">import</span> { ml_dsa65 } <span class="text-emerald-400">from</span> <span class="text-yellow-400">'@noble/post-quantum'</span>
+            </span>
+            <span class="px-3 py-1.5 rounded-lg bg-black/60 border border-gray-700 text-gray-300">
+              <span class="text-emerald-400">import</span> { ml_kem768 } <span class="text-emerald-400">from</span> <span class="text-yellow-400">'@noble/post-quantum'</span>
+            </span>
+          </div>
+          <p class="mt-3 text-xs text-gray-600 font-mono"># Powered by @noble/post-quantum — audited, zero-dependency, pure TypeScript</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== COMPARISON TABLE ====== -->
+  <section id="compare" class="py-24 max-w-5xl mx-auto px-6">
+    <div class="text-center mb-16 fade-in-up">
+      <div class="section-label">Comparison</div>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">
+        PQSafe vs. <span class="gradient-text">classical wallets</span>
+      </h2>
+      <p class="mt-4 text-gray-400 max-w-xl mx-auto">When quantum computers arrive, existing wallets will be vulnerable. PQSafe is ready now.</p>
+    </div>
+
+    <div class="bg-[#0f0f1a] rounded-2xl overflow-hidden card-glow fade-in-up delay-100">
+      <div class="overflow-x-auto">
+        <table class="comp-table w-full">
+          <thead>
+            <tr class="border-b border-gray-800">
+              <th>Feature</th>
+              <th>
+                <div class="flex items-center gap-2">
+                  <span class="pq-logo text-xs py-0.5 px-1.5">PQ</span>
+                  <span class="text-emerald-400">PQSafe</span>
+                </div>
+              </th>
+              <th>MetaMask</th>
+              <th>Classical Wallets</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-gray-300 font-medium">Signature Algorithm</td>
+              <td><span class="text-emerald-400 font-semibold">ML-DSA-65</span> <span class="text-xs text-gray-500">(Dilithium)</span></td>
+              <td class="text-gray-400">ECDSA secp256k1</td>
+              <td class="text-gray-400">ECDSA / RSA</td>
+            </tr>
+            <tr>
+              <td class="text-gray-300 font-medium">Key Exchange</td>
+              <td><span class="text-cyan-400 font-semibold">ML-KEM-768</span> <span class="text-xs text-gray-500">(Kyber)</span></td>
+              <td class="text-gray-400">ECDH</td>
+              <td class="text-gray-400">ECDH / DH</td>
+            </tr>
+            <tr>
+              <td class="text-gray-300 font-medium">Quantum Resistant</td>
+              <td><span class="check">✓ Yes</span></td>
+              <td><span class="cross">✗ No</span></td>
+              <td><span class="cross">✗ No</span></td>
+            </tr>
+            <tr>
+              <td class="text-gray-300 font-medium">NIST Standard</td>
+              <td><span class="check">FIPS 203 &amp; 204</span></td>
+              <td><span class="cross">None (legacy)</span></td>
+              <td><span class="cross">None (legacy)</span></td>
+            </tr>
+            <tr>
+              <td class="text-gray-300 font-medium">Address Format</td>
+              <td><span class="text-emerald-400 font-mono text-xs">pq1[sha256 of ML-DSA pubkey]</span></td>
+              <td class="text-gray-400 font-mono text-xs">0x[keccak160]</td>
+              <td class="text-gray-400 font-mono text-xs">varies</td>
+            </tr>
+            <tr>
+              <td class="text-gray-300 font-medium">Open Source</td>
+              <td><span class="check">✓ MIT License</span></td>
+              <td class="text-gray-400">Partial</td>
+              <td class="text-gray-400">Varies</td>
+            </tr>
+            <tr>
+              <td class="text-gray-300 font-medium">Manifest Version</td>
+              <td><span class="text-emerald-400">Chrome MV3</span></td>
+              <td class="text-gray-400">MV3</td>
+              <td class="text-gray-400">Varies</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Warning callout -->
+    <div class="mt-8 fade-in-up delay-200 p-5 rounded-xl border border-red-800/50 bg-red-900/10 flex gap-4">
+      <svg class="flex-shrink-0 mt-0.5" width="20" height="20" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <p class="text-sm text-red-300 leading-relaxed">
+        <strong>Harvest Now, Decrypt Later:</strong> Adversaries are already recording encrypted traffic today to decrypt once quantum computers exist.
+        "Store now, decrypt later" attacks mean the threat is <em>already active</em> — migration cannot wait.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== EXTENSION SCREENSHOTS ====== -->
+  <section id="screenshots" class="py-24 overflow-hidden">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-16 fade-in-up">
+        <div class="section-label">Extension Preview</div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-white">See it in action</h2>
+        <p class="mt-4 text-gray-400 max-w-xl mx-auto">Clean, minimal UI. Everything you need — nothing you don't.</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-start justify-center gap-6 fade-in-up delay-100">
+
+        <!-- Screen 1: Welcome -->
+        <div class="ext-mock">
+          <div class="ext-header">
+            <div class="flex items-center gap-2">
+              <span class="pq-logo text-xs py-0.5 px-1.5">PQ</span>
+              <span class="font-semibold text-sm text-white">PQSafe</span>
+            </div>
+            <span class="badge badge-emerald text-xs">Beta</span>
+          </div>
+          <div class="ext-body">
+            <div class="text-center py-4">
+              <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+                   style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.2)); border: 1px solid rgba(16,185,129,0.3);">
+                <svg width="30" height="30" fill="none" stroke="#10b981" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <h3 class="text-white font-bold text-lg">Welcome to PQSafe</h3>
+              <p class="text-gray-500 text-xs mt-2 leading-relaxed">Post-quantum cryptographic wallet<br>powered by ML-DSA-65</p>
+            </div>
+            <div class="space-y-3 mt-4">
+              <button class="w-full py-2.5 rounded-lg font-semibold text-sm text-black" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
+                Create New Wallet
+              </button>
+              <button class="w-full py-2.5 rounded-lg font-semibold text-sm text-gray-300 border border-gray-700 bg-transparent">
+                Import Existing Key
+              </button>
+            </div>
+            <p class="text-center text-xs text-gray-600 mt-4">Keys never leave your browser</p>
+          </div>
+        </div>
+
+        <!-- Screen 2: Dashboard -->
+        <div class="ext-mock sm:-mt-6">
+          <div class="ext-header">
+            <div class="flex items-center gap-2">
+              <span class="pq-logo text-xs py-0.5 px-1.5">PQ</span>
+              <span class="font-semibold text-sm text-white">Dashboard</span>
+            </div>
+            <div class="w-2 h-2 rounded-full bg-emerald-400" title="Connected"></div>
+          </div>
+          <div class="ext-body">
+            <!-- Address -->
+            <div class="p-3 rounded-lg bg-black/40 border border-gray-800 mb-4">
+              <div class="text-xs text-gray-500 mb-1">Your PQ Address</div>
+              <div class="font-mono text-xs text-emerald-400 break-all leading-relaxed">pq1a8f3e2d...b7c91f</div>
+            </div>
+            <!-- Stats grid -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div class="p-3 rounded-lg bg-black/40 border border-gray-800 text-center">
+                <div class="text-xs text-gray-500">Algorithm</div>
+                <div class="text-sm font-bold text-emerald-400 mt-1">ML-DSA-65</div>
+              </div>
+              <div class="p-3 rounded-lg bg-black/40 border border-gray-800 text-center">
+                <div class="text-xs text-gray-500">Security</div>
+                <div class="text-sm font-bold text-cyan-400 mt-1">Level 3</div>
+              </div>
+            </div>
+            <!-- Pubkey preview -->
+            <div class="p-3 rounded-lg bg-black/40 border border-gray-800">
+              <div class="flex items-center justify-between mb-2">
+                <div class="text-xs text-gray-500">Public Key (1952 bytes)</div>
+                <button class="text-xs text-emerald-400 hover:text-emerald-300">Copy</button>
+              </div>
+              <div class="font-mono text-xs text-gray-600 break-all">3059301306...a12f8e4c...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 3: Sign Message -->
+        <div class="ext-mock">
+          <div class="ext-header">
+            <div class="flex items-center gap-2">
+              <span class="pq-logo text-xs py-0.5 px-1.5">PQ</span>
+              <span class="font-semibold text-sm text-white">Sign Message</span>
+            </div>
+          </div>
+          <div class="ext-body">
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-gray-500 block mb-1.5">Message to Sign</label>
+                <div class="w-full p-2.5 rounded-lg bg-black/40 border border-gray-700 text-xs text-gray-300 font-mono min-h-[60px]">
+                  Hello, post-quantum world!<br>Timestamp: 2025-01-15
+                </div>
+              </div>
+              <button class="w-full py-2.5 rounded-lg font-semibold text-sm text-black" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
+                Sign with ML-DSA-65
+              </button>
+              <div>
+                <label class="text-xs text-gray-500 block mb-1.5">Signature (3293 bytes)</label>
+                <div class="w-full p-2.5 rounded-lg bg-black/40 border border-emerald-800/50 text-xs text-emerald-400/70 font-mono break-all leading-relaxed">
+                  b3a1f9c2e4...d891ac3f2b...7e4f12dc...
+                </div>
+              </div>
+              <div class="flex items-center gap-2 p-2 rounded-lg bg-emerald-900/20 border border-emerald-800/40">
+                <svg width="14" height="14" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-xs text-emerald-400">Signature verified ✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== OPEN SOURCE ====== -->
+  <section id="opensource" class="py-24 max-w-5xl mx-auto px-6">
+    <div class="fade-in-up">
+      <div class="bg-[#0f0f1a] rounded-2xl p-8 sm:p-12 card-glow text-center">
+        <div class="section-label mb-4">Open Source</div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">
+          Built in public.<br><span class="gradient-text">Verify everything.</span>
+        </h2>
+        <p class="text-gray-400 max-w-2xl mx-auto leading-relaxed mb-8">
+          Every line of cryptographic code is open for inspection. No proprietary black boxes.
+          No telemetry. No cloud dependencies. Your keys, your code, your security.
+        </p>
+
+        <!-- Tech badges -->
+        <div class="flex flex-wrap justify-center gap-3 mb-10">
+          <span class="badge badge-blue">TypeScript</span>
+          <span class="badge badge-violet">React 18</span>
+          <span class="badge badge-orange">Chrome MV3</span>
+          <span class="badge badge-cyan">Vite</span>
+          <span class="badge badge-emerald">ML-DSA-65</span>
+          <span class="badge badge-emerald">ML-KEM-768</span>
+          <span class="badge badge-blue">@noble/post-quantum</span>
+          <span class="badge badge-violet">Tailwind CSS</span>
+        </div>
+
+        <!-- GitHub card -->
+        <div class="inline-flex flex-col sm:flex-row items-center gap-4 p-5 rounded-xl border border-gray-700 bg-black/30 max-w-xl mx-auto">
+          <div class="flex-1 text-left">
+            <div class="flex items-center gap-2 mb-1">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" class="text-gray-400">
+                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+              </svg>
+              <span class="text-white font-semibold text-sm">PQSafe/pqsafe</span>
+            </div>
+            <p class="text-xs text-gray-500">The world's first post-quantum crypto wallet</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="text-xs text-gray-500 flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
+                TypeScript
+              </span>
+              <span class="text-xs text-gray-500">MIT License</span>
+            </div>
+          </div>
+          <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="btn-primary text-sm px-5 py-2.5 whitespace-nowrap">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+            </svg>
+            Star on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== CHINESE SECTION ====== -->
+  <section id="chinese" class="chinese-section py-24">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Text -->
+        <div class="fade-in-up">
+          <div class="section-label mb-4" style="font-family: sans-serif;">中文介绍</div>
+          <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6 leading-tight" style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;">
+            全球首个<br><span class="gradient-text">后量子密码钱包</span>
+          </h2>
+          <p class="text-gray-300 leading-loose text-base mb-6" style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;">
+            PQSafe 采用 NIST FIPS 203/204 标准的 <strong class="text-emerald-400">ML-DSA-65</strong> 数字签名和
+            <strong class="text-cyan-400">ML-KEM-768</strong> 密钥封装算法，在量子计算威胁到来之前，为您的数字资产提供真正的后量子安全保护。
+          </p>
+          <p class="text-gray-400 leading-loose text-sm mb-8" style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;">
+            当其他钱包还在使用即将被量子计算机破解的 ECDSA 时，PQSafe 已经领先一步。基于 CRYSTALS-Dilithium 和 CRYSTALS-Kyber 算法，
+            这两个算法已经过全球密码学界数年的严格审查，并于 2024 年正式由 NIST 标准化为 FIPS 203 和 FIPS 204。
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <span class="badge badge-emerald" style="font-family: 'PingFang SC', sans-serif;">后量子安全</span>
+            <span class="badge badge-cyan" style="font-family: 'PingFang SC', sans-serif;">NIST 认证</span>
+            <span class="badge badge-violet" style="font-family: 'PingFang SC', sans-serif;">完全开源</span>
+          </div>
+        </div>
+
+        <!-- Info grid -->
+        <div class="space-y-4 fade-in-up delay-200">
+          <div class="bg-[#0f0f1a] rounded-xl p-5 border border-emerald-900/40 flex gap-4">
+            <div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
+                 style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);">
+              <svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-semibold text-white text-sm mb-1" style="font-family: 'PingFang SC', sans-serif;">量子安全签名</div>
+              <div class="text-gray-400 text-xs leading-relaxed" style="font-family: 'PingFang SC', sans-serif;">
+                ML-DSA-65 签名无法被量子计算机伪造，安全等级相当于 AES-192
+              </div>
+            </div>
+          </div>
+          <div class="bg-[#0f0f1a] rounded-xl p-5 border border-cyan-900/40 flex gap-4">
+            <div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
+                 style="background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25);">
+              <svg width="18" height="18" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-semibold text-white text-sm mb-1" style="font-family: 'PingFang SC', sans-serif;">后量子密钥交换</div>
+              <div class="text-gray-400 text-xs leading-relaxed" style="font-family: 'PingFang SC', sans-serif;">
+                ML-KEM-768 提供安全的密钥封装，防御"现在收集，以后解密"攻击
+              </div>
+            </div>
+          </div>
+          <div class="bg-[#0f0f1a] rounded-xl p-5 border border-violet-900/40 flex gap-4">
+            <div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
+                 style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25);">
+              <svg width="18" height="18" fill="none" stroke="#a78bfa" stroke-width="2" viewBox="0 0 24 24">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-semibold text-white text-sm mb-1" style="font-family: 'PingFang SC', sans-serif;">完全开源透明</div>
+              <div class="text-gray-400 text-xs leading-relaxed" style="font-family: 'PingFang SC', sans-serif;">
+                MIT 许可证，所有代码公开可审计，无后门，无遥测数据收集
+              </div>
+            </div>
+          </div>
+          <div class="bg-[#0f0f1a] rounded-xl p-5 border border-gray-800 flex gap-4">
+            <div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
+                 style="background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.25);">
+              <svg width="18" height="18" fill="none" stroke="#fb923c" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-semibold text-white text-sm mb-1" style="font-family: 'PingFang SC', sans-serif;">Beta 测试版</div>
+              <div class="text-gray-400 text-xs leading-relaxed" style="font-family: 'PingFang SC', sans-serif;">
+                当前为测试版本，尚未适用于生产环境。欢迎开发者贡献代码和反馈
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== FINAL CTA ====== -->
+  <section id="cta" class="py-32 max-w-4xl mx-auto px-6 text-center">
+    <div class="fade-in-up">
+      <!-- Pulsing icon -->
+      <div class="relative w-24 h-24 mx-auto mb-10">
+        <div class="pulse-ring w-24 h-24 -top-0 -left-0"></div>
+        <div class="pulse-ring w-24 h-24 -top-0 -left-0" style="animation-delay: 0.8s;"></div>
+        <div class="w-24 h-24 rounded-2xl flex items-center justify-center relative"
+             style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.2)); border: 1px solid rgba(16,185,129,0.4);">
+          <svg width="40" height="40" fill="none" stroke="#10b981" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+      </div>
+
+      <h2 class="text-4xl sm:text-5xl font-black text-white mb-4">
+        Ready to go <span class="gradient-text">quantum-safe?</span>
+      </h2>
+      <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+        Join the builders who refuse to wait for the quantum threat. Install PQSafe today — free, open source, and quantum-resistant from day one.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="btn-primary text-lg px-8 py-4">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          Download PQSafe
+        </a>
+        <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="btn-secondary text-base px-6 py-3.5">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+          </svg>
+          View on GitHub
+        </a>
+      </div>
+
+      <!-- Domain callout -->
+      <p class="mt-10 text-gray-600 text-sm">
+        <a href="https://pqsafe.xyz" class="text-gray-500 hover:text-gray-300 transition-colors">pqsafe.xyz</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/PQSafe/pqsafe" class="text-gray-500 hover:text-gray-300 transition-colors">github.com/PQSafe/pqsafe</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer class="border-t border-gray-800 py-12">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+          <span class="pq-logo">PQ</span>
+          <div>
+            <div class="font-bold text-white text-sm">PQSafe</div>
+            <div class="text-xs text-gray-600 mt-0.5">Post-Quantum Crypto Wallet</div>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-center gap-2 text-center">
+          <div class="flex items-center gap-2">
+            <span class="badge badge-emerald text-xs">MIT License</span>
+            <span class="px-2 py-0.5 rounded text-xs bg-yellow-900/30 text-yellow-500 border border-yellow-800/40 font-semibold">BETA</span>
+          </div>
+          <p class="text-xs text-gray-600">Not production-ready. Use at your own risk. This is experimental software.</p>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener"
+             class="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-200 transition-colors">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+          <a href="https://pqsafe.xyz" class="text-sm text-gray-500 hover:text-gray-200 transition-colors">pqsafe.xyz</a>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-gray-900 text-center text-xs text-gray-700">
+        PQSafe is an open-source project. Cryptographic implementations powered by
+        <a href="https://github.com/paulmillr/noble-post-quantum" class="text-gray-600 hover:text-gray-400 transition-colors">@noble/post-quantum</a>.
+        CRYSTALS-Dilithium and CRYSTALS-Kyber are NIST-standardized as FIPS 204 and FIPS 203 respectively.
+      </div>
+    </div>
   </footer>
+
+  <!-- ====== JAVASCRIPT ====== -->
+  <script>
+    // ── Nav scroll effect ──────────────────────────────────────────────────────
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 40) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // ── Particle Canvas ────────────────────────────────────────────────────────
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+    let animFrame;
+    const PARTICLE_COUNT = 80;
+    const MAX_DIST = 130;
+    const EMERALD = [16, 185, 129];
+    const CYAN = [6, 182, 212];
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function lerpColor(c1, c2, t) {
+      return [
+        Math.round(lerp(c1[0], c2[0], t)),
+        Math.round(lerp(c1[1], c2[1], t)),
+        Math.round(lerp(c1[2], c2[2], t))
+      ];
+    }
+
+    function resize() {
+      const hero = document.getElementById('hero');
+      canvas.width = hero.offsetWidth;
+      canvas.height = hero.offsetHeight;
+    }
+
+    function createParticle() {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 2 + 1,
+        t: Math.random(), // color interpolation
+        pulse: Math.random() * Math.PI * 2,
+      };
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push(createParticle());
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Update + draw particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.pulse += 0.02;
+
+        // Bounce
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+        // Draw particle
+        const col = lerpColor(EMERALD, CYAN, p.t);
+        const alpha = 0.4 + 0.3 * Math.sin(p.pulse);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${alpha})`;
+        ctx.fill();
+      }
+
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < MAX_DIST) {
+            const alpha = (1 - dist / MAX_DIST) * 0.18;
+            const t = (particles[i].t + particles[j].t) / 2;
+            const col = lerpColor(EMERALD, CYAN, t);
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${alpha})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      animFrame = requestAnimationFrame(drawParticles);
+    }
+
+    function initCanvas() {
+      resize();
+      initParticles();
+      cancelAnimationFrame(animFrame);
+      drawParticles();
+    }
+
+    window.addEventListener('resize', initCanvas, { passive: true });
+    initCanvas();
+
+    // ── Intersection Observer for fade-in-up ──────────────────────────────────
+    const fadeEls = document.querySelectorAll('.fade-in-up');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    fadeEls.forEach(el => observer.observe(el));
+
+    // ── Typing effect for hero heading ─────────────────────────────────────────
+    // (hero heading is always visible — no need to observe it)
+    document.querySelectorAll('.fade-in-up').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        el.classList.add('visible');
+      }
+    });
+
+    // ── Stats counter animation ────────────────────────────────────────────────
+    // (values are text, not numbers, so no counter needed)
+
+    // ── Smooth active nav highlighting ────────────────────────────────────────
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const top = section.offsetTop - 100;
+        if (window.scrollY >= top) {
+          current = section.getAttribute('id');
+        }
+      });
+    }, { passive: true });
+  </script>
 </body>
 </html>
