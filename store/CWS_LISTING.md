@@ -80,16 +80,18 @@ PQSafe does not collect, transmit, store, or share any personal data. All crypto
 - [x] Screenshot 1 (hero) 1280×800 — `screenshot_1_hero_1280x800.png`
 - [x] Screenshot 2 (specs) 1280×800 — `screenshot_2_specs_1280x800.png`
 - [x] Screenshot 3 (why) 1280×800 — `screenshot_3_why_1280x800.png`
-- [ ] Screenshot 4 (extension UI) — needs real popup capture after loading unpacked
-- [ ] Privacy policy page hosted at pqsafe.xyz/privacy
-- [ ] Developer account registered ($5 one-time fee)
+- [x] Screenshot 4 (Welcome popup) 1280×800 — `screenshot_4_welcome_1280x800.png`
+- [x] Screenshot 5 (Dashboard popup) 1280×800 — `screenshot_5_dashboard_1280x800.png`
+- [x] Screenshot 6 (Sign Message popup) 1280×800 — `screenshot_6_sign_1280x800.png`
+- [x] Privacy policy page hosted at https://pqsafe.xyz/privacy/
+- [ ] Developer account registered ($5 one-time fee) — NEEDS RAYMOND
 
 ---
 
 ## Pre-submit TODO
 
-1. Load `extension/dist/` unpacked in Chrome → take real screenshot of Welcome + Dashboard views at 1280×800
-2. Add `/privacy/index.html` to `landing/` with the privacy text above
-3. Register CWS developer account (hello@pqsafe.xyz), pay $5
-4. Upload `pqsafe-extension-v0.1.0.zip`
-5. Paste listing fields from this doc
+1. ~~Take popup screenshots~~ — done (mocked from React source, pixel-accurate)
+2. ~~Add `/privacy/` to landing~~ — done, live at https://pqsafe.xyz/privacy/
+3. **Register CWS developer account** (hello@pqsafe.xyz), pay $5 — NEEDS RAYMOND
+4. **Upload** `pqsafe-extension-v0.1.0.zip` — NEEDS RAYMOND
+5. **Paste listing fields** from this doc — NEEDS RAYMOND
