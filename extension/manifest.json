@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PQSafe Wallet",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Post-quantum secure crypto wallet using NIST ML-DSA & ML-KEM standards",
   "action": {
     "default_popup": "src/popup/index.html",
