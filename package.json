@@ -1,5 +1,5 @@
 {
   "name": "pqsafe",
   "private": true,
-  "workspaces": ["extension", "landing"]
+  "workspaces": ["extension", "landing", "agent-pay"]
 }
