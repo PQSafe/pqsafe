@@ -154,16 +154,29 @@ export async function executePayment(
 
   const body = {
     request_id: `${envelope.nonce}-${Date.now()}`,
-    source_currency: envelope.currency,
-    transfer_currency: envelope.currency,
+    source_currency: 'USD',
+    transfer_currency: 'GBP',
     transfer_amount: request.amount,
     transfer_method: 'SWIFT',
     reason: 'goods_purchase',
     reference: request.memo ?? `AgentPay/${envelope.agent}`,
     beneficiary: {
       type: 'BANK_ACCOUNT',
+      entity_type: 'COMPANY',
+      company_name: 'PQSafe Demo Supplier Ltd',
+      address: {
+        country_code: 'GB',
+        city: 'London',
+        street_address: '1 Demo Street',
+        postcode: 'EC1A 1AA',
+      },
       bank_details: {
+        account_name: 'PQSafe Demo Supplier Ltd',
         account_number: request.recipient,
+        bank_country_code: 'GB',
+        swift_code: 'NWBKGB2L',
+        bank_name: 'NatWest',
+        account_currency: 'GBP',
       },
     },
   }
