@@ -115,7 +115,6 @@ async function main() {
 
   say('Scheme', 'ML-DSA-65 (NIST FIPS 204)')
   say('Public key', `${dsaPk.length} bytes`)
-  say('Secret key', `${dsaSk.length} bytes`)
   say('PQSafe address', `${C.bold}${issuer}${C.reset}`)
   ok('Keypair generated on-device — secret never leaves this machine')
   await beat()
