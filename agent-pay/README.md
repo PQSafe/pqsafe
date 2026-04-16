@@ -69,11 +69,11 @@ console.log(result.txId)
 
 | Rail | Status | Notes |
 |---|---|---|
-| `airwallex` | MVP mock | TODO: client-credentials OAuth + transfer API |
-| `wise` | Stub | TODO: Wise Business API |
-| `stripe` | Stub | TODO: Stripe PaymentIntents |
-| `usdc-base` | Stub | TODO: Coinbase CDP / viem on Base |
-| `x402` | Stub | TODO: HTTP 402 micropayment protocol |
+| `airwallex` | **Live sandbox** | OAuth2 client-credentials + `/transfers/create`. Real transfers verified — see [DEMO_RECEIPTS.md](DEMO_RECEIPTS.md) |
+| `wise` | Stub | Wise Business API |
+| `stripe` | Stub | Stripe PaymentIntents |
+| `usdc-base` | Stub | Coinbase CDP / viem on Base |
+| `x402` | Stub | HTTP 402 micropayment protocol |
 
 ## Architecture
 
@@ -91,6 +91,27 @@ wallet (extension)
     ├─ amount ceiling check
     └─ routePayment()                    ← rails/index.ts
          └─ airwallex / wise / stripe / usdc-base / x402
+```
+
+## Demo
+
+```bash
+# Mock mode (no creds needed)
+npm run demo
+
+# Real Airwallex sandbox
+export AIRWALLEX_CLIENT_ID=<your sandbox client id>
+export AIRWALLEX_API_KEY=<your sandbox api key>
+export AIRWALLEX_ENV=demo
+npm run demo
+```
+
+See [DEMO_RECEIPTS.md](DEMO_RECEIPTS.md) for verified real sandbox transfer IDs with cryptographic provenance.
+
+## Tests
+
+```bash
+npm test    # 13 guardrail tests — sign/verify, tamper detection, policy enforcement
 ```
 
 ## Security model
