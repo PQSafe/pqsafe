@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pqsafe-api-reference"
+version = "0.1.0"
+description = "PQSafe reference API server — envelope signing + rail routing as a hosted HTTP API"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [{ name = "PQSafe", email = "dev@pqsafe.xyz" }]
+
+dependencies = [
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.29.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-multipart>=0.0.9",
+    "pqcrypto>=0.4.0",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.0",
+    "prometheus-fastapi-instrumentator>=6.1.0",
+    # Classical fallback (used when pqcrypto is unavailable in CI)
+    "cryptography>=42.0.0",
+    # SMS OTP via Twilio Verify
+    "twilio>=9.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.27.0",
+]
+
+[project.urls]
+Homepage = "https://pqsafe.xyz"
+API = "https://api.pqsafe.xyz"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

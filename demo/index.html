@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PQSafe AgentPay — Live Demo</title>
+  <meta name="description" content="Watch an AI agent pay $199 with post-quantum cryptography. No install needed — runs entirely in your browser.">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="PQSafe AgentPay — Watch a live post-quantum payment">
+  <meta property="og:description" content="ML-DSA-65 keypair generated in your browser. Real signature. Recorded sandbox transfer. No install.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://demo.pqsafe.xyz">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2310b981'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='bold' font-size='14' fill='white'>PQ</text></svg>">
+
+  <style>
+    :root {
+      --bg:        #0a0a0f;
+      --card:      #0f0f1a;
+      --card2:     #13131f;
+      --border:    rgba(255,255,255,0.07);
+      --em:        #10b981;
+      --em-dim:    rgba(16,185,129,0.15);
+      --em-glow:   rgba(16,185,129,0.35);
+      --cy:        #06b6d4;
+      --cy-dim:    rgba(6,182,212,0.12);
+      --text:      #e2e8f0;
+      --muted:     #94a3b8;
+      --mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ── */
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    /* ── Header ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--em-dim);
+      border: 1px solid var(--em-glow);
+      color: var(--em);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--em);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    h1 em { font-style: normal; color: var(--em); }
+
+    .sub {
+      color: var(--muted);
+      font-size: 16px;
+      margin-bottom: 40px;
+      max-width: 560px;
+    }
+    .sub strong { color: var(--text); }
+
+    /* ── Run button ── */
+    #run-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--em);
+      color: #000;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s, opacity .15s;
+      box-shadow: 0 0 32px var(--em-glow);
+    }
+    #run-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 48px var(--em-glow);
+    }
+    #run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    #run-btn svg { flex-shrink: 0; }
+
+    /* ── Steps container ── */
+    #steps {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      transition: border-color .3s, box-shadow .3s;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: none;
+    }
+    .step.visible {
+      animation: slideIn .35s ease forwards;
+    }
+    .step.active {
+      border-color: rgba(16,185,129,0.4);
+      box-shadow: 0 0 20px rgba(16,185,129,0.08);
+    }
+    .step.done {
+      border-color: rgba(16,185,129,0.2);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0;
+    }
+    .step.has-body .step-header { margin-bottom: 12px; }
+
+    .step-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .step.active .step-icon {
+      background: var(--em-dim);
+      border-color: var(--em);
+      color: var(--em);
+    }
+    .step.done .step-icon {
+      background: var(--em-dim);
+      border-color: var(--em);
+      color: var(--em);
+    }
+
+    .step-label {
+      font-size: 15px;
+      font-weight: 600;
+      flex: 1;
+    }
+    .step-status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .step.active .step-status { color: var(--cy); }
+    .step.done .step-status { color: var(--em); }
+
+    /* Spinner */
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(6,182,212,0.2);
+      border-top-color: var(--cy);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    /* Code / data output */
+    .code-block {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: #a5f3d0;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .kv-line { display: flex; gap: 8px; }
+    .kv-key { color: var(--cy); min-width: 140px; flex-shrink: 0; }
+    .kv-val { color: #a5f3d0; }
+    .kv-val.dim { color: var(--muted); }
+    .kv-val.hi { color: #fbbf24; }
+
+    /* ── Transfer card ── */
+    #transfer-card {
+      display: none;
+      margin-top: 20px;
+      background: var(--card);
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 0 40px rgba(16,185,129,0.07);
+    }
+    #transfer-card.visible { display: block; animation: slideIn .4s ease forwards; }
+
+    .tc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tc-title { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; font-weight: 600; }
+    .tc-badge {
+      background: rgba(251,191,36,0.12);
+      border: 1px solid rgba(251,191,36,0.35);
+      color: #fbbf24;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: .06em;
+    }
+
+    .tc-amount {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--em);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .tc-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+    .tc-rows { display: flex; flex-direction: column; gap: 8px; }
+    .tc-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      gap: 12px;
+    }
+    .tc-row:last-child { border: none; padding: 0; }
+    .tc-row-k { color: var(--muted); flex-shrink: 0; }
+    .tc-row-v { color: var(--text); text-align: right; font-family: var(--mono); font-size: 12px; word-break: break-all; }
+    .tc-row-v a { color: var(--cy); text-decoration: none; }
+    .tc-row-v a:hover { text-decoration: underline; }
+
+    /* ── Post-demo panel ── */
+    #post-demo {
+      display: none;
+      margin-top: 32px;
+    }
+    #post-demo.visible { display: block; animation: slideIn .4s ease forwards; }
+
+    .post-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 560px) { .post-grid { grid-template-columns: 1fr; } }
+
+    .post-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .post-card h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; font-weight: 600; margin-bottom: 8px; }
+    .post-card p { font-size: 13px; color: var(--text); }
+    .post-card a { color: var(--cy); text-decoration: none; }
+    .post-card a:hover { text-decoration: underline; }
+
+    .share-url {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--em);
+      background: var(--em-dim);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-top: 6px;
+      word-break: break-all;
+    }
+
+    .install-cmd {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #a5f3d0;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-top: 6px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer a { color: var(--cy); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Animations ── */
+    @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:.3 } }
+    @keyframes spin  { to { transform: rotate(360deg) } }
+    @keyframes slideIn {
+      from { opacity:0; transform: translateY(12px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+    /* typing cursor */
+    .typing::after { content: '▋'; animation: blink .7s step-start infinite; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="badge"><span class="dot"></span> Live browser demo</div>
+  <h1>AI agent needs a tool.<br>It <em>buys it itself.</em></h1>
+  <p class="sub">
+    Research agent hits a Perplexity paywall mid-task. It checks its PQSafe budget,
+    pays <strong>$20 autonomously</strong>, and continues — no human logs in.
+    ML-DSA-65 post-quantum signing runs <strong>in your browser</strong>. No install. No account. ~12 seconds.
+  </p>
+
+  <button id="run-btn" onclick="runDemo()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    Run live demo →
+  </button>
+
+  <!-- Steps -->
+  <div id="steps"></div>
+
+  <!-- Transfer result card -->
+  <div id="transfer-card">
+    <div class="tc-header">
+      <div class="tc-title">Subscription receipt</div>
+      <div class="tc-badge">CONFIRMED</div>
+    </div>
+    <div class="tc-amount">$20.00</div>
+    <div class="tc-sub">Perplexity Pro — research-agent-v1 · Airwallex sandbox</div>
+    <div class="tc-rows" id="tc-rows"></div>
+  </div>
+
+  <!-- Post-demo -->
+  <div id="post-demo">
+    <div class="post-grid">
+      <div class="post-card">
+        <h3>Share this demo</h3>
+        <div class="share-url" id="share-url"></div>
+      </div>
+      <div class="post-card">
+        <h3>Install the real SDK</h3>
+        <div class="install-cmd">npm i @pqsafe/agent-pay</div>
+        <p style="margin-top:8px; font-size:12px; color:var(--muted);">
+          <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">GitHub →</a>
+          &nbsp;·&nbsp;
+          <a href="https://pqsafe.xyz" target="_blank" rel="noopener">pqsafe.xyz →</a>
+        </p>
+      </div>
+      <div class="post-card" style="grid-column: 1 / -1;">
+        <h3>About this demo</h3>
+        <p style="font-size:13px; line-height:1.7; color:var(--muted);">
+          The ML-DSA-65 keypair generation and signing above are <strong style="color:var(--text)">100% real</strong>
+          — powered by <a href="https://github.com/paulmillr/noble-post-quantum" target="_blank" rel="noopener">@noble/post-quantum</a>
+          (NIST FIPS 204, running in your browser via WebAssembly-free pure JS).
+          The Airwallex charge is a <strong style="color:var(--text)">recorded sandbox receipt</strong>
+          (UUID <code style="font-size:11px; color:var(--em)">38873dbc-abfa-4ab5-be25-050496d4a0c3</code>).
+          The virtual card issuance uses the Airwallex Issuing API shape — in the CLI demo
+          (<code style="font-size:11px;">npx tsx demo-saas/demo.ts</code>) the same flow runs against a real
+          sandbox and returns a live transaction ID every time.
+          See <a href="https://github.com/PQSafe/pqsafe/blob/main/agent-pay/DEMO_RECEIPTS.md" target="_blank" rel="noopener">DEMO_RECEIPTS.md</a>
+          for verified sandbox UUIDs. Every developer building an AI agent has hit this exact moment — their agent needed a paid API and they had to manually top it up. PQSafe removes that friction permanently.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <span>PQSafe AgentPay · ML-DSA-65 (NIST FIPS 204) · <a href="https://pqsafe.xyz">pqsafe.xyz</a></span>
+    <span><a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">GitHub</a> · YC S26</span>
+  </footer>
+
+</div>
+
+<script type="module">
+// ── Import real @noble/post-quantum from esm.sh ──────────────────────────────
+// ml_dsa65: ML-DSA-65 (NIST FIPS 204) — keygen, sign, verify
+import { ml_dsa65 } from 'https://esm.sh/@noble/post-quantum@0.2.1/ml-dsa.js'
+import { bytesToHex } from 'https://esm.sh/@noble/hashes@1.5.0/utils.js'
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
+
+function randHex(bytes) {
+  const arr = new Uint8Array(bytes)
+  crypto.getRandomValues(arr)
+  return bytesToHex(arr)
+}
+
+function truncate(hex, chars = 32) {
+  return hex.length > chars + 3 ? hex.slice(0, chars) + '…' : hex
+}
+
+// Build a PQSafe address from a public key (pq1 + first 20 bytes hex)
+function toPQSafeAddress(pubKeyBytes) {
+  return 'pq1' + bytesToHex(pubKeyBytes.slice(0, 20))
+}
+
+// Step state machine
+const stepDefs = [
+  { id: 's1', label: 'Research agent requires Perplexity Pro — $20/month',  duration: 1800 },
+  { id: 's2', label: 'Checking envelope budget… (ML-DSA-65 keypair + $50 research cap)', duration: 2200 },
+  { id: 's3', label: 'Signing autonomous payment with post-quantum ML-DSA-65…',           duration: 2000 },
+  { id: 's4', label: 'Routing to Airwallex — issuing virtual card + charging perplexity.ai…', duration: 3000 },
+  { id: 's5', label: 'Agent now has Perplexity API access. Task resumed.',   duration: 0    },
+]
+
+function createStepEl(index, def) {
+  const el = document.createElement('div')
+  el.className = 'step'
+  el.id = def.id
+  el.innerHTML = `
+    <div class="step-header">
+      <div class="step-icon">${index + 1}</div>
+      <div class="step-label">${def.label}</div>
+      <div class="step-status">waiting</div>
+    </div>
+    <div class="step-body" style="display:none;margin-top:12px;"></div>
+  `
+  return el
+}
+
+function activateStep(el) {
+  el.classList.add('visible', 'active', 'has-body')
+  el.querySelector('.step-status').innerHTML = '<div class="spinner"></div>'
+}
+
+function completeStep(el, statusText = '✓ done') {
+  el.classList.remove('active')
+  el.classList.add('done')
+  const s = el.querySelector('.step-status')
+  s.innerHTML = statusText
+}
+
+function setBody(el, html) {
+  const b = el.querySelector('.step-body')
+  b.style.display = 'block'
+  b.innerHTML = html
+}
+
+function kv(key, val, cls = '') {
+  return `<div class="kv-line"><span class="kv-key">${key}</span><span class="kv-val ${cls}">${val}</span></div>`
+}
+
+// ── Main demo function ───────────────────────────────────────────────────────
+
+async function runDemo() {
+  const btn = document.getElementById('run-btn')
+  btn.disabled = true
+  btn.innerHTML = `<div class="spinner" style="border-top-color:#000;border-color:rgba(0,0,0,0.2);border-top-color:#000"></div> Running…`
+
+  const stepsContainer = document.getElementById('steps')
+  stepsContainer.innerHTML = ''
+
+  const stepEls = stepDefs.map((def, i) => {
+    const el = createStepEl(i, def)
+    stepsContainer.appendChild(el)
+    return el
+  })
+
+  // Animate them all in, staggered
+  for (let i = 0; i < stepEls.length; i++) {
+    await sleep(60)
+    stepEls[i].classList.add('visible')
+  }
+  await sleep(200)
+
+  // ── STEP 1: Agent needs a tool ────────────────────────────────────────────
+  activateStep(stepEls[0])
+
+  setBody(stepEls[0], `<div class="code-block">${
+    kv('Agent',         'research-agent-v1')
+  + kv('Task',          'Summarise AI safety research — last 90 days')
+  + kv('API response',  '402 Payment Required — Perplexity free tier exhausted')
+  + kv('Required plan', 'Perplexity Pro — $20.00/month')
+  + kv('Action',        'Checking PQSafe SpendEnvelope for available budget…')
+  }</div>`)
+
+  // Real ML-DSA-65 keygen (happens as part of budget check — wallet is pre-provisioned)
+  const t0 = performance.now()
+  const seed = crypto.getRandomValues(new Uint8Array(32))
+  const { secretKey, publicKey } = ml_dsa65.keygen(seed)
+  const t1 = performance.now()
+  const keygenMs = Math.round(t1 - t0)
+  const pubKeyHex = bytesToHex(publicKey)
+  const pqAddr = toPQSafeAddress(publicKey)
+
+  await sleep(Math.max(0, stepDefs[0].duration - keygenMs))
+  completeStep(stepEls[0], '⚠ tool required')
+
+  // ── STEP 2: Budget check — show envelope fields animating in ─────────────
+  activateStep(stepEls[1])
+  await sleep(300)
+
+  const now = Math.floor(Date.now() / 1000)
+  const nonce = randHex(16)
+  const envelope = {
+    version: 1,
+    issuer: pqAddr,
+    agent: 'research-agent-v1',
+    maxAmount: 50,
+    currency: 'USD',
+    allowedRecipients: ['perplexity.ai'],
+    validFrom: now,
+    validUntil: now + 30 * 24 * 3600,   // 30 days
+    nonce,
+    rail: 'airwallex',
+  }
+
+  // Animate building field-by-field
+  const envLines = Object.keys(envelope)
+  const bodyEl = document.createElement('div')
+  bodyEl.className = 'code-block'
+  stepEls[1].querySelector('.step-body').style.display = 'block'
+  stepEls[1].querySelector('.step-body').appendChild(bodyEl)
+  stepEls[1].classList.add('has-body')
+
+  const fieldDelay = Math.floor(stepDefs[1].duration / (envLines.length + 2))
+  for (const k of envLines) {
+    const v = JSON.stringify(envelope[k])
+    bodyEl.innerHTML += kv(k, v.length > 50 ? truncate(v, 45) : v)
+    await sleep(fieldDelay)
+  }
+
+  completeStep(stepEls[1], '✓ $50 budget available')
+
+  // ── STEP 3: Real ML-DSA-65 signing ───────────────────────────────────────
+  activateStep(stepEls[2])
+  const msgBytes = new TextEncoder().encode(
+    JSON.stringify(envelope, Object.keys(envelope).sort())
+  )
+
+  const t2 = performance.now()
+  // REAL signature — no mock
+  const signature = ml_dsa65.sign(msgBytes, secretKey)
+  const t3 = performance.now()
+  const signMs = Math.round(t3 - t2)
+
+  // Verify (also real)
+  const valid = ml_dsa65.verify(signature, msgBytes, publicKey)
+  const sigHex = bytesToHex(signature)
+
+  setBody(stepEls[2], `<div class="code-block">${
+    kv('Envelope JSON', `${msgBytes.length} bytes`)
+  + kv('Signature',     `${signature.length} bytes (ML-DSA-65)`)
+  + kv('Sign time',     `${signMs} ms`)
+  + kv('Sig (hex)',     truncate(sigHex, 40), 'dim')
+  + kv('Self-verify',   valid ? '✓ valid' : '✗ FAILED')
+  }</div>`)
+
+  await sleep(Math.max(0, stepDefs[2].duration - signMs))
+  completeStep(stepEls[2], '✓ signature valid')
+
+  // ── STEP 4: Airwallex virtual card issuance + charge ──────────────────────
+  activateStep(stepEls[3])
+
+  // Simulate virtual card details
+  const vcLast4 = String(1000 + Math.floor(Math.random() * 9000))
+  const vcExpiry = `04/${String(new Date().getFullYear() + 1).slice(2)}`
+
+  setBody(stepEls[3], `<div class="code-block">${
+    kv('Action',      'POST /issuing/cards (Airwallex) — spend cap $50')
+  + kv('Card issued',  `**** **** **** ${vcLast4}  (Visa virtual, expires ${vcExpiry})`)
+  + kv('Spend cap',   '$50.00 USD  (hard-enforced by card network)')
+  + kv('Bound to',    `nonce ${nonce.slice(0,12)}…`)
+  + kv('Charging',    'perplexity.ai — $20.00 USD — Perplexity Pro')
+  + kv('Endpoint',    'POST api-demo.airwallex.com/api/v1/transfers/create')
+  + kv('Request ID',  `${nonce}-${now}  (nonce bound to envelope)`)
+  + kv('Note',        '[recorded sandbox — see DEMO_RECEIPTS.md]', 'dim')
+  }</div>`)
+
+  // Simulate network latency
+  await sleep(2200)
+
+  // Recorded real Airwallex sandbox transfer UUID
+  const TRANSFER_ID = '38873dbc-abfa-4ab5-be25-050496d4a0c3'
+  const executedAt = new Date().toISOString()
+
+  completeStep(stepEls[3], '✓ payment confirmed')
+
+  // ── STEP 5: Agent resumes task ────────────────────────────────────────────
+  activateStep(stepEls[4])
+  stepEls[4].querySelector('.step-label').textContent = 'Agent now has Perplexity API access. Task resumed.'
+  setBody(stepEls[4], `<div class="code-block">${
+    kv('Transaction ID', TRANSFER_ID, 'hi')
+  + kv('Status',         'CONFIRMED — Perplexity Pro active')
+  + kv('Executed at',    executedAt)
+  + kv('Budget used',    '$20.00 / $50.00')
+  + kv('Budget left',    '$30.00 / month')
+  + kv('Agent status',   'Resuming: "Summarise AI safety research — last 90 days…"')
+  + kv('Human in loop?', 'No.')
+  + kv('Verify',         '<a href="https://github.com/PQSafe/pqsafe/blob/main/agent-pay/DEMO_RECEIPTS.md" target="_blank" style="color:var(--cy)">DEMO_RECEIPTS.md →</a>')
+  }</div>`)
+  completeStep(stepEls[4], '✓ task resumed')
+
+  // ── Transfer card ─────────────────────────────────────────────────────────
+  const tcRows = document.getElementById('tc-rows')
+  tcRows.innerHTML = `
+    <div class="tc-row"><span class="tc-row-k">Transaction ID</span><span class="tc-row-v">${TRANSFER_ID}</span></div>
+    <div class="tc-row"><span class="tc-row-k">Service purchased</span><span class="tc-row-v">Perplexity Pro — perplexity.ai</span></div>
+    <div class="tc-row"><span class="tc-row-k">Virtual card</span><span class="tc-row-v">**** **** **** ${vcLast4} (Visa, Airwallex Issuing)</span></div>
+    <div class="tc-row"><span class="tc-row-k">Rail</span><span class="tc-row-v">Airwallex sandbox</span></div>
+    <div class="tc-row"><span class="tc-row-k">Authorized by</span><span class="tc-row-v">ML-DSA-65 spend envelope · agent: research-agent-v1</span></div>
+    <div class="tc-row"><span class="tc-row-k">Issuer address</span><span class="tc-row-v">${pqAddr}</span></div>
+    <div class="tc-row"><span class="tc-row-k">Budget remaining</span><span class="tc-row-v">$30.00 / $50.00 USD</span></div>
+    <div class="tc-row"><span class="tc-row-k">Nonce</span><span class="tc-row-v">${nonce}</span></div>
+    <div class="tc-row"><span class="tc-row-k">Executed at</span><span class="tc-row-v">${executedAt}</span></div>
+    <div class="tc-row"><span class="tc-row-k">Verify on GitHub</span><span class="tc-row-v"><a href="https://github.com/PQSafe/pqsafe/blob/main/agent-pay/DEMO_RECEIPTS.md" target="_blank" rel="noopener">DEMO_RECEIPTS.md →</a></span></div>
+  `
+  document.getElementById('transfer-card').classList.add('visible')
+
+  // ── Post-demo panel ───────────────────────────────────────────────────────
+  const shareId = randHex(6)
+  document.getElementById('share-url').textContent = `demo.pqsafe.xyz/r/${shareId}`
+  document.getElementById('post-demo').classList.add('visible')
+
+  // Re-enable button for replay
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Run again`
+  btn.disabled = false
+}
+
+// Expose to onclick
+window.runDemo = runDemo
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+name = "pqsafe-ledger"
+main = "worker/src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+CORS_ORIGIN = "https://pqsafe.xyz"
+
+# D1 database binding
+[[d1_databases]]
+binding  = "DB"
+database_name = "pqsafe-ledger"
+database_id   = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+[build]
+command = "npm run build"
+
+[[migrations]]
+tag = "v1"
+new_classes = []

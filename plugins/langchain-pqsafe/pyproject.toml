@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "langchain-pqsafe"
+version = "0.1.0"
+description = "LangChain integration for PQSafe AgentPay — post-quantum safe payments for AI agents"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "PQSafe", email = "dev@pqsafe.xyz" }]
+keywords = ["langchain", "pqsafe", "payments", "ai-agents", "post-quantum"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "langchain-core>=0.2.0",
+    "requests>=2.31.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-mock>=3.12",
+    "langchain>=0.2.0",
+    "langchain-openai>=0.1.0",
+]
+
+[project.urls]
+Homepage = "https://pqsafe.xyz"
+Documentation = "https://docs.pqsafe.xyz"
+Repository = "https://github.com/PQSafe/pqsafe"
+
+[tool.setuptools.packages.find]
+where = ["src"]

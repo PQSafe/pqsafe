@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crewai-pqsafe"
+version = "0.1.0"
+description = "CrewAI integration for PQSafe AgentPay — post-quantum safe payments for AI crews"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "PQSafe", email = "dev@pqsafe.xyz" }]
+keywords = ["crewai", "pqsafe", "payments", "ai-agents", "post-quantum"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "crewai>=0.30.0",
+    "crewai-tools>=0.4.0",
+    "requests>=2.31.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-mock>=3.12",
+]
+
+[project.urls]
+Homepage = "https://pqsafe.xyz"
+Documentation = "https://docs.pqsafe.xyz"
+Repository = "https://github.com/PQSafe/pqsafe"
+
+[tool.setuptools.packages.find]
+where = ["src"]

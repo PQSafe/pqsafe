@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PQSafe AgentPay Ledger</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#f0fdf4',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              900: '#14532d',
+            },
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'fade-in': 'fadeIn 0.4s ease-out',
+          },
+          keyframes: {
+            fadeIn: { from: { opacity: '0', transform: 'translateY(6px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { background: #0a0f0d; }
+    .grid-bg {
+      background-image: linear-gradient(rgba(34,197,94,.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(34,197,94,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .glow { box-shadow: 0 0 40px rgba(34,197,94,.12); }
+    .counter { font-variant-numeric: tabular-nums; }
+    .feed-item { animation: fadeIn 0.35s ease-out both; }
+    .hash-mono { font-family: 'SFMono-Regular', 'Menlo', monospace; }
+  </style>
+</head>
+<body class="grid-bg min-h-screen text-gray-100 antialiased">
+
+  <!-- Nav -->
+  <nav class="border-b border-gray-800/60 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto w-full">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-brand-500/20 border border-brand-500/40 flex items-center justify-center">
+        <svg class="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <span class="font-semibold tracking-tight text-white">PQSafe <span class="text-brand-400">AgentPay</span> Ledger</span>
+    </div>
+    <div class="flex items-center gap-6 text-sm text-gray-400">
+      <a href="https://pqsafe.xyz" class="hover:text-white transition-colors">pqsafe.xyz</a>
+      <a href="/api" class="hover:text-white transition-colors">API docs</a>
+      <span id="live-dot" class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse-slow"></span>
+        <span class="text-brand-400 text-xs font-medium">LIVE</span>
+      </span>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
+    <div class="inline-flex items-center gap-2 bg-brand-500/10 border border-brand-500/20 rounded-full px-4 py-1.5 text-xs text-brand-400 font-medium mb-8 uppercase tracking-widest">
+      Post-Quantum Agent Payments
+    </div>
+
+    <h1 class="text-5xl sm:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">
+      Every agent payment,<br class="hidden sm:block" />
+      <span class="text-brand-400">verified on-chain</span>
+    </h1>
+    <p class="text-gray-400 text-lg max-w-xl mx-auto mb-14">
+      Anonymized transfer log for PQSafe AgentPay. Opt-in. Zero PII. ML-DSA-65 signed envelopes only.
+    </p>
+
+    <!-- Live counters -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-16">
+      <div class="glow bg-gray-900/80 border border-gray-700/50 rounded-2xl p-6">
+        <div class="text-3xl font-bold counter text-white" id="stat-transfers">—</div>
+        <div class="text-sm text-gray-500 mt-1">Total transfers</div>
+      </div>
+      <div class="glow bg-gray-900/80 border border-gray-700/50 rounded-2xl p-6">
+        <div class="text-3xl font-bold counter text-white" id="stat-usd">—</div>
+        <div class="text-sm text-gray-500 mt-1">USD routed (est.)</div>
+      </div>
+      <div class="glow bg-gray-900/80 border border-gray-700/50 rounded-2xl p-6">
+        <div class="text-3xl font-bold counter text-white" id="stat-agents">—</div>
+        <div class="text-sm text-gray-500 mt-1">Active agents</div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="max-w-xl mx-auto mb-4">
+      <div class="relative">
+        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Paste envelope hash (64-char hex) to look up a transfer..."
+          class="w-full bg-gray-900 border border-gray-700 rounded-xl pl-11 pr-4 py-3 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500/60 focus:ring-1 focus:ring-brand-500/30 transition-all hash-mono"
+        />
+      </div>
+      <div id="search-result" class="mt-3 hidden"></div>
+    </div>
+  </div>
+
+  <!-- Feed -->
+  <div class="max-w-6xl mx-auto px-6 pb-20">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-widest">Recent transfers</h2>
+      <button id="refresh-btn" class="text-xs text-gray-500 hover:text-brand-400 transition-colors flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
+
+    <div id="feed" class="space-y-2">
+      <div class="text-center text-gray-600 py-12 text-sm">Loading transfers...</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-800/60 py-10 px-6">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
+      <div>
+        <span class="text-gray-400 font-medium">PQSafe AgentPay</span> — Post-quantum payments for AI agents
+      </div>
+      <div class="flex gap-6">
+        <a href="/api" class="hover:text-gray-400 transition-colors">API docs</a>
+        <a href="https://pqsafe.xyz" class="hover:text-gray-400 transition-colors">pqsafe.xyz</a>
+        <a href="https://pqsafe.xyz/privacy" class="hover:text-gray-400 transition-colors">Privacy</a>
+      </div>
+      <div class="text-xs text-gray-700">No PII stored. Envelope hashes only.</div>
+    </div>
+  </footer>
+
+  <script>
+    // ---------------------------------------------------------------------------
+    // Config — update to your deployed worker URL
+    // ---------------------------------------------------------------------------
+    const API_BASE = 'https://pqsafe-ledger.YOUR_SUBDOMAIN.workers.dev'
+
+    // ---------------------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------------------
+    const $ = id => document.getElementById(id)
+
+    function timeAgo(ts) {
+      const diff = Math.floor(Date.now() / 1000) - ts
+      if (diff < 60)  return `${diff}s ago`
+      if (diff < 3600) return `${Math.floor(diff/60)}m ago`
+      if (diff < 86400) return `${Math.floor(diff/3600)}h ago`
+      return `${Math.floor(diff/86400)}d ago`
+    }
+
+    function formatUSD(n) {
+      if (n >= 1_000_000) return `$${(n/1_000_000).toFixed(1)}M`
+      if (n >= 1_000) return `$${(n/1_000).toFixed(1)}K`
+      return `$${n}`
+    }
+
+    const RAIL_LABELS = {
+      airwallex: 'Airwallex', wise: 'Wise', stripe: 'Stripe',
+      'usdc-base': 'USDC/Base', x402: 'x402',
+    }
+    const OUTCOME_STYLE = {
+      success:  'bg-brand-500/10 text-brand-400 border-brand-500/20',
+      failed:   'bg-red-500/10 text-red-400 border-red-500/20',
+      rejected: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+      pending:  'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    }
+
+    function truncateHash(h) { return h.slice(0, 8) + '...' + h.slice(-6) }
+
+    function renderFeedItem(tx, index) {
+      const style = OUTCOME_STYLE[tx.outcome] ?? 'bg-gray-700/30 text-gray-400 border-gray-600/30'
+      return `
+        <a href="/tx/${tx.envelopeHash}"
+           class="feed-item flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 justify-between
+                  bg-gray-900/60 border border-gray-800/60 rounded-xl px-5 py-4
+                  hover:border-gray-700 hover:bg-gray-900/80 transition-all group"
+           style="animation-delay:${index * 40}ms">
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-lg bg-gray-800 border border-gray-700/50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-3.5 h-3.5 text-gray-500 group-hover:text-brand-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm text-white">
+                Agent paid <span class="font-semibold text-brand-400">$${tx.amountBucket}</span>
+                via <span class="font-medium">${RAIL_LABELS[tx.rail] ?? tx.rail}</span>
+              </div>
+              <div class="text-xs text-gray-600 hash-mono mt-0.5">${truncateHash(tx.envelopeHash)}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 sm:ml-4">
+            <span class="text-xs border rounded-full px-2.5 py-0.5 font-medium ${style}">${tx.outcome}</span>
+            <span class="text-xs text-gray-600">${timeAgo(tx.createdAt)}</span>
+          </div>
+        </a>`
+    }
+
+    // ---------------------------------------------------------------------------
+    // API calls
+    // ---------------------------------------------------------------------------
+    async function loadStats() {
+      try {
+        const r = await fetch(`${API_BASE}/v1/stats`)
+        if (!r.ok) return
+        const d = await r.json()
+        $('stat-transfers').textContent = d.totalTransfers.toLocaleString()
+        $('stat-usd').textContent = formatUSD(d.totalUSDRouted)
+        $('stat-agents').textContent = d.activeAgents.toLocaleString()
+      } catch {}
+    }
+
+    async function loadFeed() {
+      const feed = $('feed')
+      try {
+        const r = await fetch(`${API_BASE}/v1/transfers?limit=20`)
+        if (!r.ok) throw new Error('fetch failed')
+        const d = await r.json()
+        if (!d.transfers || d.transfers.length === 0) {
+          feed.innerHTML = '<div class="text-center text-gray-600 py-12 text-sm">No transfers yet.</div>'
+          return
+        }
+        feed.innerHTML = d.transfers.map((tx, i) => renderFeedItem(tx, i)).join('')
+      } catch {
+        feed.innerHTML = '<div class="text-center text-gray-600 py-12 text-sm">Could not load transfers. Is the API running?</div>'
+      }
+    }
+
+    async function lookupHash(hash) {
+      const el = $('search-result')
+      el.classList.remove('hidden')
+      hash = hash.trim().toLowerCase()
+
+      if (!/^[0-9a-f]{64}$/.test(hash)) {
+        el.innerHTML = '<div class="text-xs text-red-400 bg-red-900/20 border border-red-800/30 rounded-lg px-4 py-3">Invalid hash — must be 64 hex characters.</div>'
+        return
+      }
+
+      el.innerHTML = '<div class="text-xs text-gray-500 px-1">Looking up...</div>'
+      try {
+        const r = await fetch(`${API_BASE}/v1/transfers/${hash}`)
+        if (r.status === 404) {
+          el.innerHTML = '<div class="text-xs text-yellow-400 bg-yellow-900/20 border border-yellow-800/30 rounded-lg px-4 py-3">Transfer not found.</div>'
+          return
+        }
+        if (!r.ok) throw new Error()
+        const tx = await r.json()
+        el.innerHTML = `
+          <div class="bg-gray-900 border border-gray-700 rounded-xl px-5 py-4 text-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-semibold text-white">Transfer found</span>
+              <span class="text-xs border rounded-full px-2.5 py-0.5 font-medium ${OUTCOME_STYLE[tx.outcome] ?? ''}">${tx.outcome}</span>
+            </div>
+            <dl class="space-y-2 text-xs">
+              <div class="flex gap-4"><dt class="w-28 text-gray-500">Envelope hash</dt><dd class="hash-mono text-gray-300 break-all">${tx.envelopeHash}</dd></div>
+              <div class="flex gap-4"><dt class="w-28 text-gray-500">Agent (hash)</dt><dd class="hash-mono text-gray-300 break-all">${tx.agentIdHash}</dd></div>
+              <div class="flex gap-4"><dt class="w-28 text-gray-500">Rail</dt><dd class="text-gray-300">${RAIL_LABELS[tx.rail] ?? tx.rail}</dd></div>
+              <div class="flex gap-4"><dt class="w-28 text-gray-500">Amount bucket</dt><dd class="text-brand-400">$${tx.amountBucket} ${tx.currency}</dd></div>
+              <div class="flex gap-4"><dt class="w-28 text-gray-500">Timestamp</dt><dd class="text-gray-300">${new Date(tx.createdAt * 1000).toISOString()}</dd></div>
+            </dl>
+          </div>`
+      } catch {
+        el.innerHTML = '<div class="text-xs text-red-400 bg-red-900/20 border border-red-800/30 rounded-lg px-4 py-3">Error fetching transfer.</div>'
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // Event wiring
+    // ---------------------------------------------------------------------------
+    let searchTimer
+    $('search-input').addEventListener('input', e => {
+      clearTimeout(searchTimer)
+      const val = e.target.value.trim()
+      if (val.length < 10) { $('search-result').classList.add('hidden'); return }
+      searchTimer = setTimeout(() => lookupHash(val), 400)
+    })
+
+    $('refresh-btn').addEventListener('click', () => { loadStats(); loadFeed() })
+
+    // Initial load
+    loadStats()
+    loadFeed()
+
+    // Auto-refresh every 30s
+    setInterval(() => { loadStats(); loadFeed() }, 30_000)
+  </script>
+</body>
+</html>

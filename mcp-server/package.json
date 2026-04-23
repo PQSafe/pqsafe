@@ -1,0 +1,26 @@
+{
+  "name": "@pqsafe/mcp-server",
+  "version": "0.1.0",
+  "description": "PQSafe AgentPay MCP server — Cloudflare Worker exposing payment tools to Claude Desktop and other MCP hosts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:dry": "wrangler deploy --dry-run",
+    "typecheck": "tsc --noEmit",
+    "secret:set": "wrangler secret put PQSAFE_API_KEY"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240924.0",
+    "typescript": "^5.4.0",
+    "wrangler": "^3.60.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
