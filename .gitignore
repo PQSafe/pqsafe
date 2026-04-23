@@ -4,3 +4,10 @@ dist/
 *.log
 .env
 **/.env
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+**/*.egg-info/
+.pytest_cache/
