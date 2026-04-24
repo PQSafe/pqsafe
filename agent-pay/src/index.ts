@@ -7,7 +7,7 @@
  *   import { executeAgentPayment } from '@pqsafe/agent-pay'
  *
  *   const result = await executeAgentPayment(signedEnvelope, {
- *     recipient: 'GB29NWBK60161331926819',
+ *     recipient: 'anthropic.com/billing',
  *     amount: 50,
  *     memo: 'SeniorDeli supplier invoice #42',
  *   })

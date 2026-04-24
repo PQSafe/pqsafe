@@ -48,7 +48,7 @@ const envelope = createEnvelope({
   agent: 'raymond-ai-coo-v1',
   maxAmount: 100,
   currency: 'USD',
-  allowedRecipients: ['GB29NWBK60161331926819'],
+  allowedRecipients: ['anthropic.com/billing'],
   ttlSeconds: 3600,
   rail: 'airwallex',
 })
@@ -57,7 +57,7 @@ const signed = signEnvelope(envelope, dsaSecretKey, dsaPublicKey)
 
 // Agent-side: execute payment
 const result = await executeAgentPayment(signed, {
-  recipient: 'GB29NWBK60161331926819',
+  recipient: 'anthropic.com/billing',
   amount: 50,
   memo: 'Invoice #42',
 })
