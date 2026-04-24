@@ -2,7 +2,17 @@
 
 **Goal:** by **2026-04-28**, produce one screen recording of a real Airwallex sandbox transfer executed end-to-end through `executeAgentPayment()`, showing the transaction ID in the Airwallex dashboard. This is the only binary deliverable for the YC S26 video.
 
-Everything else (ML-DSA-65 signing, envelope verification, guardrails, router) already passes 13/13 tests and runs clean in mock mode — `npm run demo` on this machine already works. The only thing missing is real credentials hitting the real sandbox endpoint.
+## ✅ STATUS: REAL TRANSFERS ACHIEVED — 2026-04-24
+
+Steps 1–5 are complete. Real Airwallex sandbox transfers have been executed:
+- Transfer `af82cb1e-…` — 49 USD LOCAL/ABA — 2026-04-24
+- Transfer `8ca8d4a3-…` — 49 USD LOCAL/ABA — 2026-04-24
+
+`npm run demo` with `AIRWALLEX_CLIENT_ID` + `AIRWALLEX_API_KEY` set produces a live transaction ID on every run.
+
+**Remaining action for Raymond: record the 20-second screen capture (Step 6) before 2026-04-28.**
+
+---
 
 ---
 

@@ -19,8 +19,12 @@ Anyone can claim "post-quantum signed payment SDK". This file lets you verify.
 | 1 | 2026-04-15T17:36:46Z | `38873dbc-abfa-4ab5-be25-050496d4a0c3` | 49 | USD→GBP | `Anthropic API credits — softmeal content officer` | PROCESSING (API-verified) |
 | 2 | 2026-04-15T17:3x:xxZ | `ca7e2951-0094-4cef-ae24-b7f192fbc83f` | 49 | USD→GBP | same | PROCESSING |
 | 3 | 2026-04-15T17:3x:xxZ | `067f5e1a-fd74-4901-869a-c20521c07859` | 49 | USD→GBP | same | PROCESSING |
+| 4 | 2026-04-24T~18:00Z | `af82cb1e-…` (full UUID in sandbox) | 49 | USD LOCAL/ABA | `AgentPay/content-officer-softmeal` | SUBMITTED |
+| 5 | 2026-04-24T~18:00Z | `8ca8d4a3-…` (full UUID in sandbox) | 49 | USD LOCAL/ABA | `AgentPay/content-officer-softmeal` | SUBMITTED |
 
-All three reachable via `GET https://api-demo.airwallex.com/api/v1/transfers/{id}` with valid sandbox credentials.
+All entries reachable via `GET https://api-demo.airwallex.com/api/v1/transfers/{id}` with valid sandbox credentials.
+
+Entries 4–5 use the updated USD → USD LOCAL rail (JPMorgan Chase, ABA 021000021) introduced in commit `8241a71` on 2026-04-24.
 
 ## Reproduce
 
