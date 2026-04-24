@@ -122,8 +122,8 @@ async function main() {
   // -------------------------------------------------------------------------
   header('Step 2', 'Build spend envelope')
   // -------------------------------------------------------------------------
-  // Use a fake IBAN as recipient (SeniorDeli supplier equivalent)
-  const RECIPIENT = 'GB29NWBK60161331926819'
+  // Recipient = Anthropic API billing endpoint (agent buying its own compute)
+  const RECIPIENT = 'anthropic.com/billing'
   const envelope = createEnvelope({
     issuer,
     agent: 'content-officer-softmeal',
