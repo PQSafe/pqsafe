@@ -35,7 +35,7 @@ AIRWALLEX_CLIENT_ID=your_id AIRWALLEX_API_KEY=your_key npx tsx ../demo-saas/demo
 | File | Purpose |
 |---|---|
 | `demo.ts` | Runnable TypeScript demo script |
-| `demo.md` | Human walkthrough for YC reviewers |
+| `demo.md` | Human walkthrough for reviewers |
 | `README.md` | This file |
 
 ## Related docs

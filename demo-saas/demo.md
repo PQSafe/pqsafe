@@ -1,6 +1,6 @@
 # PQSafe AgentPay — SaaS Self-Pay Walkthrough
 
-**For YC reviewers.** This document explains what `demo.ts` just did and why it matters.
+This document explains what `demo.ts` just did and why it matters.
 
 ---
 

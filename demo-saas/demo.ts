@@ -6,7 +6,7 @@
  * "research tools"), autonomously purchases the subscription, and continues
  * its task — without any human logging in or entering a credit card.
  *
- * This is the hero demo for PQSafe AgentPay at YC S26.
+ * This is the hero demo for PQSafe AgentPay.
  *
  * Run:
  *   cd agent-pay
