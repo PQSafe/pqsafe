@@ -112,7 +112,7 @@ env = create_envelope(
     agent="smoke-test",
     max_amount=10.0,
     currency="USD",
-    allowed_recipients=["GB29NWBK60161331926819"],
+    allowed_recipients=["anthropic.com/billing"],
 )
 signed = sign_envelope(env, kp)
 verified = verify_envelope(signed, skip_temporal=False)

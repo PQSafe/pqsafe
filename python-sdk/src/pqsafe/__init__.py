@@ -17,12 +17,12 @@ Quick start
         agent="my-agent-v1",
         max_amount=100.0,
         currency="USD",
-        allowed_recipients=["GB29NWBK60161331926819"],
+        allowed_recipients=["anthropic.com/billing"],
     )
 
     signed = sign_envelope(envelope, keypair)
 
-    result = pay(signed, {"recipient": "GB29NWBK60161331926819", "amount": 10.0})
+    result = pay(signed, {"recipient": "anthropic.com/billing", "amount": 10.0})
     print(result.tx_id)
 
 Links
