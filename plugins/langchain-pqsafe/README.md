@@ -68,7 +68,7 @@ executor = AgentExecutor(agent=agent, tools=[payment_tool], verbose=True)
 # 4. Run
 result = executor.invoke({
     "envelope_json": envelope_json,
-    "input": "Pay supplier GB29NWBK60161331926819 £150 for invoice #42",
+    "input": "Renew Perplexity Pro at perplexity.ai — $20 USD for research-agent-v1",
 })
 print(result["output"])
 ```
