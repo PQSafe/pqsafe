@@ -1,0 +1,7 @@
+name = "pqsafe-demo-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+account_id = "2c4fde32590a55f13c8181cbc33027ba"
+
+[vars]
+AIRWALLEX_ENV = "demo"

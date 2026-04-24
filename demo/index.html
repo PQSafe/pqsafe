@@ -616,43 +616,54 @@ async function runDemo() {
   await sleep(Math.max(0, stepDefs[2].duration - signMs))
   completeStep(stepEls[2], '✓ signature valid')
 
-  // ── STEP 4: Airwallex virtual card issuance + charge ──────────────────────
+  // ── STEP 4: Real Airwallex sandbox transfer via Cloudflare Worker ────────
   activateStep(stepEls[3])
-
-  // Simulate virtual card details
-  const vcLast4 = String(1000 + Math.floor(Math.random() * 9000))
-  const vcExpiry = `04/${String(new Date().getFullYear() + 1).slice(2)}`
-
   setBody(stepEls[3], `<div class="code-block">${
-    kv('Action',      'POST /issuing/cards (Airwallex) — spend cap $50')
-  + kv('Card issued',  `**** **** **** ${vcLast4}  (Visa virtual, expires ${vcExpiry})`)
-  + kv('Spend cap',   '$50.00 USD  (hard-enforced by card network)')
-  + kv('Bound to',    `nonce ${nonce.slice(0,12)}…`)
-  + kv('Charging',    'perplexity.ai — $20.00 USD — Perplexity Pro')
-  + kv('Endpoint',    'POST api-demo.airwallex.com/api/v1/transfers/create')
-  + kv('Request ID',  `${nonce}-${now}  (nonce bound to envelope)`)
-  + kv('Note',        '[recorded sandbox — see DEMO_RECEIPTS.md]', 'dim')
+    kv('Action',   'POST api-demo.airwallex.com/api/v1/transfers/create')
+  + kv('Nonce',    nonce.slice(0,12) + '…  (bound to ML-DSA-65 signature)')
+  + kv('Amount',   '$20.00 USD')
+  + kv('Agent',    envelope.agent)
+  + kv('Status',   'calling Airwallex sandbox…', 'dim')
   }</div>`)
 
-  // Simulate network latency
-  await sleep(2200)
+  let TRANSFER_ID, executedAt, txStatus
+  try {
+    const apiRes = await fetch('https://pqsafe-demo-api.raymond-thu87.workers.dev/transfer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nonce, amount: 20, agent: envelope.agent }),
+    })
+    const tx = await apiRes.json()
+    TRANSFER_ID = tx.transferId || tx.requestId || 'pending'
+    txStatus = tx.status || (tx.success ? 'SUBMITTED' : 'ERROR')
+    executedAt = tx.executedAt || new Date().toISOString()
 
-  // Recorded real Airwallex sandbox transfer UUID
-  const TRANSFER_ID = '38873dbc-abfa-4ab5-be25-050496d4a0c3'
-  const executedAt = new Date().toISOString()
-
-  completeStep(stepEls[3], '✓ payment confirmed')
+    setBody(stepEls[3], `<div class="code-block">${
+      kv('Endpoint',    'POST api-demo.airwallex.com/api/v1/transfers/create')
+    + kv('Transfer ID', TRANSFER_ID, 'hi')
+    + kv('Status',      txStatus)
+    + kv('Amount',      '$20.00 USD')
+    + kv('Request ID',  tx.requestId || nonce + '-live')
+    + kv('Rail',        'Airwallex sandbox — LIVE API call')
+    }</div>`)
+    completeStep(stepEls[3], tx.success ? '✓ payment submitted' : '⚠ ' + txStatus)
+  } catch (err) {
+    TRANSFER_ID = 'error'
+    executedAt = new Date().toISOString()
+    txStatus = 'NETWORK_ERROR'
+    setBody(stepEls[3], `<div class="code-block">${kv('Error', String(err))}</div>`)
+    failStep(stepEls[3], '✗ transfer failed')
+  }
 
   // ── STEP 5: Agent resumes task ────────────────────────────────────────────
   activateStep(stepEls[4])
-  stepEls[4].querySelector('.step-label').textContent = 'Agent now has Perplexity API access. Task resumed.'
+  stepEls[4].querySelector('.step-label').textContent = 'Agent payment submitted. Task resumed.'
   setBody(stepEls[4], `<div class="code-block">${
     kv('Transaction ID', TRANSFER_ID, 'hi')
-  + kv('Status',         'CONFIRMED — Perplexity Pro active')
+  + kv('Status',         txStatus)
   + kv('Executed at',    executedAt)
-  + kv('Budget used',    '$20.00 / $50.00')
-  + kv('Budget left',    '$30.00 / month')
-  + kv('Agent status',   'Resuming: "Summarise AI safety research — last 90 days…"')
+  + kv('Amount',         '$20.00 / $50.00 budget used')
+  + kv('Agent',          envelope.agent)
   + kv('Human in loop?', 'No.')
   + kv('Verify',         '<a href="https://github.com/PQSafe/pqsafe/blob/main/agent-pay/DEMO_RECEIPTS.md" target="_blank" style="color:var(--cy)">DEMO_RECEIPTS.md →</a>')
   }</div>`)
