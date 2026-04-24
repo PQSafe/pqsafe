@@ -115,9 +115,17 @@ export function createEnvelope(params: CreateEnvelopeParams): SpendEnvelope {
  * Deterministically serialize an envelope to bytes for signing.
  * Keys are sorted for reproducibility across platforms.
  */
+function sortedJsonReplacer(_key: string, value: unknown): unknown {
+  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b))
+    )
+  }
+  return value
+}
+
 function envelopeToBytes(envelope: SpendEnvelope): Uint8Array {
-  // Sort keys so serialization is deterministic regardless of insertion order
-  const sorted = JSON.stringify(envelope, Object.keys(envelope).sort())
+  const sorted = JSON.stringify(envelope, sortedJsonReplacer)
   return new TextEncoder().encode(sorted)
 }
 

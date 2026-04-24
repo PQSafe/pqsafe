@@ -152,31 +152,38 @@ export async function executePayment(
   // -------------------------------------------------------------------------
   const token = await getAccessToken()
 
+  const currency = envelope.currency.toUpperCase()
+  // USD domestic wire: ABA routing. Other currencies fall back to SWIFT.
+  const isUsd = currency === 'USD'
+
   const body = {
     request_id: `${envelope.nonce}-${Date.now()}`,
-    source_currency: 'USD',
-    transfer_currency: 'GBP',
+    source_currency: currency,
+    transfer_currency: currency,
     transfer_amount: request.amount,
-    transfer_method: 'SWIFT',
+    transfer_method: isUsd ? 'LOCAL' : 'SWIFT',
     reason: 'goods_purchase',
     reference: request.memo ?? `AgentPay/${envelope.agent}`,
     beneficiary: {
       type: 'BANK_ACCOUNT',
-      entity_type: 'COMPANY',
-      company_name: 'PQSafe Demo Supplier Ltd',
+      entity_type: 'PERSONAL',
+      individual_name: { first_name: 'PQSafe', last_name: 'Demo' },
       address: {
-        country_code: 'GB',
-        city: 'London',
-        street_address: '1 Demo Street',
-        postcode: 'EC1A 1AA',
+        country_code: 'US',
+        state: 'NY',
+        city: 'New York',
+        street_address: '1 Demo St',
+        postcode: '10001',
       },
       bank_details: {
-        account_name: 'PQSafe Demo Supplier Ltd',
-        account_number: request.recipient,
-        bank_country_code: 'GB',
-        swift_code: 'NWBKGB2L',
-        bank_name: 'NatWest',
-        account_currency: 'GBP',
+        account_name: 'PQSafe Demo',
+        account_number: '000123456789',
+        bank_country_code: 'US',
+        bank_name: 'JPMorgan Chase',
+        account_currency: currency,
+        bank_account_category: 'Checking',
+        account_routing_type1: 'aba',
+        account_routing_value1: '021000021',
       },
     },
   }
