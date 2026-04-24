@@ -5,8 +5,8 @@
 ## ✅ STATUS: REAL TRANSFERS ACHIEVED — 2026-04-24
 
 Steps 1–5 are complete. Real Airwallex sandbox transfers have been executed:
-- Transfer `af82cb1e-…` — 49 USD LOCAL/ABA — 2026-04-24
-- Transfer `8ca8d4a3-…` — 49 USD LOCAL/ABA — 2026-04-24
+- Transfer `af82cb1e-204e-44e7-8192-d90fde9cc09f` — 49 USD LOCAL/ABA — 2026-04-24
+- Transfer `8ca8d4a3-95d2-44fa-808e-0931df1be200` — 49 USD LOCAL/ABA — 2026-04-24
 
 `npm run demo` with `AIRWALLEX_CLIENT_ID` + `AIRWALLEX_API_KEY` set produces a live transaction ID on every run.
 
