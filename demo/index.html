@@ -485,6 +485,13 @@ function completeStep(el, statusText = '✓ done') {
   s.innerHTML = statusText
 }
 
+function failStep(el, statusText = '✗ failed') {
+  el.classList.remove('active')
+  el.classList.add('done')
+  const s = el.querySelector('.step-status')
+  s.innerHTML = `<span style="color:#f87171">${statusText}</span>`
+}
+
 function setBody(el, html) {
   const b = el.querySelector('.step-body')
   b.style.display = 'block'
@@ -579,19 +586,24 @@ async function runDemo() {
 
   // ── STEP 3: Real ML-DSA-65 signing ───────────────────────────────────────
   activateStep(stepEls[2])
+  await sleep(60) // yield to let spinner render before blocking computation
   const msgBytes = new TextEncoder().encode(
     JSON.stringify(envelope, Object.keys(envelope).sort())
   )
 
-  const t2 = performance.now()
-  // REAL signature — no mock
-  const signature = ml_dsa65.sign(msgBytes, secretKey)
-  const t3 = performance.now()
-  const signMs = Math.round(t3 - t2)
-
-  // Verify (also real)
-  const valid = ml_dsa65.verify(signature, msgBytes, publicKey)
-  const sigHex = bytesToHex(signature)
+  let signature, signMs, valid, sigHex
+  try {
+    const t2 = performance.now()
+    signature = ml_dsa65.sign(msgBytes, secretKey)
+    const t3 = performance.now()
+    signMs = Math.round(t3 - t2)
+    valid = ml_dsa65.verify(signature, msgBytes, publicKey)
+    sigHex = bytesToHex(signature)
+  } catch (err) {
+    setBody(stepEls[2], `<div class="code-block">${kv('Error', String(err))}</div>`)
+    failStep(stepEls[2], '✗ signing failed')
+    return
+  }
 
   setBody(stepEls[2], `<div class="code-block">${
     kv('Envelope JSON', `${msgBytes.length} bytes`)
