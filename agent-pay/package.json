@@ -28,5 +28,24 @@
     "@types/node": "^25.6.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PQSafe/pqsafe.git",
+    "directory": "agent-pay"
+  },
+  "homepage": "https://pqsafe.xyz",
+  "keywords": [
+    "post-quantum",
+    "ml-dsa",
+    "ai-agent",
+    "payments",
+    "spend-envelope",
+    "airwallex",
+    "fips-204"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }
