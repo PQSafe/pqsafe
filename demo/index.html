@@ -670,6 +670,7 @@ async function runDemo() {
   completeStep(stepEls[4], '✓ task resumed')
 
   // ── Transfer card ─────────────────────────────────────────────────────────
+  const vcLast4 = nonce.slice(-4)
   const tcRows = document.getElementById('tc-rows')
   tcRows.innerHTML = `
     <div class="tc-row"><span class="tc-row-k">Transaction ID</span><span class="tc-row-v">${TRANSFER_ID}</span></div>
