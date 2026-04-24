@@ -594,10 +594,10 @@ async function runDemo() {
   let signature, signMs, valid, sigHex
   try {
     const t2 = performance.now()
-    signature = ml_dsa65.sign(msgBytes, secretKey)
+    signature = ml_dsa65.sign(secretKey, msgBytes)
     const t3 = performance.now()
     signMs = Math.round(t3 - t2)
-    valid = ml_dsa65.verify(signature, msgBytes, publicKey)
+    valid = ml_dsa65.verify(publicKey, msgBytes, signature)
     sigHex = bytesToHex(signature)
   } catch (err) {
     setBody(stepEls[2], `<div class="code-block">${kv('Error', String(err))}</div>`)
