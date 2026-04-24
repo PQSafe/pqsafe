@@ -57,9 +57,9 @@ const run = paySupplierWorkflow.createRun()
 await run.start({
   triggerData: {
     signedEnvelope: { envelopeJson: '...', signature: '...', dsaPublicKey: '...' },
-    recipient: 'GB29NWBK60161331926819',
-    amount: 150,
-    memo: 'Supplier invoice #42',
+    recipient: 'anthropic.com/billing',
+    amount: 20,
+    memo: 'Perplexity Pro — research agent auto-renewal',
   },
 })
 ```

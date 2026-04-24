@@ -29,7 +29,7 @@ finance_agent = Agent(
 
 pay_invoice = Task(
     description=(
-        "Pay supplier GB29NWBK60161331926819 £150 for invoice #42. "
+        "Renew Perplexity Pro subscription at perplexity.ai — $20 USD. "
         "Use envelope: {envelope_json}"
     ),
     agent=finance_agent,

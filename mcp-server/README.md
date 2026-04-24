@@ -74,17 +74,17 @@ npm run deploy
 Once connected via Claude Desktop, Claude can:
 
 ```
-User: Pay $199 to GB29NWBK60161331926819 for the Perplexity Pro subscription.
+User: I need Perplexity Pro to finish this research task. Can you pay for it?
 
-Claude: I'll use PQSafe to execute this payment.
-[calls pqsafe_check_balance → confirms budget available]
-[calls pqsafe_pay → returns transferId awx_prod_xxxx, status: COMPLETED]
+Claude: I'll use PQSafe to execute this payment autonomously.
+[calls pqsafe_check_balance → confirms $50 research budget available]
+[calls pqsafe_pay → returns transferId awx_sbx_af82cb1e, status: SUBMITTED]
 
 Payment executed:
-  Transfer ID: awx_prod_xxxx
-  Amount: $199 USD
-  Recipient: GB29NWBK60161331926819
-  Status: COMPLETED
+  Transfer ID: awx_sbx_af82cb1e
+  Amount: $20 USD
+  Recipient: perplexity.ai
+  Status: SUBMITTED — resuming task.
 ```
 
 ## Architecture
