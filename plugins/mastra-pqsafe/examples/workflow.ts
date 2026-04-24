@@ -23,7 +23,7 @@ const STUB_ENVELOPE: SignedEnvelope = {
     agent: 'mastra-demo-workflow',
     maxAmount: 500,
     currency: 'USD',
-    allowedRecipients: ['GB29NWBK60161331926819'],
+    allowedRecipients: ['anthropic.com/billing'],
     validFrom: 1700000000,
     validUntil: 9999999999,
     nonce: 'a'.repeat(32),
@@ -49,9 +49,9 @@ async function runStandaloneDemo(): Promise<void> {
 
   try {
     const result = await pqsafe.pay(STUB_ENVELOPE, {
-      recipient: 'GB29NWBK60161331926819',
-      amount: 150,
-      memo: 'Supplier invoice #42',
+      recipient: 'anthropic.com/billing',
+      amount: 20,
+      memo: 'Perplexity Pro — research-agent-v1 auto-renewal',
     })
     console.log('Payment result:', result)
   } catch (err) {
