@@ -93,6 +93,33 @@ wallet (extension)
          └─ airwallex / wise / stripe / usdc-base / x402
 ```
 
+## Arbitrum on-chain audit
+
+Every payment can be anchored on Arbitrum One for an immutable, publicly auditable record.
+
+The `SpendEnvelopeRegistry` contract (Solidity 0.8.24, `evm/` directory) stores:
+- `keccak256(envelopeJson)` — the on-chain primary key
+- First 32 bytes of the ML-DSA-65 signature — the fingerprint
+- Amount cap, currency, expiry, agent ID, operator address
+
+```typescript
+import { keccak_256 } from '@noble/hashes/sha3.js'
+import { commitEnvelopeToArbitrum } from '@pqsafe/agent-pay'
+
+const onchain = await commitEnvelopeToArbitrum(signed, envelope, {
+  rpcUrl: process.env.ARBITRUM_RPC_URL,
+  contractAddress: process.env.ARBITRUM_CONTRACT_ADDRESS,
+  privateKey: process.env.ARBITRUM_PRIVATE_KEY,
+  chainId: 421614,  // Arbitrum Sepolia
+  keccak256: (data) => keccak_256(data),
+  signTx: /* inject viem signTransaction */,
+})
+// onchain.txHash — Arbitrum transaction
+// onchain.envelopeId — on-chain primary key
+```
+
+See [`evm/README.md`](../evm/README.md) for Foundry deploy instructions.
+
 ## Demo
 
 ```bash
@@ -104,6 +131,9 @@ export AIRWALLEX_CLIENT_ID=<your sandbox client id>
 export AIRWALLEX_API_KEY=<your sandbox api key>
 export AIRWALLEX_ENV=demo
 npm run demo
+
+# Claude Agents + Arbitrum demo (D3)
+ANTHROPIC_API_KEY=sk-... npm run demo:claude
 ```
 
 See [DEMO_RECEIPTS.md](DEMO_RECEIPTS.md) for verified real sandbox transfer IDs with cryptographic provenance.
