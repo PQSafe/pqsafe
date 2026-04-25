@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@pqsafe/agent-pay?color=10b981&label=npm)](https://www.npmjs.com/package/@pqsafe/agent-pay)
 [![PyPI version](https://img.shields.io/pypi/v/pqsafe-agent-pay?color=10b981&label=PyPI)](https://pypi.org/project/pqsafe-agent-pay/)
-[![Tests](https://img.shields.io/badge/tests-22%2F22-10b981)](agent-pay/tests/)
+[![Tests](https://img.shields.io/badge/tests-23%2F23-10b981)](agent-pay/tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![API](https://img.shields.io/badge/API-live%20at%20api.pqsafe.xyz-10b981)](https://api.pqsafe.xyz/docs)
 
@@ -135,7 +135,7 @@ Human (Chrome extension / CLI)
 
 | Package | Description | Status |
 |---------|-------------|--------|
-| [`agent-pay`](agent-pay/) | TypeScript SDK — envelopes, ML-DSA-65 signing, multi-rail execution | **Live** — 22/22 tests, Airwallex + Wise live, USDC-Base + x402 mock |
+| [`agent-pay`](agent-pay/) | TypeScript SDK — envelopes, ML-DSA-65 signing, multi-rail execution | **Live** — 23/23 tests · all 5 rails · Airwallex + Wise live |
 | [`evm`](evm/) | Arbitrum SpendEnvelope Registry — Solidity 0.8.24 on-chain audit ledger | **Ready to deploy** — 13/13 Foundry tests |
 | [`api-reference`](api-reference/) | FastAPI REST API — hosted at api.pqsafe.xyz | **Deployable** — Fly.io ready |
 | [`python-sdk`](python-sdk/) | Python SDK — mirrors TypeScript SDK | PyPI: `pqsafe-agent-pay` |
