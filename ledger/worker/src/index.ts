@@ -116,8 +116,8 @@ function validateLogPayload(body: unknown): { payload: LogPayload; error?: never
   }
 
   const currency = b['currency']
-  if (typeof currency !== 'string' || currency.length !== 3) {
-    return { error: 'currency must be a 3-character ISO 4217 code' }
+  if (typeof currency !== 'string' || currency.length < 3 || currency.length > 5) {
+    return { error: 'currency must be a 3-5 character code (e.g. USD, USDC)' }
   }
 
   const outcome = b['outcome']

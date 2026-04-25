@@ -18,10 +18,13 @@ import type { SpendEnvelope as _SpendEnvelope } from './envelope.js'
 import { routePayment } from './rails/index.js'
 import type { RailConfig } from './rails/index.js'
 import type { SignedEnvelope, PaymentRequest, PaymentResult } from './types.js'
+import { autoSubmitToLedger } from './ledger.js'
 
 export type { RailConfig } from './rails/index.js'
 export { probeX402Endpoint } from './rails/x402.js'
 export type { X402Config, X402PaymentRequirements } from './rails/x402.js'
+export { submitToLedger, buildLedgerRecord } from './ledger.js'
+export type { LedgerRecord } from './ledger.js'
 
 export * from './envelope.js'
 export * from './types.js'
@@ -87,5 +90,10 @@ export async function executeAgentPayment(
   }
 
   // Step 6: Route to rail
-  return routePayment(envelope, request, railConfig)
+  const result = await routePayment(envelope, request, railConfig)
+
+  // Step 7: Fire-and-forget ledger submission (anonymized, opt-in via PQSAFE_LEDGER_URL)
+  autoSubmitToLedger(signed, envelope, result)
+
+  return result
 }
