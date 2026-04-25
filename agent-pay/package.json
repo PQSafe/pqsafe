@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit",
     "dev": "tsc --watch --noEmit",
     "demo": "tsx examples/agentpay_demo.ts",
+    "demo:claude": "tsx examples/claude_agent_demo.ts",
     "demo:basic": "tsx examples/basic.ts",
     "test": "tsx tests/envelope.test.ts"
   },
@@ -25,6 +26,7 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.37.0",
     "@types/node": "^25.6.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
