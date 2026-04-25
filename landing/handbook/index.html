@@ -63,7 +63,7 @@
       <a href="#verify-pay" class="block py-1 hover:text-slate-200 no-underline">Verify &amp; pay</a>
       <a href="#guardrails" class="block py-1 hover:text-slate-200 no-underline">Guardrails</a>
       <a href="#rails" class="block py-1 hover:text-slate-200 no-underline">Payment rails</a>
-      <a href="#config" class="block py-1 hover:text-slate-200 no-underline">Configuration</a>
+      <a href="#config" class="block py-1 hover:text-slate-200 no-underline">Configuration + Telegram approval</a>
       <a href="#langchain" class="block py-1 hover:text-slate-200 no-underline">LangChain</a>
       <a href="#crewai" class="block py-1 hover:text-slate-200 no-underline">CrewAI</a>
       <a href="#mastra" class="block py-1 hover:text-slate-200 no-underline">Mastra</a>
@@ -90,8 +90,8 @@
       </p>
       <div class="flex flex-wrap gap-3 mt-5 text-xs font-semibold">
         <span class="badge badge-green">ML-DSA-65 · NIST FIPS 204</span>
-        <span class="badge badge-green">Airwallex sandbox live</span>
-        <span class="badge badge-green">13/13 guardrail tests</span>
+        <span class="badge badge-green">Airwallex + Wise live</span>
+        <span class="badge badge-green">17/17 guardrail tests</span>
         <span class="badge" style="background:rgba(6,182,212,0.12);color:#22d3ee;border:1px solid rgba(6,182,212,0.3)">Arbitrum on-chain audit</span>
         <span class="badge badge-yellow">npm i @pqsafe/agent-pay</span>
       </div>
@@ -241,8 +241,8 @@ console.log(result.executedAt) <span class="text-slate-500">// ISO 8601</span></
           <tr>
             <td><code>wise</code></td>
             <td>Wise Business</td>
-            <td><span class="badge badge-yellow">Stub</span></td>
-            <td>International transfers, mid-market rate</td>
+            <td><span class="badge badge-green">Live sandbox</span></td>
+            <td>IBAN / sort code / ABA — mid-market rate, international</td>
           </tr>
           <tr>
             <td><code>usdc-base</code></td>
@@ -273,6 +273,25 @@ AIRWALLEX_ENV=demo         <span class="text-slate-500"># 'demo' for sandbox, 'p
 <span class="text-slate-500"># Mock mode — no real API calls (default when creds absent)</span>
 PQSAFE_MOCK_MODE=1</code></pre>
       <p class="mt-3 text-sm text-slate-400">When <code>PQSAFE_MOCK_MODE=1</code> or credentials are absent, the SDK returns a realistic mock <code>PaymentResult</code> without hitting any payment provider. All signing, verification, and guardrails still run — only the final wire call is mocked. Useful for integration testing.</p>
+
+      <h3 class="text-base font-semibold text-white mb-2 mt-6">Wise rail</h3>
+      <pre><code class="text-slate-300">WISE_API_KEY=your_wise_api_key
+WISE_ENV=sandbox         <span class="text-slate-500"># 'live' for production</span></code></pre>
+      <p class="mt-2 text-sm text-slate-400">Wise auto-detects recipient format: IBAN (<code>GB29NWBK…</code>), UK sort code (<code>60-00-01/12345678</code>), or US ABA (<code>021000021/12345678</code>).</p>
+
+      <h3 class="text-base font-semibold text-white mb-2 mt-6">Telegram approval gate</h3>
+      <pre><code class="text-slate-300">TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
+TELEGRAM_CHAT_ID=123456789
+PQSAFE_APPROVAL_THRESHOLD=100    <span class="text-slate-500"># USD — above this, require human approval</span>
+PQSAFE_APPROVAL_TIMEOUT_S=300    <span class="text-slate-500"># seconds to wait before auto-reject</span></code></pre>
+      <pre class="mt-2"><code class="text-slate-300"><span class="text-cyan-400">import</span> { executeWithApproval } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'@pqsafe/agent-pay'</span>
+
+<span class="text-slate-500">// Payments ≤ $100 → autonomous. Payments > $100 → Telegram [APPROVE][REJECT]</span>
+<span class="text-cyan-400">const</span> result = <span class="text-cyan-400">await</span> executeWithApproval(signed, {
+  recipient: <span class="text-emerald-300">'vendor@company.com'</span>,
+  amount: 150,
+  memo: <span class="text-emerald-300">'Q2 supplier invoice'</span>,
+}, { autoApproveThreshold: 100 })</code></pre>
     </section>
 
     <!-- LangChain -->
