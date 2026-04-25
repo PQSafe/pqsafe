@@ -90,8 +90,8 @@
       </p>
       <div class="flex flex-wrap gap-3 mt-5 text-xs font-semibold">
         <span class="badge badge-green">ML-DSA-65 · NIST FIPS 204</span>
-        <span class="badge badge-green">Airwallex + Wise live</span>
-        <span class="badge badge-green">17/17 guardrail tests</span>
+        <span class="badge badge-green">Airwallex + Wise live · USDC-Base</span>
+        <span class="badge badge-green">21/21 guardrail tests</span>
         <span class="badge" style="background:rgba(6,182,212,0.12);color:#22d3ee;border:1px solid rgba(6,182,212,0.3)">Arbitrum on-chain audit</span>
         <span class="badge badge-yellow">npm i @pqsafe/agent-pay</span>
       </div>
@@ -247,8 +247,8 @@ console.log(result.executedAt) <span class="text-slate-500">// ISO 8601</span></
           <tr>
             <td><code>usdc-base</code></td>
             <td>Coinbase CDP / Base</td>
-            <td><span class="badge badge-yellow">Stub</span></td>
-            <td>USDC on Base L2, gasless via CDP</td>
+            <td><span class="badge badge-green">Mock ready</span></td>
+            <td>USDC on Base L2 — inject viem/ethers/CDP AgentKit signer</td>
           </tr>
           <tr>
             <td><code>x402</code></td>
@@ -292,6 +292,40 @@ PQSAFE_APPROVAL_TIMEOUT_S=300    <span class="text-slate-500"># seconds to wait 
   amount: 150,
   memo: <span class="text-emerald-300">'Q2 supplier invoice'</span>,
 }, { autoApproveThreshold: 100 })</code></pre>
+
+      <h3 class="text-base font-semibold text-white mb-2 mt-6">USDC-Base rail</h3>
+      <p class="mb-2 text-slate-400 text-sm">Send USDC stablecoins on Coinbase Base. PQSafe handles policy enforcement — wire in your own EVM signer.</p>
+      <pre><code class="text-slate-300">BASE_NETWORK=sepolia         <span class="text-slate-500"># 'mainnet' for production</span></code></pre>
+      <pre class="mt-2"><code class="text-slate-300"><span class="text-cyan-400">import</span> { executeAgentPayment } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'@pqsafe/agent-pay'</span>
+<span class="text-cyan-400">import</span> { createWalletClient, http } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'viem'</span>
+<span class="text-cyan-400">import</span> { base } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'viem/chains'</span>
+
+<span class="text-slate-500">// Your EVM wallet (viem, ethers, or CDP AgentKit)</span>
+<span class="text-cyan-400">const</span> walletClient = createWalletClient({ account, chain: base, transport: http() })
+
+<span class="text-slate-500">// Envelope with USDC currency + usdc-base rail</span>
+<span class="text-cyan-400">const</span> envelope = createEnvelope({
+  agent: <span class="text-emerald-300">'my-agent'</span>,
+  maxAmount: 500,
+  currency: <span class="text-emerald-300">'USDC'</span>,
+  allowedRecipients: [<span class="text-emerald-300">'0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'</span>],
+  rail: <span class="text-emerald-300">'usdc-base'</span>,
+})
+<span class="text-cyan-400">const</span> signed = signEnvelope(envelope, secretKey, publicKey)
+
+<span class="text-slate-500">// Execute — PQSafe enforces policy, viem signs and broadcasts</span>
+<span class="text-cyan-400">const</span> result = <span class="text-cyan-400">await</span> executeAgentPayment(signed, {
+  recipient: <span class="text-emerald-300">'0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'</span>,
+  amount: 100,
+  memo: <span class="text-emerald-300">'USDC payment via Base'</span>,
+}, {
+  usdcBase: {
+    network: <span class="text-emerald-300">'mainnet'</span>,
+    signAndSend: <span class="text-cyan-400">async</span> ({ to, data }) =&gt; walletClient.sendTransaction({ to, data }),
+  }
+})
+console.log(result.txId)  <span class="text-slate-500">// 0x... Base transaction hash</span></code></pre>
+      <p class="mt-2 text-sm text-slate-400">With <strong class="text-slate-200">Coinbase CDP AgentKit</strong>: replace the viem <code>signAndSend</code> with <code>agentkit.sendTransaction({ to, data, network: 'base-mainnet' })</code>. USDC contract addresses: mainnet <code>0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code>, Sepolia <code>0x036CbD53842c5426634e7929541eC2318f3dCF7e</code>.</p>
     </section>
 
     <!-- LangChain -->
