@@ -49,8 +49,8 @@ class SpendEnvelope(BaseModel):
     max_amount: float = Field(..., gt=0, alias="maxAmount")
     """Maximum total amount the agent may spend."""
 
-    currency: str = Field(..., min_length=3, max_length=3)
-    """ISO 4217 currency code (e.g. 'USD', 'HKD')."""
+    currency: str = Field(..., min_length=3, max_length=5)
+    """ISO 4217 currency code or crypto token symbol (e.g. 'USD', 'HKD', 'USDC')."""
 
     allowed_recipients: List[str] = Field(..., min_length=1, alias="allowedRecipients")
     """

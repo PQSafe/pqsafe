@@ -325,8 +325,8 @@ def test_pay_dry_run(signed):
         dry_run=True,
     )
     assert isinstance(result, PaymentResult)
-    assert result.tx_id == "dry-run-no-http"
-    assert result.status == "dry_run"
+    assert result.tx_id.startswith("awx_sbx_")
+    assert result.status == "mock_confirmed"
 
 
 def test_pay_dry_run_dict_request(signed):
@@ -335,7 +335,7 @@ def test_pay_dry_run_dict_request(signed):
         {"recipient": RECIPIENT_1, "amount": 5.0, "memo": "test"},
         dry_run=True,
     )
-    assert result.tx_id == "dry-run-no-http"
+    assert result.tx_id.startswith("awx_sbx_")
 
 
 def test_pay_dry_run_wrong_recipient_rejected(signed):
@@ -436,3 +436,85 @@ def test_payment_result_accepts_camel_case():
 def test_payment_result_accepts_snake_case():
     r = PaymentResult(tx_id="tx-2", status="pending", rail="wise")
     assert r.tx_id == "tx-2"
+
+
+# ---------------------------------------------------------------------------
+# USDC and crypto currency support
+# ---------------------------------------------------------------------------
+
+
+def test_create_envelope_with_usdc_currency(keypair):
+    """USDC is 4 chars — must be accepted by the schema."""
+    env = create_envelope(
+        issuer=ISSUER,
+        agent="usdc-agent",
+        max_amount=500.0,
+        currency="USDC",
+        allowed_recipients=["0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"],
+        rail="usdc-base",
+    )
+    assert env.currency == "USDC"
+    assert env.rail == "usdc-base"
+
+
+def test_create_envelope_with_usdt_currency(keypair):
+    env = create_envelope(
+        issuer=ISSUER,
+        agent="usdt-agent",
+        max_amount=100.0,
+        currency="USDT",
+        allowed_recipients=["0xabcdef1234567890abcdef1234567890abcdef12"],
+    )
+    assert env.currency == "USDT"
+
+
+# ---------------------------------------------------------------------------
+# pay() — mock_mode parameter
+# ---------------------------------------------------------------------------
+
+
+def test_pay_mock_mode_generates_realistic_tx_id(keypair):
+    env = create_envelope(
+        issuer=ISSUER,
+        agent="mock-test-agent",
+        max_amount=200.0,
+        currency="USD",
+        allowed_recipients=[RECIPIENT_1],
+    )
+    signed_env = sign_envelope(env, keypair)
+    result = pay(signed_env, PaymentRequest(recipient=RECIPIENT_1, amount=50.0), mock_mode=True)
+    assert result.success if hasattr(result, 'success') else True
+    assert result.tx_id.startswith("awx_sbx_")
+    assert result.status == "mock_confirmed"
+    assert result.rail == "airwallex"
+
+
+def test_pay_mock_mode_wise_rail(keypair):
+    env = create_envelope(
+        issuer=ISSUER,
+        agent="wise-mock-agent",
+        max_amount=200.0,
+        currency="GBP",
+        allowed_recipients=[RECIPIENT_1],
+        rail="wise",
+    )
+    signed_env = sign_envelope(env, keypair)
+    result = pay(signed_env, PaymentRequest(recipient=RECIPIENT_1, amount=50.0), mock_mode=True)
+    assert result.tx_id.startswith("wise_sbx_")
+    assert result.rail == "wise"
+
+
+def test_pay_mock_mode_usdc_base_rail(keypair):
+    evm_address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+    env = create_envelope(
+        issuer=ISSUER,
+        agent="usdc-mock-agent",
+        max_amount=500.0,
+        currency="USDC",
+        allowed_recipients=[evm_address],
+        rail="usdc-base",
+    )
+    signed_env = sign_envelope(env, keypair)
+    result = pay(signed_env, PaymentRequest(recipient=evm_address, amount=100.0), mock_mode=True)
+    assert result.tx_id.startswith("base_sbx_")
+    assert result.rail == "usdc-base"

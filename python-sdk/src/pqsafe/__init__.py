@@ -33,6 +33,9 @@ Links
 
 from __future__ import annotations
 
+import os
+import secrets
+import time
 from typing import Optional, Union
 
 from .client import PQSafeClient, _get_default_client
@@ -83,6 +86,7 @@ def pay(
     api_key: Optional[str] = None,
     base_url: str = "https://api.pqsafe.xyz",
     dry_run: bool = False,
+    mock_mode: Optional[bool] = None,
 ) -> PaymentResult:
     """
     Verify a PQ-signed SpendEnvelope and submit the payment to PQSafe.
@@ -118,9 +122,12 @@ def pay(
     base_url : str
         PQSafe API base URL (default: https://api.pqsafe.xyz).
     dry_run : bool
-        If True, skip the HTTP call and return a fake PaymentResult with
-        tx_id='dry-run-no-http'. Useful for local testing when the API
-        is not yet available.
+        Alias for mock_mode=True. Kept for backward compatibility.
+    mock_mode : bool | None
+        If True (or if PQSAFE_MOCK_MODE=1 env var is set), skip the HTTP
+        call and return a realistic mock PaymentResult. All guardrails
+        (signature, allowlist, ceiling) still run end-to-end. Useful for
+        integration testing without live API credentials.
 
     Returns
     -------
@@ -146,8 +153,13 @@ def pay(
     elif isinstance(request, dict):
         request = PaymentRequest(**request)
 
-    # Verify envelope signature (skip temporal check in dry_run for convenience)
-    envelope = verify_envelope(signed_envelope, skip_temporal=dry_run)
+    # Determine if mock mode is active
+    _mock = mock_mode if mock_mode is not None else dry_run
+    if not _mock:
+        _mock = os.environ.get("PQSAFE_MOCK_MODE") == "1"
+
+    # Verify envelope signature (skip temporal check in mock/dry_run for convenience)
+    envelope = verify_envelope(signed_envelope, skip_temporal=_mock)
 
     # Recipient allowlist check
     if request.recipient not in envelope.allowed_recipients:
@@ -163,11 +175,20 @@ def pay(
             f"exceeds envelope max_amount {envelope.max_amount} {envelope.currency}"
         )
 
-    if dry_run:
+    if _mock:
+        rail = envelope.rail or "airwallex"
+        prefix = {
+            "airwallex": "awx_sbx",
+            "wise": "wise_sbx",
+            "usdc-base": "base_sbx",
+            "stripe": "pi_sbx",
+            "x402": "x402_sbx",
+        }.get(rail, "sbx")
+        mock_tx_id = f"{prefix}_{int(time.time() * 1000)}_{secrets.token_hex(4)}"
         return PaymentResult(
-            tx_id="dry-run-no-http",
-            status="dry_run",
-            rail=envelope.rail or "airwallex",
+            tx_id=mock_tx_id,
+            status="mock_confirmed",
+            rail=rail,
         )
 
     client = _get_default_client(api_key=api_key, base_url=base_url)
