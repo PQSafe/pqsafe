@@ -110,6 +110,7 @@ Human (Chrome extension / CLI)
 | Package | Description | Status |
 |---------|-------------|--------|
 | [`agent-pay`](agent-pay/) | TypeScript SDK — envelopes, ML-DSA-65 signing, multi-rail execution | **Live** — 13/13 tests, real Airwallex sandbox receipts |
+| [`evm`](evm/) | Arbitrum SpendEnvelope Registry — Solidity 0.8.24 on-chain audit ledger | **Ready to deploy** — 13/13 Foundry tests |
 | [`api-reference`](api-reference/) | FastAPI REST API — hosted at api.pqsafe.xyz | **Deployable** — Fly.io ready |
 | [`python-sdk`](python-sdk/) | Python SDK — mirrors TypeScript SDK | PyPI: `pqsafe-agent-pay` |
 | [`mcp-server`](mcp-server/) | MCP server — Cloudflare Worker | Connect Claude Desktop in 3 lines |
@@ -207,6 +208,7 @@ Every financial institution will migrate to PQ cryptography before 2035 (NIST ma
 | REST API docs | [api.pqsafe.xyz/docs](https://api.pqsafe.xyz/docs) |
 | Audit ledger | [ledger.pqsafe.xyz](https://ledger.pqsafe.xyz) |
 | Handbook | [pqsafe.xyz/handbook](https://pqsafe.xyz/handbook) |
+| Arbitrum Registry | [evm/README.md](evm/README.md) — on-chain audit ledger |
 
 ## Local development
 
@@ -214,6 +216,7 @@ Every financial institution will migrate to PQ cryptography before 2035 (NIST ma
 cd agent-pay
 npm install
 npm run demo          # mock mode — no credentials needed
+npm run demo:claude   # Claude Agents + Arbitrum on-chain demo
 npm test              # 13 guardrail tests
 ```
 
