@@ -21,6 +21,14 @@ import type { SignedEnvelope, PaymentRequest, PaymentResult } from './types.js'
 export * from './envelope.js'
 export * from './types.js'
 export { getAgentPayConfig, setAgentPayConfig } from './config.js'
+export {
+  commitEnvelopeToArbitrum,
+  isEnvelopeCommitted,
+  computeEnvelopeId,
+  extractSigFingerprint,
+  SPEND_ENVELOPE_REGISTRY_ABI,
+} from './arbitrum.js'
+export type { ArbitrumCommitConfig, CommitResult, EthTxParams } from './arbitrum.js'
 
 // ---------------------------------------------------------------------------
 // Core public function
