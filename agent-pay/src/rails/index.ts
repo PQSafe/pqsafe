@@ -16,6 +16,7 @@
 import type { PaymentRequest, PaymentResult, Rail } from '../types.js'
 import type { SpendEnvelope } from '../envelope.js'
 import { executePayment as airwallexPay } from './airwallex.js'
+import { executePayment as wisePay } from './wise.js'
 
 /** Default rail when envelope.rail is not set */
 const DEFAULT_RAIL: Rail = 'airwallex'
@@ -34,9 +35,7 @@ export async function routePayment(
       return airwallexPay(envelope, request)
 
     case 'wise':
-      // TODO: import and call wise connector
-      // return wisePay(envelope, request)
-      throw new Error('Rail "wise" is not yet implemented — coming soon')
+      return wisePay(envelope, request)
 
     case 'stripe':
       // TODO: import and call stripe connector

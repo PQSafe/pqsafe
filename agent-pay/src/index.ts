@@ -29,6 +29,8 @@ export {
   SPEND_ENVELOPE_REGISTRY_ABI,
 } from './arbitrum.js'
 export type { ArbitrumCommitConfig, CommitResult, EthTxParams } from './arbitrum.js'
+export { executeWithApproval, getTelegramChatId } from './approval.js'
+export type { ApprovalConfig, ApprovalInfo } from './approval.js'
 
 // ---------------------------------------------------------------------------
 // Core public function
