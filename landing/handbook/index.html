@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Payments Handbook — PQSafe AgentPay</title>
+  <meta name="description" content="Complete developer guide for PQSafe AgentPay. How to issue SpendEnvelopes, integrate with LangChain/CrewAI/Mastra, and route payments through Airwallex, Wise, Stripe, and USDC-Base.">
+  <meta property="og:title" content="Agent Payments Handbook — PQSafe AgentPay">
+  <meta property="og:description" content="How to give your AI agent a post-quantum signed spending budget. SpendEnvelope reference, rail integration guides, security model.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pqsafe.xyz/handbook">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2310b981'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='bold' font-size='14' fill='white'>PQ</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    body { background: #0a0a0f; }
+    pre, code { font-family: var(--mono); }
+    pre { background: #0f0f1a; border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.7; }
+    code:not(pre code) { background: rgba(16,185,129,0.12); color: #a5f3d0; padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
+    .anchor { scroll-margin-top: 80px; }
+    a { color: #06b6d4; }
+    a:hover { color: #67e8f9; }
+    h2 { border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 8px; }
+    table { border-collapse: collapse; width: 100%; }
+    th { background: #0f0f1a; text-align: left; padding: 8px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: #64748b; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+    tr:last-child td { border: none; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+    .badge-green { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-yellow { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  </style>
+</head>
+<body class="text-slate-200 font-sans leading-relaxed">
+
+<!-- Nav -->
+<nav class="sticky top-0 z-10 border-b border-white/5 bg-[#0a0a0f]/95 backdrop-blur">
+  <div class="max-w-4xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a href="https://pqsafe.xyz" class="flex items-center gap-2 no-underline">
+      <span class="text-emerald-400 font-bold font-mono text-sm">PQSafe</span>
+      <span class="text-slate-500 text-sm">/</span>
+      <span class="text-slate-300 text-sm font-medium">Agent Payments Handbook</span>
+    </a>
+    <div class="flex items-center gap-4 text-sm">
+      <a href="https://demo.pqsafe.xyz" class="text-emerald-400 font-medium hover:text-emerald-300 no-underline">Live Demo →</a>
+      <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="text-slate-400 hover:text-slate-200 no-underline">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Sidebar + Content layout -->
+<div class="max-w-4xl mx-auto px-6 py-12 flex gap-10">
+
+  <!-- TOC sidebar (hidden on mobile) -->
+  <aside class="hidden lg:block w-52 flex-shrink-0">
+    <div class="sticky top-20 text-sm text-slate-400 space-y-1">
+      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Contents</p>
+      <a href="#quickstart" class="block py-1 hover:text-slate-200 no-underline">Quickstart</a>
+      <a href="#concept" class="block py-1 hover:text-slate-200 no-underline">SpendEnvelope concept</a>
+      <a href="#install" class="block py-1 hover:text-slate-200 no-underline">Installation</a>
+      <a href="#create-sign" class="block py-1 hover:text-slate-200 no-underline">Create &amp; sign</a>
+      <a href="#verify-pay" class="block py-1 hover:text-slate-200 no-underline">Verify &amp; pay</a>
+      <a href="#guardrails" class="block py-1 hover:text-slate-200 no-underline">Guardrails</a>
+      <a href="#rails" class="block py-1 hover:text-slate-200 no-underline">Payment rails</a>
+      <a href="#config" class="block py-1 hover:text-slate-200 no-underline">Configuration</a>
+      <a href="#langchain" class="block py-1 hover:text-slate-200 no-underline">LangChain</a>
+      <a href="#crewai" class="block py-1 hover:text-slate-200 no-underline">CrewAI</a>
+      <a href="#mastra" class="block py-1 hover:text-slate-200 no-underline">Mastra</a>
+      <a href="#mcp" class="block py-1 hover:text-slate-200 no-underline">MCP server</a>
+      <a href="#security" class="block py-1 hover:text-slate-200 no-underline">Security model</a>
+      <a href="#api" class="block py-1 hover:text-slate-200 no-underline">API reference</a>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="flex-1 min-w-0 space-y-12 text-slate-300">
+
+    <!-- Hero -->
+    <div>
+      <div class="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Developer Handbook
+      </div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight mb-3">Agent Payments Handbook</h1>
+      <p class="text-slate-400 text-lg max-w-xl">
+        Give your AI agent a post-quantum signed spending budget. It pays autonomously.
+        You stay in control.
+      </p>
+      <div class="flex flex-wrap gap-3 mt-5 text-xs font-semibold">
+        <span class="badge badge-green">ML-DSA-65 · NIST FIPS 204</span>
+        <span class="badge badge-green">Airwallex sandbox live</span>
+        <span class="badge badge-green">13/13 guardrail tests</span>
+        <span class="badge badge-yellow">npm i @pqsafe/agent-pay</span>
+      </div>
+    </div>
+
+    <!-- Quickstart -->
+    <section id="quickstart" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Quickstart — 60 seconds</h2>
+      <pre><code class="text-emerald-300">npm install @pqsafe/agent-pay</code></pre>
+      <pre class="mt-3"><code class="text-slate-300"><span class="text-cyan-400">import</span> { ml_dsa65 } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'@noble/post-quantum/ml-dsa.js'</span>
+<span class="text-cyan-400">import</span> { bytesToHex } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'@noble/hashes/utils.js'</span>
+<span class="text-cyan-400">import</span> { createEnvelope, signEnvelope, executeAgentPayment } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'@pqsafe/agent-pay'</span>
+
+<span class="text-slate-500">// 1. Generate post-quantum keypair (wallet side — keep secretKey private)</span>
+<span class="text-cyan-400">const</span> { secretKey, publicKey } = ml_dsa65.keygen(crypto.getRandomValues(<span class="text-cyan-400">new</span> Uint8Array(32)))
+<span class="text-cyan-400">const</span> issuer = <span class="text-emerald-300">'pq1'</span> + bytesToHex(publicKey.slice(0, 20))
+
+<span class="text-slate-500">// 2. Issue a signed SpendEnvelope — defines what the agent is allowed to spend</span>
+<span class="text-cyan-400">const</span> envelope = createEnvelope({
+  issuer,
+  agent: <span class="text-emerald-300">'research-agent-v1'</span>,
+  maxAmount: 50,
+  currency: <span class="text-emerald-300">'USD'</span>,
+  allowedRecipients: [<span class="text-emerald-300">'perplexity.ai'</span>],
+  ttlSeconds: 3600,
+  rail: <span class="text-emerald-300">'airwallex'</span>,
+})
+
+<span class="text-cyan-400">const</span> signed = signEnvelope(envelope, secretKey, publicKey)
+
+<span class="text-slate-500">// 3. Agent calls this — verifies PQ sig + enforces all limits before paying</span>
+<span class="text-cyan-400">const</span> result = <span class="text-cyan-400">await</span> executeAgentPayment(signed, {
+  recipient: <span class="text-emerald-300">'perplexity.ai'</span>,
+  amount: 20,
+  memo: <span class="text-emerald-300">'Perplexity Pro — research task'</span>,
+})
+
+console.log(result.txId)  <span class="text-slate-500">// real Airwallex sandbox UUID</span></code></pre>
+    </section>
+
+    <!-- Concept -->
+    <section id="concept" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">The SpendEnvelope concept</h2>
+      <p class="mb-4">A <code>SpendEnvelope</code> is a signed JSON token that encodes exactly what an AI agent is authorized to spend. It is the authorization — no centralized server, no API key delegation, no human-in-the-loop approval per payment.</p>
+
+      <div class="bg-[#0f0f1a] border border-white/7 rounded-xl p-5 mb-4 text-sm space-y-1">
+        <div class="flex gap-3"><span class="text-cyan-400 w-36 flex-shrink-0">version</span><span class="text-slate-300">Must be <code>1</code></span></div>
+        <div class="flex gap-3"><span class="text-cyan-400 w-36 flex-shrink-0">issuer</span><span class="text-slate-300">PQSafe wallet address of the human owner (<code>pq1…</code>)</span></div>
+        <div class="flex gap-3"><span class="text-cyan-400 w-36 flex-shrink-0">agent</span><span class="text-slate-300">Identifier string for the AI agent (<code>"research-agent-v1"</code>)</span></div>
+        <div class="flex gap-3"><span class="text-cyan-400 w-36 flex-shrink-0">maxAmount</span><span class="text-slate-300">Maximum spend ceiling — SDK rejects anything above this</span></div>
+        <div class="flex gap-3"><span class="text-cyan-400 w-36 flex-shrink-0">currency</span><span class="text-slate-300">ISO 4217 code: <code>USD</code>, <code>HKD</code>, <code>EUR</code>…</span></div>
+        <div class="flex gap-3"><span class="text-cyan-400 w-36 flex-shrink-0">allowedRecipients</span><span class="text-slate-300">Allowlist — agent cannot pay anyone not on this list</span></div>
+        <div class="flex gap-3"><span class="text-cyan-400 w-36 flex-shrink-0">validFrom / validUntil</span><span class="text-slate-300">Unix timestamps — time-bounded authorization window</span></div>
+        <div class="flex gap-3"><span class="text-cyan-400 w-36 flex-shrink-0">nonce</span><span class="text-slate-300">128-bit random hex — prevents replay attacks</span></div>
+        <div class="flex gap-3"><span class="text-cyan-400 w-36 flex-shrink-0">rail</span><span class="text-slate-300">Optional: <code>airwallex</code> | <code>wise</code> | <code>stripe</code> | <code>usdc-base</code> | <code>x402</code></span></div>
+      </div>
+
+      <p class="text-slate-400 text-sm">The entire envelope is signed with <strong class="text-slate-200">ML-DSA-65</strong> (NIST FIPS 204 lattice-based signature, 128-bit post-quantum security). The signature covers all fields deterministically — any field alteration invalidates the signature. The agent is cryptographically prevented from exceeding its budget.</p>
+    </section>
+
+    <!-- Install -->
+    <section id="install" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Installation</h2>
+      <p class="mb-3">TypeScript / Node.js SDK (ES2022, ESM, Node 18+):</p>
+      <pre><code class="text-emerald-300">npm install @pqsafe/agent-pay @noble/post-quantum @noble/hashes</code></pre>
+      <p class="mt-4 mb-3">Python SDK (Python 3.10+):</p>
+      <pre><code class="text-emerald-300">pip install pqsafe-agent-pay</code></pre>
+      <p class="mt-4 text-slate-400 text-sm">Source at <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">github.com/PQSafe/pqsafe</a> — MIT license.</p>
+    </section>
+
+    <!-- Create & Sign -->
+    <section id="create-sign" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Create &amp; sign an envelope</h2>
+      <pre><code class="text-slate-300"><span class="text-cyan-400">import</span> { createEnvelope, signEnvelope } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'@pqsafe/agent-pay'</span>
+
+<span class="text-slate-500">// Build unsigned envelope</span>
+<span class="text-cyan-400">const</span> envelope = createEnvelope({
+  issuer,               <span class="text-slate-500">// 'pq1' + 40 hex chars</span>
+  agent: <span class="text-emerald-300">'my-agent-v1'</span>,
+  maxAmount: 100,
+  currency: <span class="text-emerald-300">'USD'</span>,
+  allowedRecipients: [<span class="text-emerald-300">'anthropic.com/billing'</span>, <span class="text-emerald-300">'openai.com'</span>],
+  startsInSeconds: 0,   <span class="text-slate-500">// valid immediately (default)</span>
+  ttlSeconds: 3600,     <span class="text-slate-500">// valid for 1 hour (default)</span>
+  rail: <span class="text-emerald-300">'airwallex'</span>,       <span class="text-slate-500">// optional — omit to let router choose</span>
+})
+
+<span class="text-slate-500">// Sign with issuer's ML-DSA-65 secret key</span>
+<span class="text-cyan-400">const</span> signed = signEnvelope(envelope, secretKey, publicKey)
+<span class="text-slate-500">// → { envelopeJson, signature, dsaPublicKey }</span></code></pre>
+      <p class="mt-3 text-sm text-slate-400">The <code>signed</code> object is safe to hand to the agent process — it contains only the envelope JSON, signature, and public key. The secret key never needs to leave the wallet.</p>
+    </section>
+
+    <!-- Verify & Pay -->
+    <section id="verify-pay" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Verify &amp; execute payment (agent side)</h2>
+      <pre><code class="text-slate-300"><span class="text-cyan-400">import</span> { executeAgentPayment } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'@pqsafe/agent-pay'</span>
+
+<span class="text-cyan-400">const</span> result = <span class="text-cyan-400">await</span> executeAgentPayment(signed, {
+  recipient: <span class="text-emerald-300">'anthropic.com/billing'</span>,   <span class="text-slate-500">// must be in allowedRecipients</span>
+  amount: 20,                              <span class="text-slate-500">// must be ≤ maxAmount</span>
+  memo: <span class="text-emerald-300">'Anthropic API credits — Oct 2026'</span>,
+})
+
+console.log(result.txId)       <span class="text-slate-500">// Airwallex transfer UUID</span>
+console.log(result.success)    <span class="text-slate-500">// true</span>
+console.log(result.executedAt) <span class="text-slate-500">// ISO 8601</span></code></pre>
+      <p class="mt-3 text-sm text-slate-400"><code>executeAgentPayment</code> runs all checks internally — signature verification, schema validation, temporal validity, allowlist, amount ceiling — then routes to the configured rail. It throws on any violation <em>before</em> attempting any network call to the payment provider.</p>
+    </section>
+
+    <!-- Guardrails -->
+    <section id="guardrails" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Guardrails enforced</h2>
+      <table class="text-sm">
+        <thead><tr><th>Check</th><th>What it prevents</th></tr></thead>
+        <tbody>
+          <tr><td><code>ML-DSA-65 signature</code></td><td>Forged envelopes, tampered fields, wrong signer</td></tr>
+          <tr><td><code>Schema validation</code></td><td>Malformed or incomplete envelopes</td></tr>
+          <tr><td><code>validFrom check</code></td><td>Pre-activated envelopes used too early</td></tr>
+          <tr><td><code>validUntil check</code></td><td>Expired envelopes reused after TTL</td></tr>
+          <tr><td><code>allowedRecipients</code></td><td>Payments to unauthorized addresses</td></tr>
+          <tr><td><code>maxAmount ceiling</code></td><td>Over-spend attacks by a compromised agent</td></tr>
+          <tr><td><code>nonce (128-bit)</code></td><td>Replay attacks — nonce is part of the signed payload</td></tr>
+        </tbody>
+      </table>
+      <p class="mt-4 text-sm text-slate-400">All 13 guardrail tests run on every commit. See <a href="https://github.com/PQSafe/pqsafe/blob/main/agent-pay/tests/envelope.test.ts" target="_blank" rel="noopener">tests/envelope.test.ts</a>.</p>
+    </section>
+
+    <!-- Rails -->
+    <section id="rails" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Payment rails</h2>
+      <table class="text-sm">
+        <thead><tr><th>Rail key</th><th>Provider</th><th>Status</th><th>Use case</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>airwallex</code></td>
+            <td>Airwallex</td>
+            <td><span class="badge badge-green">Live sandbox</span></td>
+            <td>USD / multi-currency wire, ACH, LOCAL</td>
+          </tr>
+          <tr>
+            <td><code>stripe</code></td>
+            <td>Stripe</td>
+            <td><span class="badge badge-yellow">Stub</span></td>
+            <td>Card payments, PaymentIntents</td>
+          </tr>
+          <tr>
+            <td><code>wise</code></td>
+            <td>Wise Business</td>
+            <td><span class="badge badge-yellow">Stub</span></td>
+            <td>International transfers, mid-market rate</td>
+          </tr>
+          <tr>
+            <td><code>usdc-base</code></td>
+            <td>Coinbase CDP / Base</td>
+            <td><span class="badge badge-yellow">Stub</span></td>
+            <td>USDC on Base L2, gasless via CDP</td>
+          </tr>
+          <tr>
+            <td><code>x402</code></td>
+            <td>HTTP 402</td>
+            <td><span class="badge badge-yellow">Stub</span></td>
+            <td>Micropayments via HTTP 402 protocol</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="mt-4 text-sm text-slate-400">To contribute a rail implementation, add a file to <a href="https://github.com/PQSafe/pqsafe/tree/main/agent-pay/src/rails" target="_blank" rel="noopener">agent-pay/src/rails/</a> and register it in <code>rails/index.ts</code>.</p>
+    </section>
+
+    <!-- Config -->
+    <section id="config" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Configuration</h2>
+      <p class="mb-3">Set via environment variables or <code>setAgentPayConfig()</code>:</p>
+      <pre><code class="text-slate-300"><span class="text-slate-500"># Airwallex sandbox (demo)</span>
+AIRWALLEX_CLIENT_ID=your_client_id
+AIRWALLEX_API_KEY=your_api_key
+AIRWALLEX_ENV=demo         <span class="text-slate-500"># 'demo' for sandbox, 'production' for live</span>
+
+<span class="text-slate-500"># Mock mode — no real API calls (default when creds absent)</span>
+PQSAFE_MOCK_MODE=1</code></pre>
+      <p class="mt-3 text-sm text-slate-400">When <code>PQSAFE_MOCK_MODE=1</code> or credentials are absent, the SDK returns a realistic mock <code>PaymentResult</code> without hitting any payment provider. All signing, verification, and guardrails still run — only the final wire call is mocked. Useful for integration testing.</p>
+    </section>
+
+    <!-- LangChain -->
+    <section id="langchain" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">LangChain integration</h2>
+      <pre><code class="text-emerald-300">pip install langchain-pqsafe</code></pre>
+      <pre class="mt-3"><code class="text-slate-300"><span class="text-cyan-400">from</span> langchain_pqsafe <span class="text-cyan-400">import</span> PQSafePaymentTool
+<span class="text-cyan-400">from</span> langchain.agents <span class="text-cyan-400">import</span> AgentExecutor, create_react_agent
+
+tool = PQSafePaymentTool(signed_envelope=signed_envelope_json)
+executor = AgentExecutor(agent=create_react_agent(llm, [tool]), tools=[tool])
+
+result = executor.invoke({
+    <span class="text-emerald-300">"input"</span>: <span class="text-emerald-300">"Renew Perplexity Pro at perplexity.ai — $20 USD for research-agent-v1"</span>
+})</code></pre>
+      <p class="mt-3 text-sm text-slate-400">Full guide: <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/langchain-pqsafe" target="_blank" rel="noopener">plugins/langchain-pqsafe</a></p>
+    </section>
+
+    <!-- CrewAI -->
+    <section id="crewai" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">CrewAI integration</h2>
+      <pre><code class="text-emerald-300">pip install crewai-pqsafe</code></pre>
+      <pre class="mt-3"><code class="text-slate-300"><span class="text-cyan-400">from</span> crewai_pqsafe <span class="text-cyan-400">import</span> PQSafePaymentTool
+<span class="text-cyan-400">from</span> crewai <span class="text-cyan-400">import</span> Agent, Task, Crew
+
+finance_agent = Agent(
+    role=<span class="text-emerald-300">'Finance Officer'</span>,
+    goal=<span class="text-emerald-300">'Execute authorized payments autonomously'</span>,
+    tools=[PQSafePaymentTool(signed_envelope=signed_envelope_json)],
+)
+
+pay_task = Task(
+    description=<span class="text-emerald-300">'Renew Perplexity Pro subscription at perplexity.ai — $20 USD.'</span>,
+    agent=finance_agent,
+    expected_output=<span class="text-emerald-300">'Payment confirmation with txId and rail'</span>,
+)
+
+Crew(agents=[finance_agent], tasks=[pay_task]).kickoff()</code></pre>
+      <p class="mt-3 text-sm text-slate-400">Full guide: <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/crewai-pqsafe" target="_blank" rel="noopener">plugins/crewai-pqsafe</a></p>
+    </section>
+
+    <!-- Mastra -->
+    <section id="mastra" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Mastra integration</h2>
+      <pre><code class="text-emerald-300">npm install mastra-pqsafe</code></pre>
+      <pre class="mt-3"><code class="text-slate-300"><span class="text-cyan-400">import</span> { createPQSafeIntegration } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'mastra-pqsafe'</span>
+
+<span class="text-cyan-400">const</span> pqsafe = createPQSafeIntegration()
+
+<span class="text-cyan-400">const</span> result = <span class="text-cyan-400">await</span> pqsafe.pay(signedEnvelope, {
+  recipient: <span class="text-emerald-300">'anthropic.com/billing'</span>,
+  amount: 20,
+  memo: <span class="text-emerald-300">'Perplexity Pro — research agent auto-renewal'</span>,
+})</code></pre>
+      <p class="mt-3 text-sm text-slate-400">Full guide: <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/mastra-pqsafe" target="_blank" rel="noopener">plugins/mastra-pqsafe</a></p>
+    </section>
+
+    <!-- MCP -->
+    <section id="mcp" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">MCP server (Claude Desktop)</h2>
+      <p class="mb-3">The PQSafe MCP server exposes payment tools to Claude Desktop and any MCP-compatible host:</p>
+      <pre><code class="text-slate-300"><span class="text-slate-500">// claude_desktop_config.json</span>
+{
+  <span class="text-emerald-300">"mcpServers"</span>: {
+    <span class="text-emerald-300">"pqsafe"</span>: {
+      <span class="text-emerald-300">"command"</span>: <span class="text-emerald-300">"npx"</span>,
+      <span class="text-emerald-300">"args"</span>: [<span class="text-emerald-300">"@pqsafe/mcp-server"</span>],
+      <span class="text-emerald-300">"env"</span>: {
+        <span class="text-emerald-300">"AIRWALLEX_CLIENT_ID"</span>: <span class="text-emerald-300">"your_id"</span>,
+        <span class="text-emerald-300">"AIRWALLEX_API_KEY"</span>: <span class="text-emerald-300">"your_key"</span>
+      }
+    }
+  }
+}</code></pre>
+      <p class="mt-3 text-sm text-slate-400">Once connected, Claude can call <code>pqsafe_pay</code>, <code>pqsafe_check_balance</code>, and <code>pqsafe_list_envelopes</code> as tool calls. Source: <a href="https://github.com/PQSafe/pqsafe/tree/main/mcp-server" target="_blank" rel="noopener">mcp-server/</a></p>
+    </section>
+
+    <!-- Security -->
+    <section id="security" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Security model</h2>
+      <div class="space-y-3 text-sm text-slate-400">
+        <p><strong class="text-slate-200">Post-quantum signature.</strong> ML-DSA-65 (NIST FIPS 204, Module Lattice Digital Signature Algorithm). 128-bit security against classical and quantum adversaries. Public key 1952 bytes, signature 3309 bytes. Implemented via <a href="https://github.com/paulmillr/noble-post-quantum" target="_blank" rel="noopener">@noble/post-quantum</a>.</p>
+        <p><strong class="text-slate-200">No key custody.</strong> The SDK never holds or stores signing keys. The secret key is provided per-call by the wallet layer and used only during <code>signEnvelope()</code>.</p>
+        <p><strong class="text-slate-200">Deterministic serialization.</strong> Envelope JSON is serialized with sorted keys before signing, ensuring identical bytes across platforms and preventing signature bypass via key reordering.</p>
+        <p><strong class="text-slate-200">Replay prevention.</strong> The 128-bit random nonce is committed into the signed envelope. The same nonce cannot be used to construct a different payment.</p>
+        <p><strong class="text-slate-200">Defense-in-depth.</strong> Even if an agent process is fully compromised, it cannot spend beyond <code>maxAmount</code>, pay a recipient not in <code>allowedRecipients</code>, or use an expired envelope — all enforced by the SDK before any rail call.</p>
+        <p><strong class="text-slate-200">Quantum threat context.</strong> NIST issued final PQ standards (FIPS 203/204) in August 2024. ECDSA and RSA are broken by Shor's algorithm on a sufficiently large quantum computer. ML-DSA-65 is the NIST-standardized replacement for digital signatures.</p>
+      </div>
+    </section>
+
+    <!-- API reference -->
+    <section id="api" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">API reference</h2>
+
+      <div class="space-y-6 text-sm">
+        <div class="bg-[#0f0f1a] border border-white/7 rounded-xl p-4">
+          <div class="font-mono text-emerald-400 mb-1">createEnvelope(params): SpendEnvelope</div>
+          <p class="text-slate-400 mb-2">Build a new unsigned SpendEnvelope. Nonce is auto-generated with <code>crypto.getRandomValues</code>.</p>
+          <table>
+            <thead><tr><th>Param</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>issuer</code></td><td>string</td><td>PQSafe address (<code>pq1…</code>)</td></tr>
+              <tr><td><code>agent</code></td><td>string</td><td>Agent identifier, 1–128 chars</td></tr>
+              <tr><td><code>maxAmount</code></td><td>number</td><td>Spend ceiling (positive)</td></tr>
+              <tr><td><code>currency</code></td><td>string</td><td>ISO 4217, e.g. <code>USD</code></td></tr>
+              <tr><td><code>allowedRecipients</code></td><td>string[]</td><td>Non-empty allowlist</td></tr>
+              <tr><td><code>ttlSeconds?</code></td><td>number</td><td>Default 3600</td></tr>
+              <tr><td><code>startsInSeconds?</code></td><td>number</td><td>Default 0 (immediate)</td></tr>
+              <tr><td><code>rail?</code></td><td>Rail</td><td>Optional rail constraint</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bg-[#0f0f1a] border border-white/7 rounded-xl p-4">
+          <div class="font-mono text-emerald-400 mb-1">signEnvelope(envelope, secretKey, publicKey): SignedEnvelope</div>
+          <p class="text-slate-400">Sign with issuer's ML-DSA-65 secret key. Returns <code>{ envelopeJson, signature, dsaPublicKey }</code> — safe to pass to agent.</p>
+        </div>
+
+        <div class="bg-[#0f0f1a] border border-white/7 rounded-xl p-4">
+          <div class="font-mono text-emerald-400 mb-1">verifyEnvelope(signed, dsaPublicKey?): SpendEnvelope</div>
+          <p class="text-slate-400">Verify signature + schema + temporal validity. Throws on any failure. Returns parsed envelope.</p>
+        </div>
+
+        <div class="bg-[#0f0f1a] border border-white/7 rounded-xl p-4">
+          <div class="font-mono text-emerald-400 mb-1">executeAgentPayment(signed, request): Promise&lt;PaymentResult&gt;</div>
+          <p class="text-slate-400 mb-2">Full pipeline: verify → allowlist → amount ceiling → route to rail.</p>
+          <table>
+            <thead><tr><th>Request field</th><th>Type</th><th>Required</th></tr></thead>
+            <tbody>
+              <tr><td><code>recipient</code></td><td>string</td><td>Yes — must be in allowedRecipients</td></tr>
+              <tr><td><code>amount</code></td><td>number</td><td>Yes — must be &gt;0 and ≤maxAmount</td></tr>
+              <tr><td><code>memo?</code></td><td>string</td><td>No</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <div class="border-t border-white/7 pt-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <p class="text-sm text-slate-400">Something missing? <a href="https://github.com/PQSafe/pqsafe/issues" target="_blank" rel="noopener">Open a GitHub issue</a> — we fix same day.</p>
+      </div>
+      <a href="https://demo.pqsafe.xyz" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-emerald-500 text-black font-bold text-sm px-5 py-2.5 rounded-lg no-underline hover:bg-emerald-400 transition-colors">
+        Run live demo →
+      </a>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>
