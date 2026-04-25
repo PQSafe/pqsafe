@@ -16,7 +16,10 @@
 import { verifyEnvelope } from './envelope.js'
 import type { SpendEnvelope as _SpendEnvelope } from './envelope.js'
 import { routePayment } from './rails/index.js'
+import type { RailConfig } from './rails/index.js'
 import type { SignedEnvelope, PaymentRequest, PaymentResult } from './types.js'
+
+export type { RailConfig } from './rails/index.js'
 
 export * from './envelope.js'
 export * from './types.js'
@@ -57,6 +60,7 @@ export type { UsdcBaseConfig, UsdcBaseSignAndSend, UsdcBaseTxParams, BaseNetwork
 export async function executeAgentPayment(
   signed: SignedEnvelope,
   request: PaymentRequest,
+  railConfig?: RailConfig,
 ): Promise<PaymentResult> {
   // Step 1-3: Verify signature + schema + temporal validity
   const envelope = verifyEnvelope(signed)
@@ -81,5 +85,5 @@ export async function executeAgentPayment(
   }
 
   // Step 6: Route to rail
-  return routePayment(envelope, request)
+  return routePayment(envelope, request, railConfig)
 }

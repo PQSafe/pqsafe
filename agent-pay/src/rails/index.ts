@@ -15,6 +15,7 @@
 
 import type { PaymentRequest, PaymentResult, Rail } from '../types.js'
 import type { SpendEnvelope } from '../envelope.js'
+import type { UsdcBaseConfig } from './usdc-base.js'
 import { executePayment as airwallexPay } from './airwallex.js'
 import { executePayment as wisePay } from './wise.js'
 import { executePayment as usdcBasePay } from './usdc-base.js'
@@ -22,12 +23,18 @@ import { executePayment as usdcBasePay } from './usdc-base.js'
 /** Default rail when envelope.rail is not set */
 const DEFAULT_RAIL: Rail = 'airwallex'
 
+/** Per-rail configuration passed through from executeAgentPayment */
+export interface RailConfig {
+  usdcBase?: UsdcBaseConfig
+}
+
 /**
  * Route a payment request to the appropriate rail connector.
  */
 export async function routePayment(
   envelope: SpendEnvelope,
   request: PaymentRequest,
+  railConfig?: RailConfig,
 ): Promise<PaymentResult> {
   const rail = envelope.rail ?? DEFAULT_RAIL
 
@@ -44,7 +51,7 @@ export async function routePayment(
       throw new Error('Rail "stripe" is not yet implemented — coming soon')
 
     case 'usdc-base':
-      return usdcBasePay(envelope, request)
+      return usdcBasePay(envelope, request, railConfig?.usdcBase)
 
     case 'x402':
       // TODO: import and call x402 connector (HTTP 402 micropayments)
