@@ -69,6 +69,7 @@
       <a href="#mastra" class="block py-1 hover:text-slate-200 no-underline">Mastra</a>
       <a href="#mcp" class="block py-1 hover:text-slate-200 no-underline">MCP server</a>
       <a href="#arbitrum" class="block py-1 hover:text-slate-200 no-underline text-cyan-400">Arbitrum on-chain audit</a>
+      <a href="#ledger" class="block py-1 hover:text-slate-200 no-underline">Public audit ledger</a>
       <a href="#security" class="block py-1 hover:text-slate-200 no-underline">Security model</a>
       <a href="#api" class="block py-1 hover:text-slate-200 no-underline">API reference</a>
     </div>
@@ -516,6 +517,35 @@ ANTHROPIC_API_KEY=... AIRWALLEX_CLIENT_ID=... AIRWALLEX_API_KEY=... \
       <div class="mt-4 p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-xl text-sm text-slate-400">
         <strong class="text-slate-200">Why Arbitrum?</strong> ~$0.01 gas per <code>commit()</code> vs ~$5 on mainnet. 250ms finality — suitable for real-time payment flows. EVM-equivalent. See <a href="https://github.com/PQSafe/pqsafe/tree/main/evm" target="_blank" rel="noopener">evm/README.md</a> for deployment instructions.
       </div>
+    </section>
+
+    <!-- Public ledger -->
+    <section id="ledger" class="anchor">
+      <h2 class="text-xl font-bold text-white mb-4">Public audit ledger</h2>
+      <p class="mb-3">After each successful payment, the SDK can optionally submit an anonymized record to <a href="https://ledger.pqsafe.xyz" target="_blank" rel="noopener">ledger.pqsafe.xyz</a>. Opt-in via environment variables. No PII, no exact amounts, no recipient addresses.</p>
+      <pre><code class="text-slate-300">PQSAFE_LEDGER_URL=https://ledger.pqsafe.xyz
+PQSAFE_LEDGER_API_KEY=your-ledger-api-key  <span class="text-slate-500"># from your PQSafe account</span></code></pre>
+      <p class="mt-3 mb-2 text-sm text-slate-400">What is logged per payment:</p>
+      <table>
+        <thead><tr><th>Field</th><th>Value</th><th>Reversible?</th></tr></thead>
+        <tbody>
+          <tr><td>envelopeHash</td><td>SHA-256 of signed envelope bytes</td><td>No</td></tr>
+          <tr><td>agentIdHash</td><td>SHA-256 of agent identifier string</td><td>No</td></tr>
+          <tr><td>rail</td><td>e.g. <code>airwallex</code>, <code>wise</code></td><td>—</td></tr>
+          <tr><td>amountBucket</td><td>One of: &lt;10, 10-100, 100-1000, 1000-10000, &gt;10000</td><td>—</td></tr>
+          <tr><td>currency</td><td>ISO code (e.g. <code>USD</code>, <code>USDC</code>)</td><td>—</td></tr>
+          <tr><td>outcome</td><td><code>success</code> or <code>failed</code></td><td>—</td></tr>
+          <tr><td>timestamp</td><td>Unix seconds</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <p class="mt-3 text-sm text-slate-400">Submission is best-effort — failures are silently swallowed and never interrupt payment execution. Self-host the ledger by deploying <a href="https://github.com/PQSafe/pqsafe/tree/main/ledger" target="_blank" rel="noopener">ledger/</a> to your own Cloudflare Workers account.</p>
+      <pre class="mt-3"><code class="text-slate-300"><span class="text-slate-500">// Query the public ledger</span>
+<span class="text-cyan-400">const</span> stats = <span class="text-cyan-400">await</span> fetch(<span class="text-emerald-300">'https://ledger.pqsafe.xyz/v1/stats'</span>).then(r =&gt; r.json())
+<span class="text-slate-500">// { totalTransfers: 847, totalUSDRouted: 42300, activeAgents: 23, lastUpdated: ... }</span>
+
+<span class="text-slate-500">// Or from the SDK directly</span>
+<span class="text-cyan-400">import</span> { submitToLedger, buildLedgerRecord } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'@pqsafe/agent-pay'</span>
+<span class="text-slate-500">// submitToLedger is called automatically — or call manually for custom flows</span></code></pre>
     </section>
 
     <!-- Security -->
