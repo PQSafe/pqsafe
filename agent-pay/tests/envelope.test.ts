@@ -332,6 +332,100 @@ async function run() {
     assert(threw, 'zero maxAmount should throw')
   })
 
+  // -------------------------------------------------------------------------
+  // Wise rail (mock mode)
+  // -------------------------------------------------------------------------
+
+  await test('Wise rail executes in mock mode (IBAN recipient)', async () => {
+    setAgentPayConfig({ mockMode: true })
+    const { address, sk, pk } = freshKeypair()
+    const envelope = createEnvelope({
+      issuer: address,
+      agent: 'wise-test-agent',
+      maxAmount: 100,
+      currency: 'GBP',
+      allowedRecipients: ['GB29NWBK60161331926819'],
+      rail: 'wise',
+    })
+    const signed = signEnvelope(envelope, sk, pk)
+    const result = await executeAgentPayment(signed, {
+      recipient: 'GB29NWBK60161331926819',
+      amount: 50,
+      memo: 'Wise IBAN test',
+    })
+    assert(result.success, 'Wise mock should succeed')
+    assert(result.rail === 'wise', `Expected rail=wise, got ${result.rail}`)
+    assert(result.txId.startsWith('wise_sbx_'), `Expected wise_sbx_ txId, got ${result.txId}`)
+    assert(result.amount === 50, 'Amount should be 50')
+    setAgentPayConfig({ mockMode: false })
+  })
+
+  await test('Wise rail respects amount ceiling', async () => {
+    setAgentPayConfig({ mockMode: true })
+    const { address, sk, pk } = freshKeypair()
+    const envelope = createEnvelope({
+      issuer: address,
+      agent: 'wise-ceiling-agent',
+      maxAmount: 30,
+      currency: 'GBP',
+      allowedRecipients: ['GB29NWBK60161331926819'],
+      rail: 'wise',
+    })
+    const signed = signEnvelope(envelope, sk, pk)
+    await assertThrows(
+      () => executeAgentPayment(signed, { recipient: 'GB29NWBK60161331926819', amount: 31 }),
+      'amount ceiling',
+    )
+    setAgentPayConfig({ mockMode: false })
+  })
+
+  // -------------------------------------------------------------------------
+  // Approval gate (mock mode, below threshold)
+  // -------------------------------------------------------------------------
+
+  await test('executeWithApproval auto-approves below threshold', async () => {
+    const { executeWithApproval } = await import('../src/approval.js')
+    setAgentPayConfig({ mockMode: true })
+    const { address, sk, pk } = freshKeypair()
+    const envelope = createEnvelope({
+      issuer: address,
+      agent: 'approval-test-agent',
+      maxAmount: 200,
+      currency: 'USD',
+      allowedRecipients: [GOOD_RECIPIENT],
+    })
+    const signed = signEnvelope(envelope, sk, pk)
+    const result = await executeWithApproval(signed, {
+      recipient: GOOD_RECIPIENT,
+      amount: 50,  // below default Infinity threshold
+      memo: 'auto-approved test',
+    }, { autoApproveThreshold: 100 })
+    assert(result.success, 'Should auto-approve below threshold')
+    setAgentPayConfig({ mockMode: false })
+  })
+
+  await test('executeWithApproval throws above threshold when no Telegram config', async () => {
+    const { executeWithApproval } = await import('../src/approval.js')
+    setAgentPayConfig({ mockMode: true })
+    const { address, sk, pk } = freshKeypair()
+    const envelope = createEnvelope({
+      issuer: address,
+      agent: 'approval-gate-agent',
+      maxAmount: 200,
+      currency: 'USD',
+      allowedRecipients: [GOOD_RECIPIENT],
+    })
+    const signed = signEnvelope(envelope, sk, pk)
+    await assertThrows(
+      () => executeWithApproval(signed, {
+        recipient: GOOD_RECIPIENT,
+        amount: 150,  // above threshold
+      }, { autoApproveThreshold: 100 }),
+      'threshold',
+    )
+    setAgentPayConfig({ mockMode: false })
+  })
+
   // --- Report ------------------------------------------------------------
 
   console.log('')
