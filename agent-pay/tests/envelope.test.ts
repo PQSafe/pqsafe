@@ -338,7 +338,7 @@ async function run() {
 
   await test('Wise rail executes in mock mode (IBAN recipient)', async () => {
     setAgentPayConfig({ mockMode: true })
-    const { address, sk, pk } = freshKeypair()
+    const { address, secretKey, publicKey } = freshKeypair()
     const envelope = createEnvelope({
       issuer: address,
       agent: 'wise-test-agent',
@@ -347,7 +347,7 @@ async function run() {
       allowedRecipients: ['GB29NWBK60161331926819'],
       rail: 'wise',
     })
-    const signed = signEnvelope(envelope, sk, pk)
+    const signed = signEnvelope(envelope, secretKey, publicKey)
     const result = await executeAgentPayment(signed, {
       recipient: 'GB29NWBK60161331926819',
       amount: 50,
@@ -362,7 +362,7 @@ async function run() {
 
   await test('Wise rail respects amount ceiling', async () => {
     setAgentPayConfig({ mockMode: true })
-    const { address, sk, pk } = freshKeypair()
+    const { address, secretKey, publicKey } = freshKeypair()
     const envelope = createEnvelope({
       issuer: address,
       agent: 'wise-ceiling-agent',
@@ -371,10 +371,10 @@ async function run() {
       allowedRecipients: ['GB29NWBK60161331926819'],
       rail: 'wise',
     })
-    const signed = signEnvelope(envelope, sk, pk)
+    const signed = signEnvelope(envelope, secretKey, publicKey)
     await assertThrows(
       () => executeAgentPayment(signed, { recipient: 'GB29NWBK60161331926819', amount: 31 }),
-      'amount ceiling',
+      'exceeds envelope maxAmount',
     )
     setAgentPayConfig({ mockMode: false })
   })
@@ -386,7 +386,7 @@ async function run() {
   await test('executeWithApproval auto-approves below threshold', async () => {
     const { executeWithApproval } = await import('../src/approval.js')
     setAgentPayConfig({ mockMode: true })
-    const { address, sk, pk } = freshKeypair()
+    const { address, secretKey, publicKey } = freshKeypair()
     const envelope = createEnvelope({
       issuer: address,
       agent: 'approval-test-agent',
@@ -394,7 +394,7 @@ async function run() {
       currency: 'USD',
       allowedRecipients: [GOOD_RECIPIENT],
     })
-    const signed = signEnvelope(envelope, sk, pk)
+    const signed = signEnvelope(envelope, secretKey, publicKey)
     const result = await executeWithApproval(signed, {
       recipient: GOOD_RECIPIENT,
       amount: 50,  // below default Infinity threshold
@@ -407,7 +407,7 @@ async function run() {
   await test('executeWithApproval throws above threshold when no Telegram config', async () => {
     const { executeWithApproval } = await import('../src/approval.js')
     setAgentPayConfig({ mockMode: true })
-    const { address, sk, pk } = freshKeypair()
+    const { address, secretKey, publicKey } = freshKeypair()
     const envelope = createEnvelope({
       issuer: address,
       agent: 'approval-gate-agent',
@@ -415,7 +415,7 @@ async function run() {
       currency: 'USD',
       allowedRecipients: [GOOD_RECIPIENT],
     })
-    const signed = signEnvelope(envelope, sk, pk)
+    const signed = signEnvelope(envelope, secretKey, publicKey)
     await assertThrows(
       () => executeWithApproval(signed, {
         recipient: GOOD_RECIPIENT,
@@ -424,6 +424,77 @@ async function run() {
       'threshold',
     )
     setAgentPayConfig({ mockMode: false })
+  })
+
+  // -------------------------------------------------------------------------
+  // USDC-Base rail (mock mode)
+  // -------------------------------------------------------------------------
+
+  await test('USDC-Base rail executes in mock mode (EVM address)', async () => {
+    setAgentPayConfig({ mockMode: true })
+    const { address, secretKey, publicKey } = freshKeypair()
+    const EVM_RECIPIENT = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+    const envelope = createEnvelope({
+      issuer: address,
+      agent: 'usdc-base-test-agent',
+      maxAmount: 500,
+      currency: 'USDC',
+      allowedRecipients: [EVM_RECIPIENT],
+      rail: 'usdc-base',
+    })
+    const signed = signEnvelope(envelope, secretKey, publicKey)
+    const result = await executeAgentPayment(signed, {
+      recipient: EVM_RECIPIENT,
+      amount: 100,
+      memo: 'USDC-Base mock test',
+    })
+    assert(result.success, 'USDC-Base mock should succeed')
+    assert(result.rail === 'usdc-base', `Expected rail=usdc-base, got ${result.rail}`)
+    assert(/^0x[0-9a-f]{64}$/.test(result.txId), `Expected 0x tx hash, got ${result.txId}`)
+    assert(result.amount === 100, 'Amount should be 100')
+    assert(result.currency === 'USDC', `Expected USDC currency, got ${result.currency}`)
+    assert(result.meta?.mock === true, 'Should be in mock mode')
+    setAgentPayConfig({ mockMode: false })
+  })
+
+  await test('USDC-Base rejects non-EVM recipient', async () => {
+    setAgentPayConfig({ mockMode: true })
+    const { address, secretKey, publicKey } = freshKeypair()
+    const envelope = createEnvelope({
+      issuer: address,
+      agent: 'usdc-base-reject-agent',
+      maxAmount: 500,
+      currency: 'USDC',
+      allowedRecipients: [GOOD_RECIPIENT],
+      rail: 'usdc-base',
+    })
+    const signed = signEnvelope(envelope, secretKey, publicKey)
+    await assertThrows(
+      () => executeAgentPayment(signed, { recipient: GOOD_RECIPIENT, amount: 50 }),
+      /EVM address/,
+      'non-EVM recipient',
+    )
+    setAgentPayConfig({ mockMode: false })
+  })
+
+  await test('toUsdcAtomicUnits converts decimals correctly', async () => {
+    const { toUsdcAtomicUnits } = await import('../src/rails/usdc-base.js')
+    assert(toUsdcAtomicUnits(1) === 1_000_000n, '1 USDC = 1_000_000 atomic')
+    assert(toUsdcAtomicUnits(1.5) === 1_500_000n, '1.5 USDC = 1_500_000 atomic')
+    assert(toUsdcAtomicUnits(100) === 100_000_000n, '100 USDC = 100_000_000 atomic')
+    assert(toUsdcAtomicUnits(0.000001) === 1n, '0.000001 USDC = 1 atomic (min unit)')
+  })
+
+  await test('encodeTransferCalldata produces 68-byte 0x-prefixed calldata', async () => {
+    const { encodeTransferCalldata, toUsdcAtomicUnits } = await import('../src/rails/usdc-base.js')
+    const to = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+    const amount = toUsdcAtomicUnits(100)
+    const calldata = encodeTransferCalldata(to, amount)
+    // 4 byte selector + 32 byte address + 32 byte amount = 68 bytes = 136 hex chars + '0x' = 138
+    assert(calldata.startsWith('0x'), 'calldata should start with 0x')
+    assert(calldata.length === 2 + 136, `Expected 138 chars, got ${calldata.length}`)
+    // Function selector for transfer(address,uint256) = 0xa9059cbb
+    assert(calldata.startsWith('0xa9059cbb'), 'selector should be 0xa9059cbb')
   })
 
   // --- Report ------------------------------------------------------------

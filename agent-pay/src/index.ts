@@ -31,6 +31,11 @@ export {
 export type { ArbitrumCommitConfig, CommitResult, EthTxParams } from './arbitrum.js'
 export { executeWithApproval, getTelegramChatId } from './approval.js'
 export type { ApprovalConfig, ApprovalInfo } from './approval.js'
+export {
+  encodeTransferCalldata,
+  toUsdcAtomicUnits,
+} from './rails/usdc-base.js'
+export type { UsdcBaseConfig, UsdcBaseSignAndSend, UsdcBaseTxParams, BaseNetwork } from './rails/usdc-base.js'
 
 // ---------------------------------------------------------------------------
 // Core public function

@@ -42,8 +42,8 @@ export const SpendEnvelopeSchema = z.object({
   /** Maximum total amount the agent may spend (in the given currency) */
   maxAmount: z.number().positive(),
 
-  /** ISO 4217 currency code */
-  currency: z.string().length(3),
+  /** ISO 4217 currency code or crypto token symbol (3–5 chars) */
+  currency: z.string().min(3).max(5),
 
   /**
    * Allowlist of recipients. Agent may ONLY pay to addresses in this list.
