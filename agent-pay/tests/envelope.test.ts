@@ -498,6 +498,35 @@ async function run() {
   })
 
   // -------------------------------------------------------------------------
+  // Stripe rail (mock mode)
+  // -------------------------------------------------------------------------
+
+  await test('Stripe rail executes in mock mode (invoice ID recipient)', async () => {
+    setAgentPayConfig({ mockMode: true })
+    const { address, secretKey, publicKey } = freshKeypair()
+    const STRIPE_INVOICE = 'in_1PXqBBGJhmH2PkSTDemoTest123'
+    const envelope = createEnvelope({
+      issuer: address,
+      agent: 'stripe-test-agent',
+      maxAmount: 500,
+      currency: 'USD',
+      allowedRecipients: [STRIPE_INVOICE],
+      rail: 'stripe',
+    })
+    const signed = signEnvelope(envelope, secretKey, publicKey)
+    const result = await executeAgentPayment(signed, {
+      recipient: STRIPE_INVOICE,
+      amount: 49,
+      memo: 'Anthropic API credits',
+    })
+    assert(result.success, 'Stripe mock should succeed')
+    assert(result.rail === 'stripe', `Expected rail=stripe, got ${result.rail}`)
+    assert(result.txId.startsWith('pi_sbx_'), `Expected pi_sbx_ txId, got ${result.txId}`)
+    assert(result.meta?.recipientType === 'invoice', 'meta.recipientType should be invoice')
+    setAgentPayConfig({ mockMode: false })
+  })
+
+  // -------------------------------------------------------------------------
   // x402 rail (mock mode)
   // -------------------------------------------------------------------------
 

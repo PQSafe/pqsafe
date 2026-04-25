@@ -20,6 +20,7 @@ import { executePayment as airwallexPay } from './airwallex.js'
 import { executePayment as wisePay } from './wise.js'
 import { executePayment as usdcBasePay } from './usdc-base.js'
 import { executePayment as x402Pay } from './x402.js'
+import { executePayment as stripePay } from './stripe.js'
 
 /** Default rail when envelope.rail is not set */
 const DEFAULT_RAIL: Rail = 'airwallex'
@@ -47,9 +48,7 @@ export async function routePayment(
       return wisePay(envelope, request)
 
     case 'stripe':
-      // TODO: import and call stripe connector
-      // return stripePay(envelope, request)
-      throw new Error('Rail "stripe" is not yet implemented — coming soon')
+      return stripePay(envelope, request)
 
     case 'usdc-base':
       return usdcBasePay(envelope, request, railConfig?.usdcBase)
