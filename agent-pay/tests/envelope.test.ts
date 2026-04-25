@@ -497,6 +497,35 @@ async function run() {
     assert(calldata.startsWith('0xa9059cbb'), 'selector should be 0xa9059cbb')
   })
 
+  // -------------------------------------------------------------------------
+  // x402 rail (mock mode)
+  // -------------------------------------------------------------------------
+
+  await test('x402 rail executes in mock mode (URL-style recipient)', async () => {
+    setAgentPayConfig({ mockMode: true })
+    const { address, secretKey, publicKey } = freshKeypair()
+    const X402_RECIPIENT = 'https://api.example.com/premium-data'
+    const envelope = createEnvelope({
+      issuer: address,
+      agent: 'x402-test-agent',
+      maxAmount: 10,
+      currency: 'USDC',
+      allowedRecipients: [X402_RECIPIENT],
+      rail: 'x402',
+    })
+    const signed = signEnvelope(envelope, secretKey, publicKey)
+    const result = await executeAgentPayment(signed, {
+      recipient: X402_RECIPIENT,
+      amount: 0.001,
+      memo: 'x402 micropayment',
+    })
+    assert(result.success, 'x402 mock should succeed')
+    assert(result.rail === 'x402', `Expected rail=x402, got ${result.rail}`)
+    assert(result.txId.startsWith('x402_sbx_'), `Expected x402_sbx_ txId, got ${result.txId}`)
+    assert(result.meta?.protocol === 'x402', 'meta.protocol should be x402')
+    setAgentPayConfig({ mockMode: false })
+  })
+
   // --- Report ------------------------------------------------------------
 
   console.log('')

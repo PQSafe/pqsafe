@@ -19,6 +19,7 @@ import type { UsdcBaseConfig } from './usdc-base.js'
 import { executePayment as airwallexPay } from './airwallex.js'
 import { executePayment as wisePay } from './wise.js'
 import { executePayment as usdcBasePay } from './usdc-base.js'
+import { executePayment as x402Pay } from './x402.js'
 
 /** Default rail when envelope.rail is not set */
 const DEFAULT_RAIL: Rail = 'airwallex'
@@ -54,9 +55,7 @@ export async function routePayment(
       return usdcBasePay(envelope, request, railConfig?.usdcBase)
 
     case 'x402':
-      // TODO: import and call x402 connector (HTTP 402 micropayments)
-      // return x402Pay(envelope, request)
-      throw new Error('Rail "x402" is not yet implemented — coming soon')
+      return x402Pay(envelope, request)
 
     default: {
       const _exhaustive: never = rail

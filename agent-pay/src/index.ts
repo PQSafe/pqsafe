@@ -20,6 +20,8 @@ import type { RailConfig } from './rails/index.js'
 import type { SignedEnvelope, PaymentRequest, PaymentResult } from './types.js'
 
 export type { RailConfig } from './rails/index.js'
+export { probeX402Endpoint } from './rails/x402.js'
+export type { X402Config, X402PaymentRequirements } from './rails/x402.js'
 
 export * from './envelope.js'
 export * from './types.js'
