@@ -17,6 +17,7 @@
     "dev": "tsc --watch --noEmit",
     "demo": "tsx examples/agentpay_demo.ts",
     "demo:claude": "tsx examples/claude_agent_demo.ts",
+    "demo:claude-code": "tsx examples/claude_code_payment.ts",
     "demo:basic": "tsx examples/basic.ts",
     "test": "tsx tests/envelope.test.ts"
   },

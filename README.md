@@ -14,16 +14,42 @@ Signatures use **ML-DSA-65 (NIST FIPS 204)** — the post-quantum standard that 
 
 ## The killer demo
 
-An AI agent pays for a Perplexity Pro subscription without any human logging in:
+**Claude Code paid for its own Anthropic API credits.**
 
 ```
-Agent: I need Perplexity Pro to complete this research task.
-       [checks envelope] Budget: $200 USD. Allowed: Perplexity IBAN. Expiry: 1h.
-       [calls pqsafe_pay] → transferId: awx_prod_3x9f, status: COMPLETED
-       Payment done. Continuing research...
+Claude Code running autonomously: API rate limit hit. Credits depleted.
+[checks envelope] Budget: $50 USD. Allowed: anthropic.com/billing. Expiry: 24h.
+[calls pqsafe_pay → $20 to anthropic.com/billing]
+  Transaction ID: awx_sbx_af82cb1e  ← real Airwallex sandbox transfer
+Resuming task. No human approved this payment.
 ```
 
-[Watch the live demo at demo.pqsafe.xyz](https://demo.pqsafe.xyz)
+The AI agent that writes your code also manages its own budget. No credit card handover. Post-quantum authorized. On-chain audit on Arbitrum.
+
+[Watch the live demo at demo.pqsafe.xyz](https://demo.pqsafe.xyz) | [Handbook](https://pqsafe.xyz/handbook)
+
+### Claude Code / Claude Desktop (MCP — zero config)
+
+```json
+// ~/.claude/claude_desktop_config.json
+{
+  "mcpServers": {
+    "pqsafe": { "url": "https://mcp.pqsafe.xyz/mcp" }
+  }
+}
+```
+
+Then ask Claude: *"My API credits are low — top up $20 from my PQSafe envelope."*
+
+### OpenHands / Devin / AutoGen (TypeScript SDK)
+
+```typescript
+import { executeAgentPayment } from '@pqsafe/agent-pay'
+
+// Register as a tool in your agent framework
+const pqsafePay = (recipient, amount, memo) =>
+  executeAgentPayment(signedEnvelope, { recipient, amount, memo })
+```
 
 ## 5-line quickstart (TypeScript)
 

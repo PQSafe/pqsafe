@@ -332,22 +332,55 @@ Crew(agents=[finance_agent], tasks=[pay_task]).kickoff()</code></pre>
 
     <!-- MCP -->
     <section id="mcp" class="anchor">
-      <h2 class="text-xl font-bold text-white mb-4">MCP server (Claude Desktop)</h2>
-      <p class="mb-3">The PQSafe MCP server exposes payment tools to Claude Desktop and any MCP-compatible host:</p>
-      <pre><code class="text-slate-300"><span class="text-slate-500">// claude_desktop_config.json</span>
+      <h2 class="text-xl font-bold text-white mb-4">MCP server — Claude Code, Claude Desktop, Cursor</h2>
+
+      <p class="mb-3 text-sm text-slate-400">The PQSafe MCP server exposes payment tools to any MCP-compatible AI agent. <strong class="text-slate-200">Claude Code can pay for its own API credits.</strong></p>
+
+      <h3 class="text-base font-semibold text-white mb-2">Connect to Claude Desktop / Claude Code</h3>
+      <pre><code class="text-slate-300"><span class="text-slate-500">// ~/.claude/claude_desktop_config.json  (or Claude Code settings)</span>
 {
   <span class="text-emerald-300">"mcpServers"</span>: {
     <span class="text-emerald-300">"pqsafe"</span>: {
-      <span class="text-emerald-300">"command"</span>: <span class="text-emerald-300">"npx"</span>,
-      <span class="text-emerald-300">"args"</span>: [<span class="text-emerald-300">"@pqsafe/mcp-server"</span>],
-      <span class="text-emerald-300">"env"</span>: {
-        <span class="text-emerald-300">"AIRWALLEX_CLIENT_ID"</span>: <span class="text-emerald-300">"your_id"</span>,
-        <span class="text-emerald-300">"AIRWALLEX_API_KEY"</span>: <span class="text-emerald-300">"your_key"</span>
-      }
+      <span class="text-emerald-300">"url"</span>: <span class="text-emerald-300">"https://mcp.pqsafe.xyz/mcp"</span>
     }
   }
 }</code></pre>
-      <p class="mt-3 text-sm text-slate-400">Once connected, Claude can call <code>pqsafe_pay</code>, <code>pqsafe_check_balance</code>, and <code>pqsafe_list_envelopes</code> as tool calls. Source: <a href="https://github.com/PQSafe/pqsafe/tree/main/mcp-server" target="_blank" rel="noopener">mcp-server/</a></p>
+
+      <p class="mt-3 text-sm text-slate-400">Once connected, Claude has 4 payment tools:</p>
+      <table class="mt-2">
+        <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>pqsafe_create_envelope</code></td><td>Build a SpendEnvelope (unsigned — operator must sign)</td></tr>
+          <tr><td><code>pqsafe_pay</code></td><td>Verify + execute payment via Airwallex</td></tr>
+          <tr><td><code>pqsafe_check_balance</code></td><td>Read envelope constraints without paying</td></tr>
+          <tr><td><code>pqsafe_commit_onchain</code></td><td>Return on-chain commit IDs for Arbitrum registry</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="text-base font-semibold text-white mb-2 mt-6">The killer use case</h3>
+      <div class="p-4 bg-[#0f0f1a] border border-white/7 rounded-xl text-sm font-mono text-slate-300">
+        <div class="text-slate-500 mb-2"># Claude Code running autonomously hits API rate limit</div>
+        <div class="text-cyan-300">You: "Keep working — you have a $50 PQSafe envelope for API credits."</div>
+        <div class="text-blue-300 mt-2">Claude: I see my Anthropic credits are depleted.</div>
+        <div class="text-blue-300">       Calling pqsafe_pay → anthropic.com/billing, $20 USD...</div>
+        <div class="text-green-300 mt-1">       ✓ txId: awx_sbx_abc123  — credits topped up. Resuming task.</div>
+      </div>
+
+      <div class="mt-4 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl text-sm text-slate-400">
+        <strong class="text-slate-200">Self-hosted (full Airwallex integration):</strong> Run <code>npm run build</code> in <code>mcp-server/</code> and deploy as a Cloudflare Worker with your <code>AIRWALLEX_CLIENT_ID</code> and <code>AIRWALLEX_API_KEY</code> env vars. Source: <a href="https://github.com/PQSafe/pqsafe/tree/main/mcp-server" target="_blank" rel="noopener">mcp-server/</a>
+      </div>
+
+      <h3 class="text-base font-semibold text-white mb-2 mt-6">OpenHands / Devin / AutoGen</h3>
+      <p class="text-sm text-slate-400">Any agent that supports MCP tool calls, or that can import TypeScript/Python SDKs, can use PQSafe:</p>
+      <pre><code class="text-slate-300"><span class="text-slate-500">// OpenHands custom tool</span>
+<span class="text-cyan-400">import</span> { executeAgentPayment } <span class="text-cyan-400">from</span> <span class="text-emerald-300">'@pqsafe/agent-pay'</span>
+
+<span class="text-slate-500">// Register as tool in your agent framework</span>
+<span class="text-cyan-400">const</span> pqsafePayTool = {
+  name: <span class="text-emerald-300">'pay'</span>,
+  execute: async ({ recipient, amount, memo }) =&gt;
+    executeAgentPayment(signedEnvelope, { recipient, amount, memo })
+}</code></pre>
     </section>
 
     <!-- Arbitrum on-chain audit -->
