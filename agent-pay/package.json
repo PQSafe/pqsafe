@@ -27,7 +27,8 @@
     "test": "tsx tests/envelope.test.ts",
     "test:canonical": "tsx tests/canonicalization.test.ts",
     "test:sprint2": "tsx tests/sprint2_errors.test.ts",
-    "test:all": "npm test && npm run test:canonical && npm run test:sprint2"
+    "test:adapters": "tsx tests/adapters.test.ts",
+    "test:all": "npm test && npm run test:canonical && npm run test:sprint2 && npm run test:adapters"
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1",

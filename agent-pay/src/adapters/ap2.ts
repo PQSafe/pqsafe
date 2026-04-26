@@ -9,12 +9,14 @@
  *
  * Reference: https://github.com/google-agentic-commerce/AP2 (v0.3.0)
  *
- * Production implementation queued for Sprint 2 (May 19 → Jun 8, 2026).
- *
  * @module adapters/ap2
  */
 
+import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
+import { sha256 } from '@noble/hashes/sha2.js'
 import type { SpendEnvelope } from '../envelope.js'
+import { canonicalJsonBytes } from '../canonical.js'
 
 // ---------------------------------------------------------------------------
 // AP2 type definitions (translated from Python reference impl v0.3.0)
@@ -276,7 +278,45 @@ export namespace AP2 {
 }
 
 // ---------------------------------------------------------------------------
-// Stub functions (production implementation: Sprint 2)
+// Internal helpers
+// ---------------------------------------------------------------------------
+
+/** ML-DSA-65 signature byte length (FIPS 204, security level 3) */
+const ML_DSA65_SIG_BYTES = 3309
+
+/** ML-DSA-65 public key byte length */
+const ML_DSA65_PK_BYTES = 1952
+
+/**
+ * Derive a 128-bit nonce from an arbitrary string by SHA-256-hashing it
+ * and taking the first 16 bytes. Returns a 32-character lowercase hex string.
+ */
+function nonceFromString(s: string): string {
+  const hashBytes = sha256(new TextEncoder().encode(s))
+  return bytesToHex(hashBytes.slice(0, 16))
+}
+
+/**
+ * Parse an ISO 8601 datetime string to a Unix timestamp (integer seconds).
+ * Throws if the string is not a valid date.
+ */
+function isoToUnix(iso: string): number {
+  const ms = Date.parse(iso)
+  if (Number.isNaN(ms)) {
+    throw new Error(`AP2 adapter: invalid ISO 8601 datetime "${iso}"`)
+  }
+  return Math.floor(ms / 1000)
+}
+
+/**
+ * Convert a Unix timestamp (seconds) to an ISO 8601 UTC string.
+ */
+function unixToIso(ts: number): string {
+  return new Date(ts * 1000).toISOString()
+}
+
+// ---------------------------------------------------------------------------
+// Public functions
 // ---------------------------------------------------------------------------
 
 /**
@@ -300,7 +340,6 @@ export namespace AP2 {
  * @param ttlSeconds - Override TTL in seconds. If omitted, derived from `mandate.expiresAt`.
  *   Useful for extending short-lived AP2 mandates to match SpendEnvelope lifetime requirements.
  * @returns An unsigned `SpendEnvelope` ready for `signEnvelope()`.
- * @throws {'AP2 adapter — production implementation queued for Sprint 2.'} Always — stub.
  * @throws {Error} If mandate type is unrecognized or required fields are missing.
  *
  * @example
@@ -314,10 +353,66 @@ export function ap2MandateToSpendEnvelope(
   issuerAddress: string,
   ttlSeconds?: number,
 ): SpendEnvelope {
-  void mandate
-  void issuerAddress
-  void ttlSeconds
-  throw new Error('AP2 adapter — production implementation queued for Sprint 2.')
+  const validFrom = Math.floor(Date.now() / 1000)
+
+  // Derive validUntil from expiresAt or ttlSeconds override
+  let validUntil: number
+  if (ttlSeconds !== undefined) {
+    validUntil = validFrom + ttlSeconds
+  } else {
+    validUntil = isoToUnix(mandate.expiresAt)
+  }
+
+  // Extract amount, currency, recipients based on mandate type
+  let maxAmount: number
+  let currency: string
+  let allowedRecipients: string[]
+  let nonce: string
+
+  switch (mandate.type) {
+    case 'intent': {
+      maxAmount = mandate.maxAmount
+      currency = mandate.currency
+      // Intent mandate has no committed recipient — use merchantId as placeholder
+      allowedRecipients = [mandate.merchantId]
+      nonce = nonceFromString(mandate.mandateId)
+      break
+    }
+    case 'cart': {
+      maxAmount = mandate.total
+      currency = mandate.currency
+      // Cart mandate has no committed recipient — use merchantId as placeholder
+      allowedRecipients = [mandate.merchantId]
+      nonce = nonceFromString(mandate.mandateId)
+      break
+    }
+    case 'payment': {
+      maxAmount = mandate.amount
+      currency = mandate.currency
+      allowedRecipients = [mandate.recipientAddress]
+      nonce = nonceFromString(mandate.mandateId)
+      break
+    }
+    default: {
+      // TypeScript exhaustiveness — should never reach here
+      const _exhaustive: never = mandate
+      throw new Error(`AP2 adapter: unrecognized mandate type "${(_exhaustive as AP2.AnyMandate).type}"`)
+    }
+  }
+
+  const envelope: SpendEnvelope = {
+    version: 1,
+    issuer: issuerAddress,
+    agent: mandate.agentId,
+    maxAmount,
+    currency: currency.toUpperCase(),
+    allowedRecipients,
+    validFrom,
+    validUntil,
+    nonce,
+  }
+
+  return envelope
 }
 
 /**
@@ -335,7 +430,6 @@ export function ap2MandateToSpendEnvelope(
  *   - `'payment'` — builds a `PaymentMandate` using `allowedRecipients[0]` as
  *     the recipient address. Throws if `allowedRecipients` is empty.
  * @returns The AP2 mandate object matching the requested type.
- * @throws {'AP2 adapter — production implementation queued for Sprint 2.'} Always — stub.
  * @throws {Error} If `mandateType` is `'payment'` and `env.allowedRecipients` is empty.
  *
  * @example
@@ -348,9 +442,91 @@ export function spendEnvelopeToAp2Mandate(
   env: SpendEnvelope,
   mandateType: 'intent' | 'cart' | 'payment',
 ): AP2.AnyMandate {
-  void env
-  void mandateType
-  throw new Error('AP2 adapter — production implementation queued for Sprint 2.')
+  const expiresAt = unixToIso(env.validUntil)
+  // Use nonce as the mandate ID (it's already a unique 128-bit hex token)
+  const mandateId = env.nonce
+  // Use first allowed recipient as the merchantId placeholder
+  const merchantId = env.allowedRecipients[0] ?? 'unknown'
+
+  switch (mandateType) {
+    case 'intent': {
+      const intentMandate: AP2.IntentMandate = {
+        type: 'intent',
+        mandateId,
+        merchantId,
+        description: `Agent spend intent: up to ${env.maxAmount} ${env.currency}`,
+        maxAmount: env.maxAmount,
+        currency: env.currency,
+        expiresAt,
+        agentId: env.agent,
+        issuerAddress: env.issuer,
+        metadata: {
+          pqNonce: env.nonce,
+          pqIssuer: env.issuer,
+        },
+      }
+      return intentMandate
+    }
+
+    case 'cart': {
+      const cartMandate: AP2.CartMandate = {
+        type: 'cart',
+        mandateId,
+        merchantId,
+        items: [
+          {
+            label: `Authorized spend (${env.currency})`,
+            amount: env.maxAmount,
+            currency: env.currency,
+            quantity: 1,
+          },
+        ],
+        subtotal: env.maxAmount,
+        total: env.maxAmount,
+        currency: env.currency,
+        expiresAt,
+        agentId: env.agent,
+        issuerAddress: env.issuer,
+        metadata: {
+          pqNonce: env.nonce,
+          pqIssuer: env.issuer,
+        },
+      }
+      return cartMandate
+    }
+
+    case 'payment': {
+      if (env.allowedRecipients.length === 0) {
+        throw new Error(
+          'AP2 adapter: cannot build PaymentMandate — SpendEnvelope.allowedRecipients is empty',
+        )
+      }
+      const paymentMandate: AP2.PaymentMandate = {
+        type: 'payment',
+        mandateId,
+        merchantId,
+        amount: env.maxAmount,
+        currency: env.currency,
+        paymentMethod: {
+          supportedMethods: env.rail ?? 'pqsafe',
+        },
+        recipientAddress: env.allowedRecipients[0],
+        expiresAt,
+        agentId: env.agent,
+        issuerAddress: env.issuer,
+        metadata: {
+          pqNonce: env.nonce,
+          pqIssuer: env.issuer,
+        },
+      }
+      return paymentMandate
+    }
+
+    default: {
+      const _exhaustive: never = mandateType
+      throw new Error(`AP2 adapter: unrecognized mandateType "${_exhaustive as string}"`)
+    }
+  }
 }
 
 /**
@@ -371,8 +547,9 @@ export function spendEnvelopeToAp2Mandate(
  * @param pqSig - Hex-encoded ML-DSA-65 signature (produced by PQSafe wallet).
  * @param pqPublicKey - Hex-encoded ML-DSA-65 public key of the issuer.
  * @returns The verified `AP2.AnyMandate` (same object, typed).
- * @throws {'AP2 adapter — production implementation queued for Sprint 2.'} Always — stub.
  * @throws {Error} If signature verification fails (wrong key, tampered mandate).
+ * @throws {Error} If signature size is not exactly 3309 bytes.
+ * @throws {Error} If public key size is not exactly 1952 bytes.
  * @throws {Error} If mandate type is not one of 'intent', 'cart', 'payment'.
  *
  * @example
@@ -386,8 +563,38 @@ export function verifyAp2WithPqWrapper(
   pqSig: string,
   pqPublicKey: string,
 ): AP2.AnyMandate {
-  void mandate
-  void pqSig
-  void pqPublicKey
-  throw new Error('AP2 adapter — production implementation queued for Sprint 2.')
+  // Validate mandate type
+  if (mandate.type !== 'intent' && mandate.type !== 'cart' && mandate.type !== 'payment') {
+    throw new Error(
+      `AP2 adapter: unrecognized mandate type "${(mandate as AP2.AnyMandate).type}"`,
+    )
+  }
+
+  // Decode and validate sizes
+  const sigBytes = hexToBytes(pqSig)
+  if (sigBytes.length !== ML_DSA65_SIG_BYTES) {
+    throw new Error(
+      `AP2 adapter: invalid ML-DSA-65 signature length — expected ${ML_DSA65_SIG_BYTES} bytes, got ${sigBytes.length}`,
+    )
+  }
+
+  const pubKeyBytes = hexToBytes(pqPublicKey)
+  if (pubKeyBytes.length !== ML_DSA65_PK_BYTES) {
+    throw new Error(
+      `AP2 adapter: invalid ML-DSA-65 public key length — expected ${ML_DSA65_PK_BYTES} bytes, got ${pubKeyBytes.length}`,
+    )
+  }
+
+  // Compute canonical JSON bytes of the mandate
+  const canonicalBytes = canonicalJsonBytes(mandate)
+
+  // Verify ML-DSA-65 signature
+  const valid = ml_dsa65.verify(sigBytes, canonicalBytes, pubKeyBytes)
+  if (!valid) {
+    throw new Error(
+      'AP2 adapter: ML-DSA-65 signature verification failed — mandate may have been tampered',
+    )
+  }
+
+  return mandate
 }
