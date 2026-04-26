@@ -1,0 +1,61 @@
+{
+  "name": "@pqsafe/mcp-server",
+  "version": "0.1.0",
+  "description": "PQSafe AgentPay MCP server — exposes PQ-safe payment tools to Claude Desktop, Cursor, and any MCP host",
+  "type": "module",
+  "bin": {
+    "pqsafe-mcp": "./dist/server.js"
+  },
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/server.js",
+      "types": "./dist/server.d.ts"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts",
+    "inspect": "npx @modelcontextprotocol/inspector tsx src/server.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@pqsafe/agent-pay": "file:../../"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PQSafe/pqsafe.git",
+    "directory": "agent-pay/integrations/mcp"
+  },
+  "homepage": "https://pqsafe.xyz",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "pqsafe",
+    "agent-pay",
+    "post-quantum",
+    "ml-dsa",
+    "payments",
+    "claude",
+    "cursor"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

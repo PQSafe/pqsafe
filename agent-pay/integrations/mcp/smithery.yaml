@@ -1,0 +1,48 @@
+# Smithery MCP Registry — submission stub
+# Publish after YC batch: https://smithery.ai/submit
+#
+# Command to submit: npx @smithery/cli publish --config smithery.yaml
+
+name: "@pqsafe/mcp-server"
+displayName: "PQSafe AgentPay"
+version: "0.1.0"
+description: >
+  Post-quantum safe payment tools for AI agents.
+  Exposes ML-DSA-65 signed SpendEnvelopes, multi-rail payments (Airwallex, Stripe,
+  Wise, USDC-Base, x402), and on-chain audit anchoring to any MCP host.
+homepage: "https://pqsafe.xyz"
+repository: "https://github.com/PQSafe/pqsafe"
+license: "MIT"
+author:
+  name: "PQSafe"
+  email: "dev@pqsafe.xyz"
+
+categories:
+  - payments
+  - finance
+  - security
+
+tags:
+  - post-quantum
+  - ml-dsa
+  - ai-agent-payments
+  - spend-envelope
+  - airwallex
+  - stripe
+  - usdc
+
+tools:
+  - name: pqsafe.create_envelope
+    description: Build and sign a SpendEnvelope that authorizes AI agent spend.
+  - name: pqsafe.verify_envelope
+    description: Verify ML-DSA-65 signature, schema, and temporal validity.
+  - name: pqsafe.execute_payment
+    description: Verify envelope and route payment to configured rail.
+  - name: pqsafe.get_envelope_status
+    description: Inspect envelope expiry, budget ceiling, and revocation status.
+
+startCommand:
+  type: stdio
+  command: npx
+  args:
+    - "@pqsafe/mcp-server"

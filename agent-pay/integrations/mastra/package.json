@@ -1,0 +1,59 @@
+{
+  "name": "@pqsafe/mastra",
+  "version": "0.1.0",
+  "description": "Mastra integration for PQSafe AgentPay — post-quantum safe payments for Mastra workflows (experimental)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "example": "tsx examples/supplier-payment-workflow.ts"
+  },
+  "dependencies": {
+    "@pqsafe/agent-pay": "file:../../"
+  },
+  "peerDependencies": {
+    "@mastra/core": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@mastra/core": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PQSafe/pqsafe.git",
+    "directory": "agent-pay/integrations/mastra"
+  },
+  "homepage": "https://pqsafe.xyz",
+  "keywords": [
+    "mastra",
+    "pqsafe",
+    "agent-pay",
+    "post-quantum",
+    "ml-dsa",
+    "ai-agent",
+    "payments",
+    "workflow"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

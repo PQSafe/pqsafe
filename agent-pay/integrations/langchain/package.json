@@ -1,0 +1,60 @@
+{
+  "name": "@pqsafe/agent-pay-langchain",
+  "version": "0.1.0",
+  "description": "LangChain integration for PQSafe AgentPay — post-quantum safe payments for AI agents",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "example": "tsx examples/pay-anthropic-credits.ts"
+  },
+  "dependencies": {
+    "@pqsafe/agent-pay": "file:../../"
+  },
+  "peerDependencies": {
+    "@langchain/core": ">=0.2.0",
+    "langchain": ">=0.2.0"
+  },
+  "peerDependenciesMeta": {
+    "langchain": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@langchain/core": "^0.3.0",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PQSafe/pqsafe.git",
+    "directory": "agent-pay/integrations/langchain"
+  },
+  "homepage": "https://pqsafe.xyz",
+  "keywords": [
+    "langchain",
+    "pqsafe",
+    "agent-pay",
+    "post-quantum",
+    "ml-dsa",
+    "ai-agent",
+    "payments"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
