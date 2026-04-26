@@ -38,9 +38,25 @@ import secrets
 import time
 from typing import Optional, Union
 
+from .canonical import canonical_json_bytes, canonical_json_string
 from .client import PQSafeClient, _get_default_client
 from .crypto import KeyPair, active_backend, generate_keypair
 from .envelope import create_envelope, sign_envelope, verify_envelope
+from .errors import (
+    AuthError,
+    PolicyError,
+    PQSafeError,
+    RailError,
+    RateLimitError,
+    RevocationError,
+    SignatureError,
+    TemporalError,
+    amount_exceeds_ceiling_error,
+    envelope_expired_error,
+    envelope_not_yet_active_error,
+    recipient_not_allowed_error,
+    signature_invalid_error,
+)
 from .types import (
     PaymentRequest,
     PaymentResult,
@@ -51,6 +67,9 @@ from .types import (
 
 __version__ = "0.1.0"
 __all__ = [
+    # Canonical JSON (RFC 8785)
+    "canonical_json_bytes",
+    "canonical_json_string",
     # Crypto
     "generate_keypair",
     "active_backend",
@@ -68,6 +87,20 @@ __all__ = [
     # Client
     "pay",
     "PQSafeClient",
+    # Errors
+    "PQSafeError",
+    "SignatureError",
+    "PolicyError",
+    "TemporalError",
+    "RevocationError",
+    "RailError",
+    "RateLimitError",
+    "AuthError",
+    "signature_invalid_error",
+    "recipient_not_allowed_error",
+    "amount_exceeds_ceiling_error",
+    "envelope_expired_error",
+    "envelope_not_yet_active_error",
 ]
 
 
