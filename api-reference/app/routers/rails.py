@@ -33,36 +33,40 @@ RAIL_CATALOG: dict[str, dict[str, Any]] = {
     "wise": {
         "rail": "wise",
         "name": "Wise (TransferWise)",
-        "status": "coming_soon",
+        "status": "sandbox",
         "supported_currencies": ["USD", "GBP", "EUR", "AUD", "CAD", "SGD"],
         "transfer_methods": ["LOCAL"],
+        "transfer_type_detection": "auto (IBAN / sort-code / ABA routing)",
         "min_amount": 1.0,
         "docs": "https://docs.wise.com",
     },
     "stripe": {
         "rail": "stripe",
-        "name": "Stripe Treasury",
-        "status": "coming_soon",
+        "name": "Stripe Invoices + PaymentIntents",
+        "status": "mock_ready",
         "supported_currencies": ["USD"],
-        "transfer_methods": ["ACH"],
+        "transfer_methods": ["invoice", "payment_intent", "payment_link"],
+        "recipient_detection": "auto (in_xxx / pi_xxx / plink_xxx prefix)",
         "min_amount": 0.5,
-        "docs": "https://stripe.com/docs/treasury",
+        "docs": "https://stripe.com/docs",
     },
     "usdc-base": {
         "rail": "usdc-base",
-        "name": "USDC on Base (Coinbase)",
-        "status": "coming_soon",
+        "name": "USDC on Base (Coinbase L2)",
+        "status": "mock_ready",
         "supported_currencies": ["USDC"],
-        "transfer_methods": ["onchain"],
+        "transfer_methods": ["onchain_erc20"],
+        "signer": "injected (viem / ethers / CDP AgentKit)",
         "min_amount": 0.01,
         "docs": "https://docs.cdp.coinbase.com",
     },
     "x402": {
         "rail": "x402",
         "name": "HTTP 402 Micropayments",
-        "status": "coming_soon",
+        "status": "mock_ready",
         "supported_currencies": ["USDC"],
         "transfer_methods": ["micropayment"],
+        "protocol": "Coinbase x402 (HTTP 402 handshake)",
         "min_amount": 0.001,
         "docs": "https://x402.org",
     },
@@ -98,13 +102,27 @@ async def get_quote(
             detail=f"Rail '{rail}' not found. Available: {list(RAIL_CATALOG.keys())}",
         )
 
-    if RAIL_CATALOG[rail]["status"] != "live":
+    if RAIL_CATALOG[rail]["status"] not in ("live", "sandbox", "mock_ready"):
         return {
             "rail": rail,
             "status": "coming_soon",
-            "note": f"Rail '{rail}' is not yet implemented.",
+            "note": f"Rail '{rail}' is not yet available.",
             "indicative_fee_pct": None,
             "indicative_rate": None,
+        }
+
+    if RAIL_CATALOG[rail]["status"] in ("sandbox", "mock_ready"):
+        return {
+            "rail": rail,
+            "status": RAIL_CATALOG[rail]["status"],
+            "note": f"Rail '{rail}' is in {RAIL_CATALOG[rail]['status']} mode. Quotes are indicative only.",
+            "source_currency": source_currency,
+            "target_currency": target_currency,
+            "source_amount": amount,
+            "target_amount": round(amount * 0.99, 4),
+            "indicative_fee_pct": 0.5,
+            "indicative": True,
+            "mock": True,
         }
 
     # Airwallex live quote
