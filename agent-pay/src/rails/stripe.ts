@@ -22,6 +22,7 @@
  *
  * Required env vars:
  *   STRIPE_SECRET_KEY    — Stripe secret key (sk_test_... or sk_live_...)
+ *   STRIPE_TEST_KEY      — Alias for STRIPE_SECRET_KEY in test mode (set by demo scripts)
  *   STRIPE_ENV           — "test" (default) or "live"
  *
  * Docs: https://stripe.com/docs/api
@@ -43,7 +44,8 @@ function readEnv(key: string): string | null {
 }
 
 function getStripeConfig() {
-  const secretKey = readEnv('STRIPE_SECRET_KEY')
+  // Accept either STRIPE_SECRET_KEY or STRIPE_TEST_KEY (the latter is used by demo scripts)
+  const secretKey = readEnv('STRIPE_SECRET_KEY') ?? readEnv('STRIPE_TEST_KEY')
   const env = readEnv('STRIPE_ENV') === 'live' ? 'live' : 'test'
   const cfg = getAgentPayConfig()
   const mockMode = cfg.mockMode || readEnv('PQSAFE_MOCK_MODE') === '1' || !secretKey

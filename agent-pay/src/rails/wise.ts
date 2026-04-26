@@ -14,7 +14,9 @@
  *
  * Required env vars:
  *   WISE_API_KEY       — API key from Wise dashboard (Settings → API tokens)
+ *   WISE_SANDBOX_KEY   — Alias for WISE_API_KEY in sandbox context (set by demo scripts)
  *   WISE_ENV           — "sandbox" (default) or "live"
+ *   WISE_PROFILE_ID    — (optional) Pre-set profile ID to skip GET /v1/profiles call
  *
  * Docs: https://docs.wise.com/api-docs/api-reference
  */
@@ -34,7 +36,8 @@ function readEnv(key: string): string | null {
 }
 
 function getWiseConfig() {
-  const apiKey = readEnv('WISE_API_KEY')
+  // Accept either WISE_API_KEY or WISE_SANDBOX_KEY (the latter is used by demo scripts)
+  const apiKey = readEnv('WISE_API_KEY') ?? readEnv('WISE_SANDBOX_KEY')
   const env = readEnv('WISE_ENV') === 'live' ? 'live' : 'sandbox'
   const mockMode = readEnv('PQSAFE_MOCK_MODE') === '1' || !apiKey
   const baseUrl = env === 'live'
