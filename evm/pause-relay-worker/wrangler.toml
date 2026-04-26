@@ -1,0 +1,44 @@
+name = "pqsafe-pause-relay"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare Workers paid tier ($5/mo) — required for KV + Secrets
+# https://developers.cloudflare.com/workers/platform/pricing/
+
+[build]
+command = "npm run build"
+
+# KV namespace for deduplication / cooldown tracking
+[[kv_namespaces]]
+binding = "ALERT_KV"
+id = "00000000000000000000000000000001"         # Replace with real KV namespace ID after `wrangler kv:namespace create ALERT_KV`
+preview_id = "00000000000000000000000000000002"  # Replace with preview namespace ID
+
+# Secrets (set via `wrangler secret put <KEY>`):
+#   RELAY_HMAC_SECRET     — shared HMAC-SHA256 secret (must match Forta/Tenderly)
+#   SAFE_TX_SERVICE_URL   — https://safe-transaction-arbitrum.safe.global
+#   SAFE_ADDRESS          — Gnosis Safe address on Arbitrum
+#   SAFE_OWNER_KEY        — Private key of Cloudflare Worker signer (PAUSER_ROLE holder)
+#   CONTRACT_ADDRESS      — V2.1 registry address
+#   BETTERSTACK_TOKEN     — BetterStack Heartbeats API token
+#   SLACK_WEBHOOK_URL     — Slack incoming webhook URL
+#   ALERT_EMAIL           — email for High alerts (via MailChannels or SendGrid)
+#
+# Env vars (set in [vars] or wrangler secret):
+#   AUTO_PAUSE_MODE       — "true" (default) = direct PAUSER_ROLE call on Critical
+#                           "false" = legacy Safe-propose path (2-of-3 required)
+#   DRY_RUN               — "true" = skip tx submission (staging/testing)
+
+[env.production]
+name = "pqsafe-pause-relay"
+routes = [
+  { pattern = "pause-relay.pqsafe.workers.dev/*", zone_name = "pqsafe.workers.dev" }
+]
+# AUTO_PAUSE_MODE defaults to "true" in production (direct PAUSER_ROLE call)
+# To revert to Safe-propose: wrangler secret put AUTO_PAUSE_MODE --env production
+# then set value to "false"
+
+[env.staging]
+name = "pqsafe-pause-relay-staging"
+vars = { DRY_RUN = "true", AUTO_PAUSE_MODE = "true" }

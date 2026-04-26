@@ -1,0 +1,44 @@
+{
+  "name": "pqsafe-pause-relay-worker",
+  "version": "0.1.0",
+  "description": "Cloudflare Worker: receives Forta/Tenderly webhooks and relays pause() to Gnosis Safe",
+  "private": true,
+  "scripts": {
+    "build": "wrangler build",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "test": "jest --runInBand --forceExit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@safe-global/api-kit": "^4.0.0",
+    "@safe-global/protocol-kit": "^4.0.0",
+    "@safe-global/types-kit": "^1.0.0",
+    "ethers": "^6.9.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240101.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "typescript": "^5.0.0",
+    "wrangler": "^3.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/*.spec.ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.json"
+      }
+    }
+  }
+}
