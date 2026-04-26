@@ -54,6 +54,11 @@ export {
 export type { UsdcBaseConfig, UsdcBaseSignAndSend, UsdcBaseTxParams, BaseNetwork } from './rails/usdc-base.js'
 
 // ---------------------------------------------------------------------------
+// Sprint 2 scaffold — types, stubs, and PQSafeError hierarchy
+// ---------------------------------------------------------------------------
+export * from './sprint2/index.js'
+
+// ---------------------------------------------------------------------------
 // Core public function
 // ---------------------------------------------------------------------------
 
