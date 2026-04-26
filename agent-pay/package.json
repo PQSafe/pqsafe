@@ -61,6 +61,9 @@
     "airwallex",
     "fips-204"
   ],
+  "bin": {
+    "pqsafe-admin": "./dist/cli/admin.js"
+  },
   "publishConfig": {
     "access": "public"
   }

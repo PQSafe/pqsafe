@@ -21,6 +21,16 @@ import type { SignedEnvelope, PaymentRequest, PaymentResult } from './types.js'
 import { autoSubmitToLedger } from './ledger.js'
 import { requestApproval as _requestApproval } from './approval.js'
 import type { ApprovalRequest as _ApprovalRequest } from './approval.js'
+import { isRevoked } from './sprint2/revocation.js'
+import { EnvelopeRevokedError, EpochInvalidatedError, EnvelopeExpiredError } from './sprint2/errors.js'
+import { sha256 } from '@noble/hashes/sha2.js'
+import { bytesToHex } from '@noble/hashes/utils.js'
+
+/** Compute SHA-256 hash of the envelope's canonical JSON for revocation lookups. */
+async function computeEnvelopeHash(envelopeJson: string): Promise<string> {
+  const bytes = new TextEncoder().encode(envelopeJson)
+  return bytesToHex(sha256(bytes))
+}
 
 export type { RailConfig } from './rails/index.js'
 export { probeX402Endpoint } from './rails/x402.js'
@@ -124,6 +134,46 @@ export async function executeAgentPayment(
       `PQSafe: requested amount ${request.amount} ${envelope.currency} exceeds ` +
       `envelope maxAmount ${envelope.maxAmount} ${envelope.currency}`,
     )
+  }
+
+  // Step 5a: Revocation check (3-layer)
+  // Compute envelope hash for revocation lookup.
+  // envelopeJson is the canonical JSON used for signing; hash it with SHA-256.
+  const envelopeHash = await computeEnvelopeHash(signed.envelopeJson)
+  const issuerAddress = (envelope as unknown as { issuerAddress?: string }).issuerAddress
+  const issuerEpoch = (envelope as unknown as { issuerEpoch?: bigint }).issuerEpoch
+  const now = Math.floor(Date.now() / 1000)
+  // failOpen for micro-payments (< $5) to avoid blocking low-value flows on infra issues
+  const failOpenThreshold = 5
+  const failOpen = request.amount < failOpenThreshold
+
+  const revocationStatus = await isRevoked(envelopeHash, {
+    issuerAddress,
+    issuerEpoch,
+    failOpen,
+    validUntil: envelope.validUntil,
+  })
+
+  if (revocationStatus.status === 'revoked') {
+    throw new EnvelopeRevokedError({
+      envelopeHash,
+      revokedAt: revocationStatus.revokedAt,
+      reason: revocationStatus.reason,
+    })
+  }
+  if (revocationStatus.status === 'epoch_invalidated') {
+    throw new EpochInvalidatedError({
+      issuerAddress: issuerAddress ?? envelope.issuer,
+      envelopeEpoch: issuerEpoch ?? 0n,
+      currentEpoch: (issuerEpoch ?? 0n) + 1n,
+    })
+  }
+  if (revocationStatus.status === 'expired') {
+    throw new EnvelopeExpiredError({
+      envelopeHash,
+      validUntil: envelope.validUntil,
+      now,
+    })
   }
 
   // Step 5b: Human approval gate

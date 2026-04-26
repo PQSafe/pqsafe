@@ -372,3 +372,106 @@ export function envelopeNotYetActiveError(validFrom: number, now: number): Tempo
     context: { validFrom, now, activatesInSeconds: validFrom - now },
   })
 }
+
+// ---------------------------------------------------------------------------
+// Sprint 2 — Revocation-specific error subclasses
+// ---------------------------------------------------------------------------
+
+export interface EnvelopeRevokedErrorParams {
+  envelopeHash: string
+  revokedAt?: string
+  reason?: string
+}
+
+/**
+ * Thrown when a per-envelope revocation record exists (Layer 3).
+ * The envelope has been explicitly revoked; never retriable.
+ */
+export class EnvelopeRevokedError extends RevocationError {
+  readonly envelopeHash: string
+  readonly revokedAt: string | undefined
+
+  constructor(params: EnvelopeRevokedErrorParams) {
+    super({
+      code: 'REVOKED_GRANULAR',
+      human_reason:
+        `Envelope ${params.envelopeHash} has been revoked` +
+        (params.revokedAt ? ` at ${params.revokedAt}` : '') +
+        (params.reason ? `: ${params.reason}` : '.'),
+      context: {
+        envelopeHash: params.envelopeHash,
+        revokedAt: params.revokedAt ?? null,
+        reason: params.reason ?? null,
+      },
+    })
+    this.name = 'EnvelopeRevokedError'
+    this.envelopeHash = params.envelopeHash
+    this.revokedAt = params.revokedAt
+  }
+}
+
+export interface EpochInvalidatedErrorParams {
+  issuerAddress: string
+  envelopeEpoch: bigint
+  currentEpoch: bigint
+}
+
+/**
+ * Thrown when the issuer has advanced their epoch beyond the envelope's epoch (Layer 2).
+ * All envelopes from this issuer under the old epoch are bulk-invalidated.
+ * Never retriable — a new envelope under the current epoch is required.
+ */
+export class EpochInvalidatedError extends RevocationError {
+  readonly issuerAddress: string
+  readonly envelopeEpoch: bigint
+  readonly currentEpoch: bigint
+
+  constructor(params: EpochInvalidatedErrorParams) {
+    super({
+      code: 'REVOKED_EPOCH_ADVANCED',
+      human_reason:
+        `Issuer ${params.issuerAddress} advanced epoch to ${params.currentEpoch}. ` +
+        `Envelope was signed under epoch ${params.envelopeEpoch}. Issue a new envelope.`,
+      context: {
+        issuerAddress: params.issuerAddress,
+        envelopeEpoch: params.envelopeEpoch.toString(),
+        currentEpoch: params.currentEpoch.toString(),
+      },
+    })
+    this.name = 'EpochInvalidatedError'
+    this.issuerAddress = params.issuerAddress
+    this.envelopeEpoch = params.envelopeEpoch
+    this.currentEpoch = params.currentEpoch
+  }
+}
+
+export interface EnvelopeExpiredErrorParams {
+  envelopeHash?: string
+  validUntil: number
+  now: number
+}
+
+/**
+ * Thrown when an envelope's validUntil timestamp has passed (Layer 1 / TTL).
+ * May be resolved by issuing a new envelope. Not retriable with the same envelope.
+ */
+export class EnvelopeExpiredError extends TemporalError {
+  readonly validUntil: number
+
+  constructor(params: EnvelopeExpiredErrorParams) {
+    const expiredAgo = params.now - params.validUntil
+    super({
+      code: 'ENVELOPE_EXPIRED',
+      human_reason:
+        `Envelope expired ${expiredAgo} second(s) ago (validUntil=${params.validUntil}).`,
+      context: {
+        envelopeHash: params.envelopeHash ?? null,
+        validUntil: params.validUntil,
+        now: params.now,
+        expiredSecondsAgo: expiredAgo,
+      },
+    })
+    this.name = 'EnvelopeExpiredError'
+    this.validUntil = params.validUntil
+  }
+}

@@ -17,3 +17,6 @@ export * from './issuer.js'
 
 // Structured error hierarchy (FULLY IMPLEMENTED)
 export * from './errors.js'
+
+// TTL policy by amount tier
+export * from './ttl_policy.js'
