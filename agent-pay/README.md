@@ -1,5 +1,8 @@
 # @pqsafe/agent-pay
 
+[![Unit Tests](https://github.com/PQSafe/pqsafe/actions/workflows/test.yml/badge.svg)](https://github.com/PQSafe/pqsafe/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/PQSafe/pqsafe/branch/main/graph/badge.svg)](https://codecov.io/gh/PQSafe/pqsafe)
+
 Post-quantum signed spend envelopes for AI agent payments, routed across multiple payment rails.
 
 ## What it is

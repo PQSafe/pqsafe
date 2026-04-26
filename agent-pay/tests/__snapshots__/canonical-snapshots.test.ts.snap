@@ -1,0 +1,107 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`canonical envelope snapshots > envelope-01: snapshot-agent-01 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-01","allowedRecipients":["GB29NWBK60161331926819"],"currency":"USD","issuer":"pq1aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","maxAmount":100,"nonce":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","rail":"airwallex","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-01: snapshot-agent-01 canonical bytes + signature 2`] = `285`;
+
+exports[`canonical envelope snapshots > envelope-01: snapshot-agent-01 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-01: snapshot-agent-01 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-01: snapshot-agent-01 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-01","allowedRecipients":["GB29NWBK60161331926819"],"currency":"USD","issuer":"pq1aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","maxAmount":100,"nonce":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","rail":"airwallex","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-02: snapshot-agent-02 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-02","allowedRecipients":["DE89370400440532013000","FR76123459876501234567890"],"currency":"GBP","issuer":"pq1bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","maxAmount":500,"nonce":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","rail":"wise","validFrom":1700000000,"validUntil":1700007200,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-02: snapshot-agent-02 canonical bytes + signature 2`] = `308`;
+
+exports[`canonical envelope snapshots > envelope-02: snapshot-agent-02 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-02: snapshot-agent-02 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-02: snapshot-agent-02 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-02","allowedRecipients":["DE89370400440532013000","FR76123459876501234567890"],"currency":"GBP","issuer":"pq1bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","maxAmount":500,"nonce":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","rail":"wise","validFrom":1700000000,"validUntil":1700007200,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-03: snapshot-agent-03 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-03","allowedRecipients":["0xdddddddddddddddddddddddddddddddddddddddd"],"currency":"USDC","issuer":"pq1cccccccccccccccccccccccccccccccccccccccc","maxAmount":1000,"nonce":"cccccccccccccccccccccccccccccccc","rail":"usdc-base","validFrom":1700000000,"validUntil":1700010800,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-03: snapshot-agent-03 canonical bytes + signature 2`] = `307`;
+
+exports[`canonical envelope snapshots > envelope-03: snapshot-agent-03 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-03: snapshot-agent-03 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-03: snapshot-agent-03 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-03","allowedRecipients":["0xdddddddddddddddddddddddddddddddddddddddd"],"currency":"USDC","issuer":"pq1cccccccccccccccccccccccccccccccccccccccc","maxAmount":1000,"nonce":"cccccccccccccccccccccccccccccccc","rail":"usdc-base","validFrom":1700000000,"validUntil":1700010800,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-04: snapshot-agent-04 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-04","allowedRecipients":["in_1PXqBBGJhmH2PkSTSnapshot04"],"currency":"USD","issuer":"pq1dddddddddddddddddddddddddddddddddddddddd","maxAmount":49.99,"nonce":"dddddddddddddddddddddddddddddddd","rail":"stripe","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-04: snapshot-agent-04 canonical bytes + signature 2`] = `291`;
+
+exports[`canonical envelope snapshots > envelope-04: snapshot-agent-04 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-04: snapshot-agent-04 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-04: snapshot-agent-04 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-04","allowedRecipients":["in_1PXqBBGJhmH2PkSTSnapshot04"],"currency":"USD","issuer":"pq1dddddddddddddddddddddddddddddddddddddddd","maxAmount":49.99,"nonce":"dddddddddddddddddddddddddddddddd","rail":"stripe","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-05: snapshot-agent-05 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-05","allowedRecipients":["https://api.data.ai/premium/v1/resource"],"currency":"USDC","issuer":"pq1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","maxAmount":0.001,"nonce":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","rail":"x402","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-05: snapshot-agent-05 canonical bytes + signature 2`] = `300`;
+
+exports[`canonical envelope snapshots > envelope-05: snapshot-agent-05 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-05: snapshot-agent-05 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-05: snapshot-agent-05 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-05","allowedRecipients":["https://api.data.ai/premium/v1/resource"],"currency":"USDC","issuer":"pq1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","maxAmount":0.001,"nonce":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","rail":"x402","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-06: snapshot-agent-06 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-06","allowedRecipients":["IT60X0542811101000000123456"],"currency":"EUR","issuer":"pq1ffffffffffffffffffffffffffffffffffffffff","maxAmount":75000,"nonce":"ffffffffffffffffffffffffffffffff","rail":"airwallex","validFrom":1700000000,"validUntil":1700086400,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-06: snapshot-agent-06 canonical bytes + signature 2`] = `292`;
+
+exports[`canonical envelope snapshots > envelope-06: snapshot-agent-06 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-06: snapshot-agent-06 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-06: snapshot-agent-06 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-06","allowedRecipients":["IT60X0542811101000000123456"],"currency":"EUR","issuer":"pq1ffffffffffffffffffffffffffffffffffffffff","maxAmount":75000,"nonce":"ffffffffffffffffffffffffffffffff","rail":"airwallex","validFrom":1700000000,"validUntil":1700086400,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-07: snapshot-agent-07 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-07","allowedRecipients":["acct_1PXqBBGJhmH2PkST"],"currency":"USD","issuer":"pq10a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a","maxAmount":200,"nonce":"0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a","rail":"stripe","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-07: snapshot-agent-07 canonical bytes + signature 2`] = `281`;
+
+exports[`canonical envelope snapshots > envelope-07: snapshot-agent-07 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-07: snapshot-agent-07 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-07: snapshot-agent-07 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-07","allowedRecipients":["acct_1PXqBBGJhmH2PkST"],"currency":"USD","issuer":"pq10a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a","maxAmount":200,"nonce":"0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a","rail":"stripe","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-08: snapshot-agent-08 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-08","allowedRecipients":["GB29NWBK60161331926819","DE89370400440532013000"],"currency":"GBP","issuer":"pq11b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b","maxAmount":10,"nonce":"1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b","rail":"wise","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-08: snapshot-agent-08 canonical bytes + signature 2`] = `304`;
+
+exports[`canonical envelope snapshots > envelope-08: snapshot-agent-08 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-08: snapshot-agent-08 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-08: snapshot-agent-08 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-08","allowedRecipients":["GB29NWBK60161331926819","DE89370400440532013000"],"currency":"GBP","issuer":"pq11b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b","maxAmount":10,"nonce":"1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b","rail":"wise","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-09: snapshot-agent-09 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-09","allowedRecipients":["0x3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d"],"currency":"USDC","issuer":"pq12c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c","maxAmount":999.99,"nonce":"2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c","rail":"usdc-base","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-09: snapshot-agent-09 canonical bytes + signature 2`] = `309`;
+
+exports[`canonical envelope snapshots > envelope-09: snapshot-agent-09 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-09: snapshot-agent-09 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-09: snapshot-agent-09 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-09","allowedRecipients":["0x3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d"],"currency":"USDC","issuer":"pq12c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c","maxAmount":999.99,"nonce":"2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c","rail":"usdc-base","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-10: snapshot-agent-10 canonical bytes + signature 1`] = `"{"agent":"snapshot-agent-10","allowedRecipients":["https://api.premium.xyz/v2/data","https://api.premium.xyz/v2/models"],"currency":"USDC","issuer":"pq13e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e","maxAmount":1,"nonce":"3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e","rail":"x402","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonical envelope snapshots > envelope-10: snapshot-agent-10 canonical bytes + signature 2`] = `324`;
+
+exports[`canonical envelope snapshots > envelope-10: snapshot-agent-10 canonical bytes + signature 3`] = `6618`;
+
+exports[`canonical envelope snapshots > envelope-10: snapshot-agent-10 canonical bytes + signature 4`] = `3904`;
+
+exports[`canonical envelope snapshots > envelope-10: snapshot-agent-10 canonical bytes + signature 5`] = `"{"agent":"snapshot-agent-10","allowedRecipients":["https://api.premium.xyz/v2/data","https://api.premium.xyz/v2/models"],"currency":"USDC","issuer":"pq13e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e","maxAmount":1,"nonce":"3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e","rail":"x402","validFrom":1700000000,"validUntil":1700003600,"version":1}"`;
+
+exports[`canonicalJsonString stability > array with mixed types snapshots 1`] = `"{"list":[1,"two",true,null,{"x":3}]}"`;
+
+exports[`canonicalJsonString stability > empty object snapshots 1`] = `"{}"`;
+
+exports[`canonicalJsonString stability > nested object with sorted keys snapshots 1`] = `"{"a":2,"m":{"b":4,"y":3},"z":1}"`;
