@@ -24,11 +24,14 @@
     "demo:claude": "tsx examples/claude_agent_demo.ts",
     "demo:claude-code": "tsx examples/claude_code_payment.ts",
     "demo:basic": "tsx examples/basic.ts",
-    "test": "tsx tests/envelope.test.ts"
+    "test": "tsx tests/envelope.test.ts",
+    "test:canonical": "tsx tests/canonicalization.test.ts",
+    "test:all": "npm test && npm run test:canonical"
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1",
     "@noble/post-quantum": "^0.6.0",
+    "canonicalize": "^3.0.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
