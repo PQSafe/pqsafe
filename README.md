@@ -312,7 +312,7 @@ cd agent-pay
 npm install
 npm run demo          # mock mode — no credentials needed
 npm run demo:claude   # Claude Agents + Arbitrum on-chain demo
-npm test              # 17 guardrail tests
+npm test              # 23 guardrail tests
 ```
 
 For real Airwallex sandbox payments, see [agent-pay/DEMO_RECEIPTS.md](agent-pay/DEMO_RECEIPTS.md).
@@ -334,10 +334,11 @@ uvicorn app.main:app --reload
 | MCP server (Cloudflare) | `cd mcp-server && npm run deploy` |
 | Demo (Cloudflare Pages) | `cd demo && wrangler pages deploy .` |
 | Ledger (Cloudflare D1) | See `ledger/README.md` |
+| TypeScript SDK (npm) | `cd agent-pay && npm run build && npm publish` |
+| Mastra plugin (npm) | `cd plugins/mastra-pqsafe && npm run build && npm publish` |
 | Python SDK (PyPI) | `cd python-sdk && bash publish.sh` |
 | LangChain plugin (PyPI) | `cd plugins/langchain-pqsafe && bash publish.sh` |
 | CrewAI plugin (PyPI) | `cd plugins/crewai-pqsafe && bash publish.sh` |
-| Mastra plugin (npm) | `cd plugins/mastra-pqsafe && bash publish.sh` |
 
 ## License
 
