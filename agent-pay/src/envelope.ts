@@ -16,6 +16,7 @@ import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { z } from 'zod'
 import type { Rail, HexString, SignedEnvelope } from './types.js'
+import { canonicalJsonBytes } from './canonical.js'
 
 // ---------------------------------------------------------------------------
 // Zod schema
@@ -113,20 +114,10 @@ export function createEnvelope(params: CreateEnvelopeParams): SpendEnvelope {
 
 /**
  * Deterministically serialize an envelope to bytes for signing.
- * Keys are sorted for reproducibility across platforms.
+ * Uses RFC 8785 JSON Canonicalization Scheme (JCS) for cross-platform reproducibility.
  */
-function sortedJsonReplacer(_key: string, value: unknown): unknown {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b))
-    )
-  }
-  return value
-}
-
 function envelopeToBytes(envelope: SpendEnvelope): Uint8Array {
-  const sorted = JSON.stringify(envelope, sortedJsonReplacer)
-  return new TextEncoder().encode(sorted)
+  return canonicalJsonBytes(envelope)
 }
 
 /**
