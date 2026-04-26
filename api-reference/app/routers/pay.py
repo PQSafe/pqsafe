@@ -222,9 +222,17 @@ async def pay(body: PayRequest) -> PayResponse:
             memo=body.memo,
         )
     else:
+        # Wise, Stripe, USDC-Base, x402 are implemented in the TypeScript SDK.
+        # The REST API currently routes via Airwallex only. Use the SDK directly
+        # for other rails: npm i @pqsafe/agent-pay
         raise HTTPException(
             status_code=501,
-            detail=f"Rail '{rail}' is not yet implemented. Available: airwallex",
+            detail=(
+                f"Rail '{rail}' is not available via the REST API. "
+                "Wise, Stripe, USDC-Base, and x402 are supported by the TypeScript SDK "
+                "(npm i @pqsafe/agent-pay). REST API currently routes via Airwallex only. "
+                "Set rail='airwallex' in your envelope to use this endpoint."
+            ),
         )
 
     # ------------------------------------------------------------------
