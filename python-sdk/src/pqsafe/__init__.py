@@ -65,7 +65,40 @@ from .types import (
     SpendEnvelope,
 )
 
-__version__ = "0.1.0"
+# Adapters (v0.1.1)
+from .adapters import (
+    # AP2
+    ap2_mandate_to_spend_envelope,
+    spend_envelope_to_ap2_mandate,
+    verify_ap2_with_pq_wrapper,
+    IntentMandate,
+    CartMandate,
+    PaymentMandate,
+    PaymentItem,
+    PaymentMethodData,
+    ContactAddress,
+    # ACP
+    acp_token_to_spend_envelope,
+    spend_envelope_to_acp_token,
+    SharedPaymentToken,
+    SharedPaymentTokenUsageLimits,
+    CreateSharedPaymentTokenParams,
+)
+
+# Sprint 2 (v0.1.1)
+from .sprint2 import (
+    SpendPolicyMode,
+    SingleUsePolicy,
+    PerTxCapPolicy,
+    CumulativeCapPolicy,
+    SpendPolicy,
+    DEFAULT_SPEND_POLICY,
+    validate_spend_policy,
+    effective_policy,
+    assert_policy_consistency,
+)
+
+__version__ = "0.1.1"
 __all__ = [
     # Canonical JSON (RFC 8785)
     "canonical_json_bytes",
@@ -101,6 +134,32 @@ __all__ = [
     "amount_exceeds_ceiling_error",
     "envelope_expired_error",
     "envelope_not_yet_active_error",
+    # AP2 adapter (v0.1.1)
+    "ap2_mandate_to_spend_envelope",
+    "spend_envelope_to_ap2_mandate",
+    "verify_ap2_with_pq_wrapper",
+    "IntentMandate",
+    "CartMandate",
+    "PaymentMandate",
+    "PaymentItem",
+    "PaymentMethodData",
+    "ContactAddress",
+    # ACP adapter (v0.1.1)
+    "acp_token_to_spend_envelope",
+    "spend_envelope_to_acp_token",
+    "SharedPaymentToken",
+    "SharedPaymentTokenUsageLimits",
+    "CreateSharedPaymentTokenParams",
+    # Sprint 2 policy (v0.1.1)
+    "SpendPolicyMode",
+    "SingleUsePolicy",
+    "PerTxCapPolicy",
+    "CumulativeCapPolicy",
+    "SpendPolicy",
+    "DEFAULT_SPEND_POLICY",
+    "validate_spend_policy",
+    "effective_policy",
+    "assert_policy_consistency",
 ]
 
 

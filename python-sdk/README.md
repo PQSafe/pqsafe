@@ -87,6 +87,64 @@ Verify a `SignedEnvelope`. Raises `ValueError` on invalid signature or expired e
 
 Verify the envelope and POST to `/v1/pay`. Accepts a `PaymentRequest`, plain dict, or keyword args.
 
+## AP2 adapter (v0.1.1)
+
+Convert between [AP2 mandates](https://github.com/google-agentic-commerce/AP2) and PQSafe SpendEnvelopes:
+
+```python
+from pqsafe.adapters import ap2_mandate_to_spend_envelope, spend_envelope_to_ap2_mandate, IntentMandate
+
+# IntentMandate → SpendEnvelope
+mandate = IntentMandate(
+    mandateId="m-001",
+    merchantId="merchant-xyz",
+    description="Purchase intent",
+    maxAmount=100.0,
+    currency="USD",
+    expiresAt="2026-12-31T23:59:59Z",
+    agentId="my-agent-v1",
+    issuerAddress="pq1" + "a" * 40,
+)
+envelope = ap2_mandate_to_spend_envelope(mandate, issuer_address="pq1" + "a" * 40, ttl_seconds=3600)
+
+# SpendEnvelope → CartMandate
+cart = spend_envelope_to_ap2_mandate(envelope, "cart")
+
+# Verify an AP2 mandate with a PQ signature
+from pqsafe.adapters import verify_ap2_with_pq_wrapper
+valid = verify_ap2_with_pq_wrapper(mandate, pq_sig_bytes, pq_public_key_bytes)
+```
+
+## ACP adapter (v0.1.1)
+
+Convert between [Stripe ACP Shared Payment Tokens](https://stripe.com/docs/agent-commerce) and SpendEnvelopes:
+
+```python
+from pqsafe.adapters import acp_token_to_spend_envelope, spend_envelope_to_acp_token, SharedPaymentToken
+
+spt = SharedPaymentToken(...)  # from Stripe API
+envelope = acp_token_to_spend_envelope(spt, issuer_address="pq1" + "a" * 40)
+
+# Back to SPT creation params (for POST /v1/shared_payment_tokens)
+params = spend_envelope_to_acp_token(envelope, payment_method_id="pm_123")
+```
+
+Zero-decimal currencies (JPY, KRW, etc.) are handled automatically — no manual division by 100.
+
+## Sprint 2: Spend Policy (v0.1.1)
+
+Three policy modes for SpendEnvelopes:
+
+```python
+from pqsafe.sprint2 import SingleUsePolicy, PerTxCapPolicy, CumulativeCapPolicy
+from pqsafe.sprint2 import validate_spend_policy, assert_policy_consistency
+
+policy = validate_spend_policy({"mode": "per_tx_cap", "perTxLimit": 25.0})
+assert_policy_consistency(policy, max_amount=100.0)  # validates perTxLimit <= maxAmount
+```
+
+Revocation and issuer hierarchy stubs are included (Sprint 3 implementation: May 19 – Jun 8).
+
 ## Links
 
 - Handbook: https://pqsafe.xyz/handbook
