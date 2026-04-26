@@ -30,6 +30,12 @@ export * from './envelope.js'
 export * from './types.js'
 export * from './canonical.js'
 export * from './adapters/index.js'
+
+// Convenience re-exports: protocol namespace types at the top-level public API.
+// Consumers can import `AP2` or `StripeACP` directly from '@pqsafe/agent-pay'
+// without knowing the adapters/ sub-path.
+export type { AP2 } from './adapters/ap2.js'
+export type { Stripe as StripeACP } from './adapters/acp.js'
 export { getAgentPayConfig, setAgentPayConfig } from './config.js'
 export {
   commitEnvelopeToArbitrum,
