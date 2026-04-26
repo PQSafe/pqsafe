@@ -19,6 +19,8 @@ import { routePayment } from './rails/index.js'
 import type { RailConfig } from './rails/index.js'
 import type { SignedEnvelope, PaymentRequest, PaymentResult } from './types.js'
 import { autoSubmitToLedger } from './ledger.js'
+import { requestApproval as _requestApproval } from './approval.js'
+import type { ApprovalRequest as _ApprovalRequest } from './approval.js'
 
 export type { RailConfig } from './rails/index.js'
 export { probeX402Endpoint } from './rails/x402.js'
@@ -45,8 +47,23 @@ export {
   SPEND_ENVELOPE_REGISTRY_ABI,
 } from './arbitrum.js'
 export type { ArbitrumCommitConfig, CommitResult, EthTxParams } from './arbitrum.js'
-export { executeWithApproval, getTelegramChatId } from './approval.js'
-export type { ApprovalConfig, ApprovalInfo } from './approval.js'
+export { executeWithApproval, getTelegramChatId, requestApproval, getApprovalStatus, resolveApproval } from './approval.js'
+export type {
+  ApprovalConfig,
+  ApprovalInfo,
+  ApprovalChannel,
+  ApprovalRequest,
+  ApprovalResult,
+  ApprovalAuditEntry,
+  TelegramConfig,
+  SlackConfig,
+  EmailConfig,
+  WebhookConfig,
+  DiscordConfig,
+  SmsConfig,
+  WhatsappConfig,
+} from './approval.js'
+export { ApprovalRejectedError, ApprovalTimeoutError } from './approval.js'
 export {
   encodeTransferCalldata,
   toUsdcAtomicUnits,
@@ -71,14 +88,21 @@ export * from './sprint2/index.js'
  *   3. Temporal validity (validFrom / validUntil)
  *   4. Recipient allowlist check
  *   5. Amount ceiling check (request.amount <= envelope.maxAmount)
+ *   5b. Human approval gate (if approvalRequest provided, or amount >= requiresApprovalAbove)
  *   6. Route to rail connector
  *
- * @throws if any check fails — payments are only attempted if ALL checks pass.
+ * @param approvalRequest - Optional approval gate config. If omitted and amount is below any
+ *   configured threshold, the payment executes immediately. If provided, the payment is blocked
+ *   until a human approves via the configured channels.
+ * @throws {ApprovalRejectedError} if approval is rejected
+ * @throws {ApprovalTimeoutError} if approval times out
+ * @throws if any other check fails — payments are only attempted if ALL checks pass.
  */
 export async function executeAgentPayment(
   signed: SignedEnvelope,
   request: PaymentRequest,
   railConfig?: RailConfig,
+  approvalRequest?: _ApprovalRequest,
 ): Promise<PaymentResult> {
   // Step 1-3: Verify signature + schema + temporal validity
   const envelope = verifyEnvelope(signed)
@@ -100,6 +124,21 @@ export async function executeAgentPayment(
       `PQSafe: requested amount ${request.amount} ${envelope.currency} exceeds ` +
       `envelope maxAmount ${envelope.maxAmount} ${envelope.currency}`,
     )
+  }
+
+  // Step 5b: Human approval gate
+  // Triggered if: (a) explicit approvalRequest provided, OR
+  //               (b) envelope has requiresApprovalAbove and amount exceeds it
+  const requiresApproval = approvalRequest != null ||
+    ((envelope as unknown as { requiresApprovalAbove?: number }).requiresApprovalAbove != null &&
+      request.amount >= ((envelope as unknown as { requiresApprovalAbove?: number }).requiresApprovalAbove ?? Infinity))
+
+  if (requiresApproval && approvalRequest) {
+    await _requestApproval({
+      ...approvalRequest,
+      envelope: signed,
+      paymentRequest: request,
+    })
   }
 
   // Step 6: Route to rail
