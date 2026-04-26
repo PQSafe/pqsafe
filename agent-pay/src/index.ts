@@ -28,6 +28,8 @@ export type { LedgerRecord } from './ledger.js'
 
 export * from './envelope.js'
 export * from './types.js'
+export * from './canonical.js'
+export * from './adapters/index.js'
 export { getAgentPayConfig, setAgentPayConfig } from './config.js'
 export {
   commitEnvelopeToArbitrum,
