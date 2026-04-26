@@ -3,14 +3,12 @@
 [![npm version](https://img.shields.io/npm/v/@pqsafe/agent-pay?color=10b981&label=npm)](https://www.npmjs.com/package/@pqsafe/agent-pay)
 [![PyPI version](https://img.shields.io/pypi/v/pqsafe-agent-pay?color=10b981&label=PyPI)](https://pypi.org/project/pqsafe-agent-pay/)
 [![Tests](https://img.shields.io/badge/tests-23%2F23-10b981)](agent-pay/tests/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![API](https://img.shields.io/badge/API-live%20at%20api.pqsafe.xyz-10b981)](https://api.pqsafe.xyz/docs)
 
-**Your AI agent can now pay for the tools it needs.**
+Your AI agents are already moving money. The spend receipts they generate use RSA/ECDSA — signatures quantum computers will break within 7–15 years, inside your audit-retention window. **PQSafe AgentPay** wraps AP2, ACP, and x402 with FIPS 204 (ML-DSA-65) signing, producing spend-delegation envelopes that comply today and survive the cryptographic transition. Developers integrate free. Banks and enterprises pay for PQ migration attestations. No new payment rails — just compliance you can prove.
 
-PQSafe AgentPay lets a human sign a **spend envelope** — a cryptographically bound authorization that says *this agent can spend up to $X, to these recipients, for this long*. The agent presents the envelope to execute payments autonomously. No credit card sharing. No prompt injection escape. Full audit trail.
-
-Signatures use **ML-DSA-65 (NIST FIPS 204)** — the post-quantum standard that will remain secure against quantum computers.
+A human signs a **SpendEnvelope** — a cryptographically bound authorization: *this agent can spend up to $X, to these recipients, for this long*. The agent presents the envelope to execute payments autonomously. No credit card sharing. No prompt injection escape. Full audit trail on Arbitrum.
 
 ## The killer demo
 
@@ -340,6 +338,21 @@ uvicorn app.main:app --reload
 | LangChain plugin (PyPI) | `cd plugins/langchain-pqsafe && bash publish.sh` |
 | CrewAI plugin (PyPI) | `cd plugins/crewai-pqsafe && bash publish.sh` |
 
+## Repository layout
+
+| Directory | Description |
+|-----------|-------------|
+| [`agent-pay/`](agent-pay/) | TypeScript SDK — envelopes, ML-DSA-65 signing, multi-rail execution |
+| [`python-sdk/`](python-sdk/) | Python SDK — mirrors TypeScript SDK |
+| [`evm/`](evm/) | Arbitrum SpendEnvelopeRegistry — on-chain audit ledger |
+| [`mcp-server/`](mcp-server/) | MCP server for Claude Desktop / Cursor |
+| [`api-reference/`](api-reference/) | FastAPI REST API — hosted at api.pqsafe.xyz |
+| [`ledger/`](ledger/) | Anonymized audit ledger — Cloudflare D1 |
+| [`plugins/`](plugins/) | LangChain, CrewAI, Mastra framework integrations |
+| [`demo/`](demo/) | Browser demo — demo.pqsafe.xyz |
+| [`handbook/`](handbook/) | pqsafe.xyz/handbook source |
+| [`extension/`](extension/) | Chrome extension wallet (first iteration; superseded by agent-pay) |
+
 ## License
 
-MIT
+Apache 2.0 — see [LICENSE](LICENSE).
