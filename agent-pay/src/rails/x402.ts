@@ -246,3 +246,131 @@ export async function probeX402Endpoint(
     return null
   }
 }
+
+// ---------------------------------------------------------------------------
+// Named x402 protocol functions (per x402.org spec)
+// ---------------------------------------------------------------------------
+
+export interface X402ResourceResult {
+  /** HTTP status of the response */
+  status: number
+  /** Payment requirements if 402 was returned, null otherwise */
+  requirements: X402PaymentRequirements | null
+  /** Response body text if resource was served (status 200) */
+  body: string | null
+}
+
+export interface X402PaymentProof {
+  /** On-chain tx hash or signed off-chain receipt */
+  txHash: string
+  /** Token amount in atomic units (e.g. USDC 6dp) */
+  amount: string
+  /** Recipient address from requirements */
+  to: string
+  /** Unix timestamp */
+  timestamp: number
+  /** X-Payment header value (base64url-encoded) */
+  header: string
+}
+
+/**
+ * Step 1: GET a URL and parse the 402 Payment Required response.
+ * Returns the payment requirements needed to access the resource.
+ */
+export async function requestResource(
+  url: string,
+  config?: X402Config,
+): Promise<X402ResourceResult> {
+  const fetchFn = config?.fetchFn ?? fetch
+  const timeoutMs = config?.timeoutMs ?? 30_000
+
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+
+  try {
+    const res = await fetchFn(url, {
+      method: 'GET',
+      signal: controller.signal,
+    })
+
+    if (res.status === 200) {
+      const body = await res.text()
+      return { status: 200, requirements: null, body }
+    }
+
+    if (res.status !== 402) {
+      return { status: res.status, requirements: null, body: null }
+    }
+
+    const reqHeader = res.headers.get('X-Payment-Requirements') ??
+      res.headers.get('x-payment-requirements')
+    if (!reqHeader) {
+      throw new Error('x402: 402 response missing X-Payment-Requirements header')
+    }
+
+    const requirements = parsePaymentRequirements(reqHeader)
+    return { status: 402, requirements, body: null }
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+/**
+ * Step 2: Produce a payment proof for the given requirements.
+ * In real mode this executes an on-chain USDC transfer.
+ * Callers may inject a txHash from an already-executed on-chain transfer.
+ */
+export function signPayment(
+  requirements: X402PaymentRequirements,
+  txHashOrProof: string,
+): X402PaymentProof {
+  const amount = requirements.amount ?? '0'
+  const to = requirements.to
+  const timestamp = Math.floor(Date.now() / 1000)
+  const header = encodePaymentHeader(txHashOrProof, amount, to)
+
+  return {
+    txHash: txHashOrProof,
+    amount,
+    to,
+    timestamp,
+    header,
+  }
+}
+
+/**
+ * Step 3: Re-GET the URL with the X-Payment header containing the proof.
+ * Returns the resource body on success (HTTP 200).
+ */
+export async function retryWithPayment(
+  url: string,
+  proof: X402PaymentProof,
+  config?: X402Config,
+): Promise<{ status: number; body: string }> {
+  const fetchFn = config?.fetchFn ?? fetch
+  const timeoutMs = config?.timeoutMs ?? 30_000
+
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+
+  try {
+    const res = await fetchFn(url, {
+      method: 'GET',
+      headers: {
+        'X-Payment': proof.header,
+        'X-Payment-TxHash': proof.txHash,
+      },
+      signal: controller.signal,
+    })
+
+    const body = await res.text()
+
+    if (!res.ok && res.status !== 200) {
+      throw new Error(`x402: payment rejected by server (${res.status}): ${body}`)
+    }
+
+    return { status: res.status, body }
+  } finally {
+    clearTimeout(timer)
+  }
+}

@@ -28,7 +28,13 @@
     "test:canonical": "tsx tests/canonicalization.test.ts",
     "test:sprint2": "tsx tests/sprint2_errors.test.ts",
     "test:adapters": "tsx tests/adapters.test.ts",
-    "test:all": "npm test && npm run test:canonical && npm run test:sprint2 && npm run test:adapters"
+    "test:rails:wise": "tsx tests/rails/wise.test.ts",
+    "test:rails:stripe": "tsx tests/rails/stripe.test.ts",
+    "test:rails:usdc": "tsx tests/rails/usdc_base.test.ts",
+    "test:rails:x402": "tsx tests/rails/x402.test.ts",
+    "test:rails:router": "tsx tests/rails/selectRail.test.ts",
+    "test:rails": "npm run test:rails:wise && npm run test:rails:stripe && npm run test:rails:usdc && npm run test:rails:x402 && npm run test:rails:router",
+    "test:all": "npm test && npm run test:canonical && npm run test:sprint2 && npm run test:adapters && npm run test:rails"
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1",
