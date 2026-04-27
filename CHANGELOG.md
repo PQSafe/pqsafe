@@ -8,6 +8,21 @@ Format follows [Conventional Commits](https://www.conventionalcommits.org/) and 
 
 ## [Unreleased]
 
+### Fixed
+- `fbf0b55` — `fix(x402)`: wrap `verifyEnvelope` in try/catch for proper error propagation in `agent-pay/demo/x402-demo.ts`; 402 errors were previously silently swallowed
+
+### Chore
+- `2faeb30` — `chore(evm)`: track Sepolia deploy script (`evm/script/DeployV2_1_Sepolia.s.sol`), `VerifyOnEtherscan.sh`, subgraph, Tenderly actions, Forta agent, and e2e/integration test scaffolding
+
+### Refactored
+- `bf2933a` — `refactor(cli)`: export `main()` and all handlers from `src/cli/admin.ts` for testability; enables coverage smoke tests for admin CLI
+
+### Tests
+- `11385ff` — `test(evm)`: raise `advanceEpoch` gas budgets to match OpenZeppelin AccessControl overhead (Foundry suite now passes all 141 tests)
+
+### Docs
+- `a713cf7` — `docs`: generate TypeDoc API reference to `docs/api/` from all public exports in `agent-pay/src/`
+
 ### Added
 - Coverage smoke tests for `src/cli/admin.ts` and `src/contracts/registry-config.ts` — lifts total line coverage to 81% (above 80% CI threshold)
 - Additional x402 error-path tests: `probeX402Endpoint`, real-mode throws, recipient allowlist validation, 200/500 passthrough
