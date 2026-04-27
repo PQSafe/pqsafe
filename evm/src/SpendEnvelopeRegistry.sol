@@ -5,18 +5,18 @@ pragma solidity ^0.8.24;
  * @title SpendEnvelopeRegistry
  * @notice On-chain audit ledger for PQSafe AgentPay SpendEnvelopes.
  *
- * An AI agent operator calls `commit()` before or during a payment to
+ * An AI agent operator calls commit() before or during a payment to
  * immutably record: (a) the agent identifier, (b) the ML-DSA-65 envelope
  * hash, (c) the spend cap, (d) the expiry, and (e) a compact 32-byte
  * fingerprint of the ML-DSA-65 signature.
  *
- * Verifiers — compliance officers, auditors, counter-parties — can call
- * `isCommitted()` to confirm that a given payment was pre-authorized.
+ * Verifiers (compliance officers, auditors, counter-parties) can call
+ * isCommitted() to confirm that a given payment was pre-authorized.
  *
  * NOTE: This contract does NOT attempt to verify ML-DSA-65 signatures
  * on-chain. Full on-chain verification is possible but expensive (~50M gas
  * for a naive Solidity port). The pattern here is:
- *   1. Operator verifies signature off-chain via @pqsafe/agent-pay SDK.
+ *   1. Operator verifies signature off-chain via the pqsafe agent-pay SDK.
  *   2. Operator commits the envelope hash + sig fingerprint on-chain.
  *   3. Anyone can verify the commitment exists; anyone with the full
  *      envelope JSON can re-verify the ML-DSA-65 signature off-chain.

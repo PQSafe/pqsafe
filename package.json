@@ -1,5 +1,16 @@
 {
   "name": "pqsafe",
   "private": true,
-  "workspaces": ["extension", "landing", "agent-pay"]
+  "workspaces": [
+    "extension",
+    "landing",
+    "agent-pay"
+  ],
+  "scripts": {
+    "docs:api": "typedoc --options typedoc.json"
+  },
+  "devDependencies": {
+    "typedoc": "^0.28.19",
+    "typedoc-plugin-markdown": "^4.11.0"
+  }
 }

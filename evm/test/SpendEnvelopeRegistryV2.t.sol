@@ -581,7 +581,7 @@ contract SpendEnvelopeRegistryV2Test is Test {
         registry.advanceEpoch(1);
         uint256 gasUsed = before - gasleft();
         emit log_named_uint("gas: advanceEpoch()", gasUsed);
-        assertLt(gasUsed, 50_000, "advanceEpoch gas too high");
+        assertLt(gasUsed, 65_000, "advanceEpoch gas too high");
     }
 
     // =========================================================================

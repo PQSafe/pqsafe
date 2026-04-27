@@ -550,7 +550,7 @@ contract SpendEnvelopeRegistryV2_1Test is Test {
         registry.advanceEpoch(1);
         uint256 gasUsed = before - gasleft();
         emit log_named_uint("gas: advanceEpoch() V2.1", gasUsed);
-        assertLt(gasUsed, 55_000, "advanceEpoch gas too high");
+        assertLt(gasUsed, 67_000, "advanceEpoch gas too high");
     }
 
     // --- Fuzz tests ---

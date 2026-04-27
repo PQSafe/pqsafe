@@ -1,0 +1,24 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "PQSafe AgentPay API Reference",
+  "entryPoints": ["agent-pay/src/index.ts"],
+  "entryPointStrategy": "expand",
+  "out": "docs/src/content/docs/api-reference",
+  "tsconfig": "agent-pay/tsconfig.json",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "excludeExternals": false,
+  "includeVersion": true,
+  "categorizeByGroup": true,
+  "githubPages": false,
+  "navigationLinks": {
+    "GitHub": "https://github.com/PQSafe/pqsafe",
+    "npm": "https://www.npmjs.com/package/@pqsafe/agent-pay"
+  },
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  }
+}
