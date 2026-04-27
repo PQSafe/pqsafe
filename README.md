@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@pqsafe/agent-pay?color=10b981&label=npm)](https://www.npmjs.com/package/@pqsafe/agent-pay)
 [![PyPI version](https://img.shields.io/pypi/v/pqsafe-agent-pay?color=10b981&label=PyPI)](https://pypi.org/project/pqsafe-agent-pay/)
-[![Tests](https://img.shields.io/badge/tests-184%2F184-10b981)](agent-pay/tests/)
+[![Tests](https://img.shields.io/badge/tests-221%2F221-10b981)](agent-pay/tests/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![API](https://img.shields.io/badge/API-live%20at%20api.pqsafe.xyz-10b981)](https://api.pqsafe.xyz/docs)
 
