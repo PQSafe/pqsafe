@@ -153,17 +153,58 @@ describe('admin.ts underlying revocation API (mock store)', () => {
   })
 })
 
-// Direct import of admin module — exercises parseArgs + main() dispatch
-// for the help path (no network, no exit side effects since we can't safely
-// mock process.exit in ESM without module isolation)
-describe('admin.ts module structure', () => {
-  it('module file exists and is importable (TypeScript compiles)', async () => {
-    // This test simply verifies the module can be resolved by the TypeScript
-    // compiler / Vitest transform without syntax errors.
-    // The actual runtime is tested via the revocation API above.
+// Smoke tests using the newly exported handlers + parseArgs
+describe('admin.ts exported API smoke tests', () => {
+  beforeEach(() => {
+    process.env['PQSAFE_REVOCATION_MOCK'] = 'true'
+  })
+  afterEach(() => {
+    delete process.env['PQSAFE_REVOCATION_MOCK']
+  })
+
+  it('parseArgs correctly parses command + positional + flags', async () => {
+    const { parseArgs } = await import('../src/cli/admin.ts')
+    const result = parseArgs(['node', 'admin.ts', 'revoke', '0xabc', '--reason', 'test'])
+    expect(result.command).toBe('revoke')
+    expect(result.positional).toEqual(['0xabc'])
+    expect(result.flags['reason']).toBe('test')
+  })
+
+  it('parseArgs handles boolean flags (no value after flag)', async () => {
+    const { parseArgs } = await import('../src/cli/admin.ts')
+    const result = parseArgs(['node', 'admin.ts', 'status', '--verbose'])
+    expect(result.command).toBe('status')
+    expect(result.flags['verbose']).toBe('true')
+  })
+
+  it('cmdGetEpoch returns epoch for fresh issuer via exported handler', async () => {
+    const { cmdGetEpoch } = await import('../src/cli/admin.ts')
+    const logs: string[] = []
+    const orig = console.log
+    console.log = (...a: unknown[]) => { logs.push(a.map(String).join(' ')) }
+    try {
+      await cmdGetEpoch({ issuer: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' })
+    } finally {
+      console.log = orig
+    }
+    expect(logs.join('\n')).toMatch(/epoch/)
+  })
+
+  it('main() is exported and is a function', async () => {
     const mod = await import('../src/cli/admin.ts')
-    // admin.ts has no named exports (it's a CLI entry), so mod is essentially {}
-    // The fact that it resolves without throwing = compile + module-level code OK
-    expect(mod).toBeDefined()
+    expect(typeof mod.main).toBe('function')
+  })
+
+  it('printHelp outputs usage info without throwing', async () => {
+    const { printHelp } = await import('../src/cli/admin.ts')
+    const logs: string[] = []
+    const orig = console.log
+    console.log = (...a: unknown[]) => { logs.push(a.map(String).join(' ')) }
+    try {
+      printHelp()
+    } finally {
+      console.log = orig
+    }
+    expect(logs.join('\n')).toMatch(/pqsafe-admin/)
   })
 })

@@ -49,6 +49,14 @@
     "typescript": "^5.7.0",
     "vitest": "^4.1.5"
   },
+  "author": {
+    "name": "PQSafe",
+    "email": "dev@pqsafe.xyz",
+    "url": "https://pqsafe.xyz"
+  },
+  "bugs": {
+    "url": "https://github.com/PQSafe/pqsafe/issues"
+  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

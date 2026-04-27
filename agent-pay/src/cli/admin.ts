@@ -151,10 +151,10 @@ Environment:
 }
 
 // ---------------------------------------------------------------------------
-// Main entry point
+// Main entry point (exported for testability)
 // ---------------------------------------------------------------------------
 
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   const { command, positional, flags } = parseArgs(process.argv)
 
   switch (command) {
@@ -183,7 +183,19 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((err) => {
-  console.error('Fatal:', err instanceof Error ? err.message : String(err))
-  process.exit(1)
-})
+// Export command handlers for unit testing
+export { cmdRevoke, cmdAdvanceEpoch, cmdGetEpoch, cmdStatus, parseArgs, printHelp }
+
+// Only invoke when run directly as a script
+const isMain = process.argv[1] !== undefined && (
+  import.meta.url === new URL(process.argv[1], 'file:').href ||
+  process.argv[1].endsWith('/admin.js') ||
+  process.argv[1].endsWith('/admin.ts')
+)
+
+if (isMain) {
+  main().catch((err) => {
+    console.error('Fatal:', err instanceof Error ? err.message : String(err))
+    process.exit(1)
+  })
+}
