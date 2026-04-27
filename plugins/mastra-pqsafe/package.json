@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Mastra integration for PQSafe AgentPay — post-quantum safe payments for AI workflows",
   "keywords": ["mastra", "pqsafe", "payments", "ai-agents", "post-quantum", "ml-dsa"],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "PQSafe <dev@pqsafe.xyz>",
   "homepage": "https://pqsafe.xyz",
   "repository": {
