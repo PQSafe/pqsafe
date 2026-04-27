@@ -1,0 +1,41 @@
+# CODEOWNERS — PQSafe AgentPay
+# Syntax: <pattern> <owner1> [owner2 ...]
+# GitHub enforces review from at least one owner before merge.
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# --- Global fallback ---
+# All files not matched below require review from the founder.
+*                                   @raymondchau
+
+# --- Core cryptographic envelope ---
+# Any change to signing, verification, or canonical JSON requires
+# founder sign-off (production crypto — see CONTRIBUTING.md).
+/agent-pay/src/envelope.ts          @raymondchau
+/agent-pay/src/canonical.ts         @raymondchau
+/agent-pay/src/types.ts             @raymondchau
+
+# --- EVM contracts ---
+# Solidity contracts require founder + future engineer #1 review.
+/evm/contracts/                     @raymondchau @eng1-placeholder
+
+# --- Rail adapters ---
+# New rails can be reviewed by engineer #1 once onboarded.
+/agent-pay/src/rails/               @raymondchau @eng1-placeholder
+
+# --- CI / GitHub Actions ---
+# Any workflow change requires founder review (security-sensitive).
+/.github/workflows/                 @raymondchau
+
+# --- Security policy ---
+/SECURITY.md                        @raymondchau
+/.github/ISSUE_TEMPLATE/security-concern.md  @raymondchau
+
+# --- Documentation ---
+# Docs can be merged by any maintainer; founder is informed.
+/README.md                          @raymondchau
+/CONTRIBUTING.md                    @raymondchau
+/docs/                              @raymondchau @eng1-placeholder
+
+# --- Tests ---
+/agent-pay/tests/                   @raymondchau @eng1-placeholder
+/agent-pay/src/**/*.test.ts         @raymondchau @eng1-placeholder
