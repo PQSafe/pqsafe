@@ -32,7 +32,9 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "test:integration:watch": "vitest --config vitest.integration.config.ts"
+    "test:integration:watch": "vitest --config vitest.integration.config.ts",
+    "bench": "tsx bench/bench.ts",
+    "bench:ci": "tsx bench/bench.ts --json"
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1",
