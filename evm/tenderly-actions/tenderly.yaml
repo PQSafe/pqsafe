@@ -1,0 +1,39 @@
+account_id: "pqsafe"
+project_slug: "pqsafe-registry-v2"
+provider_version: v1
+
+actions:
+  circuit-breaker:
+    runtime: v2
+    description: "PQSafe V2.1 circuit-breaker — monitors commit/revoke/epoch rates and calls pause-relay webhook on threshold breach"
+    sources: src
+    entrypoint: circuit-breaker:circuitBreakerAction
+
+    # Trigger: any transaction touching the V2.1 registry on Arbitrum One
+    trigger:
+      type: transaction
+      transaction:
+        status:
+          - mined
+        filters:
+          - network: 42161    # Arbitrum One
+            to: "${CONTRACT_ADDRESS}"
+          - network: 421614   # Arbitrum Sepolia (testing)
+            to: "${CONTRACT_ADDRESS_SEPOLIA}"
+
+    # Secrets (set via `tenderly actions set-secret <key> <value>`)
+    # These are NOT committed to source — configure via Tenderly dashboard or CLI
+    execution:
+      retry_on_failure: false
+      parallel_runs: false
+
+# Tenderly project secrets to configure:
+#   CONTRACT_ADDRESS         — V2.1 mainnet address (Arbitrum One)
+#   CONTRACT_ADDRESS_SEPOLIA — V2.1 Sepolia address (testing)
+#   PAUSE_RELAY_URL          — https://pause-relay.pqsafe.workers.dev/webhook
+#   RELAY_HMAC_SECRET        — shared secret for HMAC-SHA256 validation
+#
+# Set secrets:
+#   tenderly actions set-secret CONTRACT_ADDRESS 0x...
+#   tenderly actions set-secret PAUSE_RELAY_URL https://...
+#   tenderly actions set-secret RELAY_HMAC_SECRET <random_256bit_hex>

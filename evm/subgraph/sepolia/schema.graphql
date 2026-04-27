@@ -1,0 +1,107 @@
+# PQSafe AgentPay — Subgraph Schema
+# SpendEnvelopeRegistryV2_1 | Arbitrum Sepolia
+#
+# Query examples:
+#   Active envelopes: { envelopes(where: {status: "PENDING"}) { id maxAmount currency validUntil } }
+#   Spend by issuer:  { envelopes(where: {issuer: "0x..."}) { id spentAmount } }
+#   Pause history:    { pauseEvents(orderBy: blockTimestamp, orderDirection: desc) { id actor event } }
+
+type Envelope @entity {
+  "envelopeId (keccak256 of canonical JSON)"
+  id: ID!
+
+  "Address that committed this envelope (ISSUER_ROLE holder)"
+  issuer: Bytes!
+
+  "Operator address (same as issuer for standard flow)"
+  operator: Bytes!
+
+  "Maximum authorised amount (6 decimal precision, e.g. 100_000_000 = $100.00)"
+  maxAmount: BigInt!
+
+  "ISO 4217 currency code packed as bytes3 (e.g. 'USD')"
+  currency: String!
+
+  "Unix timestamp after which envelope is expired"
+  validUntil: BigInt!
+
+  "bytes16 nonce for deduplication"
+  nonce: Bytes!
+
+  "ML-DSA-65 signature fingerprint (keccak256 of public key or sig)"
+  sigFingerprint: Bytes!
+
+  "Issuer epoch at time of commit — used for bulk invalidation"
+  issuerEpochAtCommit: BigInt!
+
+  "Chain ID of commit transaction"
+  chainId: BigInt!
+
+  "PENDING | USED | REVOKED"
+  status: String!
+
+  "Block timestamp of commit"
+  committedAt: BigInt!
+
+  "Transaction hash of commit"
+  commitTxHash: Bytes!
+
+  # --- Usage ---
+  "Address that called markUsed() (OPERATOR_ROLE)"
+  usedBy: Bytes
+
+  "Payment rail transaction reference"
+  txReference: Bytes
+
+  "Actual amount charged"
+  amountUsed: BigInt
+
+  "Block timestamp of markUsed()"
+  usedAt: BigInt
+
+  # --- Cumulative spend ---
+  "Running cumulative spend across multi-draw calls"
+  spentAmount: BigInt!
+
+  # --- Revocation ---
+  revocation: EnvelopeRevocation @derivedFrom(field: "envelope")
+}
+
+type EnvelopeRevocation @entity {
+  "envelopeId"
+  id: ID!
+  envelope: Envelope!
+  revokedBy: Bytes!
+  revokedAt: BigInt!
+  reasonHash: Bytes!
+  txHash: Bytes!
+}
+
+type IssuerEpoch @entity {
+  "issuer address"
+  id: ID!
+  issuer: Bytes!
+  currentEpoch: BigInt!
+  lastAdvancedAt: BigInt!
+  txHash: Bytes!
+}
+
+type PauseEvent @entity {
+  "txHash-logIndex"
+  id: ID!
+  "PAUSED or UNPAUSED"
+  event: String!
+  actor: Bytes!
+  blockTimestamp: BigInt!
+  txHash: Bytes!
+}
+
+type CumulativeSpend @entity {
+  "envelopeId-increment (for per-draw tracking)"
+  id: ID!
+  envelope: Envelope!
+  incrementAmount: BigInt!
+  runningTotal: BigInt!
+  blockTimestamp: BigInt!
+  txHash: Bytes!
+}

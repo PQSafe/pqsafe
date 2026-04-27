@@ -167,4 +167,112 @@ describe('x402 rail', () => {
     expect(result.meta?.protocol).toBe('x402')
     expect(typeof result.meta?.onChainTxHash).toBe('string')
   })
+
+  it('requestResource returns status=200 body directly when server responds 200 (no payment needed)', async () => {
+    // Cover line 298: server responds 200 immediately
+    const immediateOkFetch = async (_input: RequestInfo | URL, _init?: RequestInit): Promise<Response> => {
+      return new Response('{"free":"content"}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    const result = await requestResource(X402_URL, { fetchFn: immediateOkFetch as typeof fetch })
+    expect(result.status).toBe(200)
+    expect(result.body).toContain('free')
+    expect(result.requirements).toBeNull()
+  })
+
+  it('requestResource returns non-402 status passthrough (e.g. 500)', async () => {
+    // Cover line 302: server responds with non-200, non-402 status
+    const serverErrorFetch = async (_input: RequestInfo | URL, _init?: RequestInit): Promise<Response> => {
+      return new Response('Internal Server Error', { status: 500 })
+    }
+    const result = await requestResource(X402_URL, { fetchFn: serverErrorFetch as typeof fetch })
+    expect(result.status).toBe(500)
+    expect(result.requirements).toBeNull()
+    expect(result.body).toBeNull()
+  })
+
+  it('requestResource throws when 402 has no X-Payment-Requirements header', async () => {
+    // Cover line 308: missing header on 402
+    const missingHeaderFetch = async (_input: RequestInfo | URL, _init?: RequestInit): Promise<Response> => {
+      return new Response('payment required', { status: 402 })
+    }
+    await expect(requestResource(X402_URL, { fetchFn: missingHeaderFetch as typeof fetch }))
+      .rejects.toThrow('X-Payment-Requirements')
+  })
+
+  it('retryWithPayment throws when server rejects payment (non-ok response)', async () => {
+    // Cover line 369: payment rejected by server
+    const rejectFetch = buildX402MockFetch({ rejectPayment: true })
+    const proof = signPayment(MOCK_REQUIREMENTS, MOCK_TX_HASH)
+    await expect(
+      retryWithPayment(X402_URL, proof, { fetchFn: rejectFetch as typeof fetch })
+    ).rejects.toThrow('payment rejected')
+  })
+
+  it('executePayment real-mode throws with helpful message (no signer injected)', async () => {
+    // Cover lines 206-230: real-mode path in executePayment
+    process.env.PQSAFE_MOCK_MODE = ''
+    const { setAgentPayConfig } = await import('../../src/config.js')
+    setAgentPayConfig({ mockMode: false })
+
+    const mockFetch = buildX402MockFetch() as typeof fetch
+    const env = makeEnvelope()
+    const req: PaymentRequest = { recipient: X402_URL, amount: 1, memo: 'x402 real-mode test' }
+
+    await expect(executePayment(env, req, { fetchFn: mockFetch })).rejects.toThrow(
+      /real-mode|usdcBaseSigner|PQSAFE_MOCK_MODE/i
+    )
+
+    // Restore mock mode for subsequent tests
+    setAgentPayConfig({ mockMode: true })
+    process.env.PQSAFE_MOCK_MODE = '1'
+  })
+
+  it('executePayment real-mode throws when recipient not in envelope allowlist', async () => {
+    // Cover line 207: recipient not in allowedRecipients
+    process.env.PQSAFE_MOCK_MODE = ''
+    const { setAgentPayConfig } = await import('../../src/config.js')
+    setAgentPayConfig({ mockMode: false })
+
+    const badRecipient = '0x' + 'bad'.repeat(13) + 'b'
+    const mockFetch = async (_input: RequestInfo | URL, _init?: RequestInit): Promise<Response> => {
+      const reqHeader = Buffer.from(JSON.stringify({
+        ...MOCK_REQUIREMENTS,
+        to: badRecipient,
+      })).toString('base64url')
+      return new Response('{}', { status: 402, headers: { 'X-Payment-Requirements': reqHeader } })
+    }
+
+    const env = makeEnvelope() // allowedRecipients = [MOCK_RECIPIENT, X402_URL]
+    const req: PaymentRequest = { recipient: X402_URL, amount: 1, memo: 'disallowed recipient test' }
+
+    await expect(executePayment(env, req, { fetchFn: mockFetch as typeof fetch })).rejects.toThrow(
+      /allowlist|not in/i
+    )
+
+    setAgentPayConfig({ mockMode: true })
+    process.env.PQSAFE_MOCK_MODE = '1'
+  })
+
+  it('probeX402Endpoint returns requirements when server responds 402 with header', async () => {
+    // Cover lines 232-246: probeX402Endpoint
+    const { probeX402Endpoint } = await import('../../src/rails/x402.js')
+    const mockFetch = buildX402MockFetch() as typeof fetch
+    const result = await probeX402Endpoint(X402_URL, mockFetch)
+    expect(result).not.toBeNull()
+    expect(result?.to).toBe(MOCK_RECIPIENT)
+  })
+
+  it('probeX402Endpoint returns null when server responds 200 (no x402 support)', async () => {
+    const { probeX402Endpoint } = await import('../../src/rails/x402.js')
+    const okFetch = async (_: RequestInfo | URL): Promise<Response> => new Response('ok', { status: 200 })
+    const result = await probeX402Endpoint(X402_URL, okFetch as typeof fetch)
+    expect(result).toBeNull()
+  })
+
+  it('probeX402Endpoint returns null when fetch throws', async () => {
+    const { probeX402Endpoint } = await import('../../src/rails/x402.js')
+    const throwFetch = async (_: RequestInfo | URL): Promise<Response> => { throw new Error('network error') }
+    const result = await probeX402Endpoint(X402_URL, throwFetch as typeof fetch)
+    expect(result).toBeNull()
+  })
 })

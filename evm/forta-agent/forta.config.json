@@ -1,0 +1,12 @@
+{
+  "agentId": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "chainIds": [42161, 421614],
+  "rpcUrls": {
+    "42161": "https://arb1.arbitrum.io/rpc",
+    "421614": "https://sepolia-rollup.arbitrum.io/rpc"
+  },
+  "ipfsGatewayUrl": "https://ipfs.forta.network",
+  "localRpcUrl": "https://arb1.arbitrum.io/rpc",
+  "scannerNetworkId": 42161,
+  "developerMode": false
+}

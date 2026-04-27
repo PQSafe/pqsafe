@@ -1,0 +1,47 @@
+specVersion: 0.0.5
+description: PQSafe AgentPay SpendEnvelopeRegistry V2.1 — Arbitrum Sepolia
+repository: https://github.com/pqsafe/pqsafe
+
+schema:
+  file: ./schema.graphql
+
+dataSources:
+  - kind: ethereum/contract
+    name: SpendEnvelopeRegistryV2_1
+    network: arbitrum-sepolia
+    source:
+      # REPLACE after deploy: Raymond pastes the Sepolia contract address here
+      address: "0x0000000000000000000000000000000000000000"
+      abi: SpendEnvelopeRegistryV2_1
+      # Block number of the deploy transaction (get from Arbiscan after deploy).
+      # Setting this avoids syncing from genesis and speeds up indexing enormously.
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Envelope
+        - EnvelopeRevocation
+        - IssuerEpoch
+        - PauseEvent
+        - CumulativeSpend
+      abis:
+        - name: SpendEnvelopeRegistryV2_1
+          file: ../../out/SpendEnvelopeRegistryV2_1.sol/SpendEnvelopeRegistryV2_1.json
+      eventHandlers:
+        - event: EnvelopeCommitted(indexed address,indexed address,indexed bytes32,bytes32,uint128,bytes3,uint64,bytes16,uint64,uint256)
+          handler: handleEnvelopeCommitted
+        - event: EnvelopeUsed(indexed bytes32,indexed address,bytes32,uint128)
+          handler: handleEnvelopeUsed
+        - event: EnvelopeRevoked(indexed bytes32,indexed address,bytes32)
+          handler: handleEnvelopeRevoked
+        - event: CumulativeSpendRecorded(indexed bytes32,uint128,uint128)
+          handler: handleCumulativeSpendRecorded
+        - event: IssuerEpochAdvanced(indexed address,uint64,uint64)
+          handler: handleIssuerEpochAdvanced
+        - event: Paused(address)
+          handler: handlePaused
+        - event: Unpaused(address)
+          handler: handleUnpaused
+      file: ./mappings.ts
