@@ -171,13 +171,17 @@ async function runClient() {
   })
 
   const signed = signEnvelope(envelope, secretKey, publicKey)
-  const verifyResult = verifyEnvelope(signed)
 
-  if (!verifyResult.valid) {
-    fail(`Verification failed: ${verifyResult.error}`)
+  // verifyEnvelope throws on failure; wrap in try/catch for demo error reporting
+  let verifiedEnvelope: ReturnType<typeof verifyEnvelope>
+  try {
+    verifiedEnvelope = verifyEnvelope(signed)
+  } catch (verifyErr) {
+    fail(`Verification failed: ${verifyErr instanceof Error ? verifyErr.message : String(verifyErr)}`)
     process.exit(1)
   }
 
+  void verifiedEnvelope // verification confirmed (throws on failure)
   say('Max amount', `${envelope.maxAmount} USDC`)
   say('Required', `${requiredUSDC} USDC`)
   say('Signature', `${signed.signature.length / 2} bytes (ML-DSA-65)`)
