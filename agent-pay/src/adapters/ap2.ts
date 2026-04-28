@@ -544,7 +544,7 @@ export function spendEnvelopeToAp2Mandate(
  * the SpendEnvelope schema.
  *
  * @param mandate - The AP2 mandate received from the agent (any type).
- * @param pqSig - Hex-encoded ML-DSA-65 signature (produced by PQSafe wallet).
+ * @param pqSig - Hex-encoded ML-DSA-65 signature (produced by the PQSafe signing key).
  * @param pqPublicKey - Hex-encoded ML-DSA-65 public key of the issuer.
  * @returns The verified `AP2.AnyMandate` (same object, typed).
  * @throws {Error} If signature verification fails (wrong key, tampered mandate).

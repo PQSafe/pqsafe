@@ -340,7 +340,7 @@ export function acpTokenToSpendEnvelope(
  * Convert a PQSafe SpendEnvelope back into Stripe SPT creation parameters.
  *
  * Enables a workflow where an agent holds a SpendEnvelope (issued by a
- * PQSafe wallet) and needs to obtain a Stripe SPT to actually charge a
+ * PQSafe AgentPay signing key) and needs to obtain a Stripe SPT to actually charge a
  * customer. The adapter translates envelope policy into SPT usage limits
  * so the resulting SPT mirrors the human-approved spend bounds.
  *

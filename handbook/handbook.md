@@ -193,13 +193,15 @@ Once identity is established, authorization confirmed, and credentials protected
 
 Settlement is distinct from routing. Routing determines how the money travels; settlement determines when it arrives and in what form.
 
-Most agent payment architectures use one of three settlement models:
+Most agent payment architectures use one of four settlement models:
 
-**Pre-funded wallet model (Skyfire, PQSafe ledger)**: The human principal pre-funds a wallet held by the payment platform. The agent's spend envelopes draw from this wallet. Settlement from the human's bank account to the platform's wallet happens via ACH or wire; settlement from the platform to the vendor happens via the appropriate rail. The human controls the wallet balance; the agent cannot access the underlying bank account.
+**Pre-funded platform model (Skyfire)**: The human principal pre-funds a balance held by the payment platform. The agent's spend envelopes draw from this balance. Settlement from the human's bank account to the platform happens via ACH or wire; settlement from the platform to the vendor happens via the appropriate rail. The human controls the platform balance; the agent cannot access the underlying bank account.
 
-**Direct debit model (Payman, bank-integrated)**: The agent's payment instructions go directly through the human's existing bank account, with the platform acting as a middleware layer. This requires core banking integration and is more complex to set up, but the money never sits in an intermediate wallet — it moves directly bank-to-bank.
+**Delegated signing model (PQSafe AgentPay)**: The human issues a cryptographically signed spend envelope that caps amount, recipients, and expiry. The agent presents this envelope to route payments through external rails (Airwallex, Wise, Stripe, USDC-Base) using the principal's existing account — no funds sit with PQSafe. The audit trail is publicly verifiable at ledger.pqsafe.xyz. Authorization is post-quantum signed (ML-DSA-65, NIST FIPS 204); the underlying money never leaves the principal's bank account or Airwallex balance.
 
-**On-chain model (x402, USDC)**: The agent holds a crypto wallet with a USDC balance. Payments are on-chain transactions from the agent's wallet to the recipient's wallet. Settlement is near-instant and there is no intermediary custody. The risk is that if the agent's private key is compromised, the balance is at risk.
+**Direct debit model (Payman, bank-integrated)**: The agent's payment instructions go directly through the human's existing bank account, with the platform acting as a middleware layer. This requires core banking integration and is more complex to set up, but the money never sits in an intermediate custodian — it moves directly bank-to-bank.
+
+**On-chain model (x402, USDC)**: The agent holds a crypto address with a USDC balance. Payments are on-chain transactions from the agent's address to the recipient's address. Settlement is near-instant and there is no intermediary custody. The risk is that if the agent's private key is compromised, the balance is at risk.
 
 ### Layer 6: Compliance — Is This Legal?
 

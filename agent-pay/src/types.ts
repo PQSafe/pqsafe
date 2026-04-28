@@ -11,7 +11,7 @@ export type HexString = string
 /** ISO 4217 currency code */
 export type CurrencyCode = string
 
-/** A PQSafe wallet address (pq1 + 20-byte keccak hex) */
+/** A PQSafe agent authorization address (pq1 + 20-byte keccak hex of ML-DSA-65 pubkey) */
 export type PQAddress = string
 
 /** Signed spend envelope ready for agent use */

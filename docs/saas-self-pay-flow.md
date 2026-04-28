@@ -114,7 +114,7 @@ PQSafe issues a **virtual card per SpendEnvelope**. The card is:
 ```typescript
 {
   version:           1,                           // schema version
-  issuer:            "pq1<40-hex>",               // human wallet address
+  issuer:            "pq1<40-hex>",               // human PQ address (ML-DSA-65 pubkey hash)
   agent:             "research-agent-v1",          // which agent is authorized
   maxAmount:         50,                           // USD cap (hard limit)
   currency:          "USD",
