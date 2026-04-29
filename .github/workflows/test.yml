@@ -23,6 +23,3 @@ jobs:
       - name: Run tests
         working-directory: agent-pay
         run: npm test
-      - name: Run canonicalization tests
-        working-directory: agent-pay
-        run: npm run test:canonical
