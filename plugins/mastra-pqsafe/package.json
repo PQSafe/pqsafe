@@ -1,6 +1,6 @@
 {
   "name": "@pqsafe/mastra",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Mastra integration for PQSafe AgentPay — post-quantum safe payments for AI workflows",
   "keywords": ["mastra", "pqsafe", "payments", "ai-agents", "post-quantum", "ml-dsa"],
   "license": "Apache-2.0",
@@ -16,12 +16,14 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/cjs/index.cjs"
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build:cjs": "tsc -p tsconfig.cjs.json && mv dist/cjs/index.js dist/cjs/index.cjs",
+    "build": "tsc && npm run build:cjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

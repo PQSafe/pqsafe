@@ -1,6 +1,6 @@
 {
   "name": "@pqsafe/agent-pay",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "PQ-signed spend envelopes for AI agent payments across multiple rails",
   "type": "module",
   "main": "./dist/index.js",
@@ -12,12 +12,14 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/cjs/index.cjs"
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build:cjs": "tsc -p tsconfig.cjs.json && mv dist/cjs/index.js dist/cjs/index.cjs",
+    "build": "tsc && npm run build:cjs",
     "typecheck": "tsc --noEmit",
     "dev": "tsc --watch --noEmit",
     "demo": "tsx examples/agentpay_demo.ts",

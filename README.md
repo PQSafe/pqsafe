@@ -69,6 +69,8 @@ const pqsafePay = (recipient, amount, memo) =>
 npm i @pqsafe/agent-pay
 ```
 
+Both ESM and CommonJS are supported. ESM (default, `"type": "module"` or `.mjs`):
+
 ```typescript
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import { createEnvelope, signEnvelope, executeAgentPayment } from '@pqsafe/agent-pay'
@@ -92,6 +94,15 @@ const result = await executeAgentPayment(signed, {
 })
 console.log(result.txId)  // awx_sbx_1234567890_abc...
 ```
+
+CommonJS (projects using `npm init -y` defaults or `"type": "commonjs"`):
+
+```js
+// Works without any package.json changes
+const { createEnvelope, signEnvelope, executeAgentPayment } = require('@pqsafe/agent-pay')
+```
+
+> **Note:** The CLI binary (`pqsafe-admin`) is ESM-only and is not affected by CommonJS mode.
 
 ## Python quickstart
 
