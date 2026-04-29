@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pqsafe-agent-pay"
-version = "0.1.0"
+version = "0.1.1"
 description = "PQSafe AgentPay Python SDK — post-quantum safe payments for AI agents"
 readme = "README.md"
 license = "MIT"
