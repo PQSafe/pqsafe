@@ -1,14 +1,28 @@
 # PQSafe AgentPay
 
+> **Post-quantum spend authorization for AI agents** — FIPS 204 (ML-DSA-65) signed SpendEnvelopes, compatible with AP2, ACP, and x402. For agent frameworks, banks, and enterprises that need audit trails that survive quantum computing.
+
 [![npm version](https://img.shields.io/npm/v/@pqsafe/agent-pay?color=10b981&label=npm)](https://www.npmjs.com/package/@pqsafe/agent-pay)
 [![PyPI version](https://img.shields.io/pypi/v/pqsafe-agent-pay?color=10b981&label=PyPI)](https://pypi.org/project/pqsafe-agent-pay/)
-[![Tests](https://img.shields.io/badge/tests-221%2F221-10b981)](agent-pay/tests/)
+[![Tests](https://img.shields.io/badge/tests-221%2F221%20passing-10b981)](agent-pay/tests/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![API](https://img.shields.io/badge/API-live%20at%20api.pqsafe.xyz-10b981)](https://api.pqsafe.xyz/docs)
+[![Build](https://img.shields.io/badge/build-passing-10b981)](https://github.com/PQSafe/pqsafe/actions)
 
 Your AI agents are already moving money. The spend receipts they generate use RSA/ECDSA — signatures quantum computers will break within 7–15 years, inside your audit-retention window. **PQSafe AgentPay** wraps AP2, ACP, and x402 with FIPS 204 (ML-DSA-65) signing, producing spend-delegation envelopes that comply today and survive the cryptographic transition. Developers integrate free. Banks and enterprises pay for PQ migration attestations. No new payment rails — just compliance you can prove.
 
 A human signs a **SpendEnvelope** — a cryptographically bound authorization: *this agent can spend up to $X, to these recipients, for this long*. The agent presents the envelope to execute payments autonomously. No credit card sharing. No prompt injection escape. Full audit trail on Arbitrum.
+
+## Live evidence
+
+| | |
+|---|---|
+| npm package | [@pqsafe/agent-pay](https://www.npmjs.com/package/@pqsafe/agent-pay) |
+| PyPI package | [pqsafe-agent-pay](https://pypi.org/project/pqsafe-agent-pay/) |
+| On-chain contract | [0x142bA5626bf8B032EB0B59052421C42595417F5d](https://arbiscan.io/address/0x142bA5626bf8B032EB0B59052421C42595417F5d) — Arbiscan-verified SpendEnvelopeRegistry |
+| AP2 RFC | [google-agentic-commerce/AP2 #250](https://github.com/google-agentic-commerce/AP2/issues/250) — PQSafe listed as compatible implementation |
+| Live demo | [demo.pqsafe.xyz](https://demo.pqsafe.xyz) |
+| Docs | [docs.pqsafe.xyz](https://docs.pqsafe.xyz) |
+| REST API | [api.pqsafe.xyz/docs](https://api.pqsafe.xyz/docs) |
 
 ## The killer demo
 
@@ -133,7 +147,7 @@ Human (Chrome extension / CLI)
 
 | Package | Description | Status |
 |---------|-------------|--------|
-| [`agent-pay`](agent-pay/) | TypeScript SDK — envelopes, ML-DSA-65 signing, multi-rail execution | **Live** — 184/184 tests · all 5 rails · Airwallex + Wise live |
+| [`agent-pay`](agent-pay/) | TypeScript SDK — envelopes, ML-DSA-65 signing, multi-rail execution | **Live** — 221/221 tests · all 5 rails · Airwallex + Wise live |
 | [`evm`](evm/) | Arbitrum SpendEnvelope Registry — Solidity 0.8.24 on-chain audit ledger | **Ready to deploy** — Foundry tests pass |
 | [`api-reference`](api-reference/) | FastAPI REST API — hosted at api.pqsafe.xyz | **Deployable** — Fly.io ready |
 | [`python-sdk`](python-sdk/) | Python SDK — mirrors TypeScript SDK | PyPI: `pqsafe-agent-pay` |
@@ -298,10 +312,12 @@ Every financial institution will migrate to PQ cryptography before 2035 (NIST ma
 | | |
 |---|---|
 | Live demo | [demo.pqsafe.xyz](https://demo.pqsafe.xyz) |
+| Docs | [docs.pqsafe.xyz](https://docs.pqsafe.xyz) |
 | REST API docs | [api.pqsafe.xyz/docs](https://api.pqsafe.xyz/docs) |
 | Audit ledger | [ledger.pqsafe.xyz](https://ledger.pqsafe.xyz) |
 | Handbook | [pqsafe.xyz/handbook](https://pqsafe.xyz/handbook) |
-| Arbitrum Registry | [evm/README.md](evm/README.md) — on-chain audit ledger |
+| Arbitrum Registry | [Arbiscan: 0x142bA5626...](https://arbiscan.io/address/0x142bA5626bf8B032EB0B59052421C42595417F5d) — on-chain audit ledger |
+| AP2 RFC | [google-agentic-commerce/AP2 #250](https://github.com/google-agentic-commerce/AP2/issues/250) |
 
 ## Local development
 
