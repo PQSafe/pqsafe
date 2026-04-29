@@ -419,9 +419,6 @@
         <a href="/handbook" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
           Handbook
         </a>
-        <a href="#founders" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
-          Founders
-        </a>
         <a href="https://ledger.pqsafe.xyz" target="_blank" rel="noopener"
            class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
           Ledger
@@ -540,7 +537,7 @@
         </div>
         <div class="flex flex-col items-center gap-1">
           <span class="text-2xl font-black gradient-text">Dogfooded</span>
-          <span class="text-sm text-gray-400 font-medium">Live across 8 operating companies</span>
+          <span class="text-sm text-gray-400 font-medium">In production at CompanyForge</span>
         </div>
       </div>
     </div>
@@ -553,7 +550,7 @@
     <div class="text-center mb-16 fade-in-up">
       <div class="section-label">How It Works</div>
       <h2 class="text-3xl sm:text-4xl font-bold text-white">Up and running in minutes</h2>
-      <p class="mt-4 text-gray-400 max-w-xl mx-auto">Three simple steps to quantum-safe crypto management.</p>
+      <p class="mt-4 text-gray-400 max-w-xl mx-auto">Three lines of code to give your agent a signed, capped, multi-rail wallet.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -563,14 +560,14 @@
           <div class="flex items-start gap-4 mb-4">
             <div class="step-num flex-shrink-0">1</div>
             <div>
-              <h3 class="font-bold text-white text-lg leading-tight">Install Extension</h3>
-              <p class="text-xs text-gray-500 mt-0.5">2 minutes</p>
+              <h3 class="font-bold text-white text-lg leading-tight">Install the SDK</h3>
+              <p class="text-xs text-gray-500 mt-0.5">30 seconds</p>
             </div>
           </div>
           <p class="text-gray-400 text-sm leading-relaxed">
-            Clone the repo, run <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">npm install && npm run build</code>,
-            then load the <code class="text-cyan-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">dist/</code> folder
-            as an unpacked Chrome extension. No Chrome Web Store account needed.
+            <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">npm i @pqsafe/agent-pay</code> or
+            <code class="text-cyan-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">pip install pqsafe-agent-pay</code>.
+            Native plugins for LangChain, CrewAI, and Mastra ship in the same package.
           </p>
           <div class="mt-5">
             <div class="w-full h-1 rounded-full bg-gray-800 overflow-hidden">
@@ -592,13 +589,13 @@
           <div class="flex items-start gap-4 mb-4">
             <div class="step-num flex-shrink-0">2</div>
             <div>
-              <h3 class="font-bold text-white text-lg leading-tight">Create Wallet</h3>
-              <p class="text-xs text-gray-500 mt-0.5">30 seconds</p>
+              <h3 class="font-bold text-white text-lg leading-tight">Issue a Spend Envelope</h3>
+              <p class="text-xs text-gray-500 mt-0.5">One call</p>
             </div>
           </div>
           <p class="text-gray-400 text-sm leading-relaxed">
-            Click "Create New Wallet" — PQSafe generates an <strong class="text-emerald-400">ML-DSA-65</strong> keypair
-            using CRYSTALS-Dilithium. Your 3309-byte public key and address are derived entirely client-side. Nothing ever leaves your browser.
+            <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">pay.envelope({ amount, currency, rail })</code>
+            returns a budget signed with <strong class="text-emerald-400">ML-DSA-65</strong> (NIST FIPS 204). Amount cap, payee allowlist, and TTL enforced cryptographically — your agent cannot exceed any of them.
           </p>
           <div class="mt-5">
             <div class="w-full h-1 rounded-full bg-gray-800 overflow-hidden">
@@ -619,13 +616,13 @@
           <div class="flex items-start gap-4 mb-4">
             <div class="step-num flex-shrink-0">3</div>
             <div>
-              <h3 class="font-bold text-white text-lg leading-tight">Sign &amp; Verify</h3>
+              <h3 class="font-bold text-white text-lg leading-tight">Authorize &amp; Pay</h3>
               <p class="text-xs text-gray-500 mt-0.5">Instant</p>
             </div>
           </div>
           <p class="text-gray-400 text-sm leading-relaxed">
-            Type any message, click Sign — you get a <strong class="text-cyan-400">3309-byte ML-DSA signature</strong>
-            that no quantum computer can forge. Paste any public key + signature to verify authenticity in real time.
+            <code class="text-cyan-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">pay.authorize(envelope)</code>
+            routes the payment through <strong class="text-cyan-400">Airwallex, Wise, Stripe, or USDC-Base</strong>, returns a real transfer UUID, and writes a signed receipt your auditor can verify seven years from now.
           </p>
           <div class="mt-5">
             <div class="w-full h-1 rounded-full bg-gray-800 overflow-hidden">
@@ -1066,9 +1063,9 @@
     <div class="text-center mb-16 fade-in-up">
       <div class="section-label">Comparison</div>
       <h2 class="text-3xl sm:text-4xl font-bold text-white">
-        PQSafe vs. <span class="gradient-text">classical wallets</span>
+        PQSafe vs. <span class="gradient-text">other agent payment stacks</span>
       </h2>
-      <p class="mt-4 text-gray-400 max-w-xl mx-auto">When quantum computers arrive, existing wallets will be vulnerable. PQSafe is ready now.</p>
+      <p class="mt-4 text-gray-400 max-w-xl mx-auto">Stripe ACP and Google AP2 answer "is this agent allowed to spend?" PQSafe also answers "can a regulator verify it seven years from now?"</p>
     </div>
 
     <div class="bg-[#0f0f1a] rounded-2xl overflow-hidden card-glow fade-in-up delay-100">
@@ -1083,52 +1080,52 @@
                   <span class="text-emerald-400">PQSafe</span>
                 </div>
               </th>
-              <th>MetaMask</th>
-              <th>Classical Wallets</th>
+              <th>Stripe ACP</th>
+              <th>Google AP2</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="text-gray-300 font-medium">Signature Algorithm</td>
-              <td><span class="text-emerald-400 font-semibold">ML-DSA-65</span> <span class="text-xs text-gray-500">(Dilithium)</span></td>
-              <td class="text-gray-400">ECDSA secp256k1</td>
-              <td class="text-gray-400">ECDSA / RSA</td>
+              <td class="text-gray-300 font-medium">Spend cap enforcement</td>
+              <td><span class="check">✓ Cryptographic envelope</span></td>
+              <td class="text-gray-400">Per-token limit</td>
+              <td class="text-gray-400">Mandate-based</td>
             </tr>
             <tr>
-              <td class="text-gray-300 font-medium">Key Exchange</td>
-              <td><span class="text-cyan-400 font-semibold">ML-KEM-768</span> <span class="text-xs text-gray-500">(Kyber)</span></td>
-              <td class="text-gray-400">ECDH</td>
-              <td class="text-gray-400">ECDH / DH</td>
+              <td class="text-gray-300 font-medium">Signature algorithm</td>
+              <td><span class="text-emerald-400 font-semibold">ML-DSA-65</span> <span class="text-xs text-gray-500">(FIPS 204)</span></td>
+              <td class="text-gray-400">ECDSA</td>
+              <td class="text-gray-400">ECDSA</td>
             </tr>
             <tr>
-              <td class="text-gray-300 font-medium">Quantum Resistant</td>
+              <td class="text-gray-300 font-medium">Post-quantum safe</td>
               <td><span class="check">✓ Yes</span></td>
               <td><span class="cross">✗ No</span></td>
               <td><span class="cross">✗ No</span></td>
             </tr>
             <tr>
-              <td class="text-gray-300 font-medium">NIST Standard</td>
-              <td><span class="check">FIPS 203 &amp; 204</span></td>
-              <td><span class="cross">None (legacy)</span></td>
-              <td><span class="cross">None (legacy)</span></td>
+              <td class="text-gray-300 font-medium">7-year audit-grade receipt</td>
+              <td><span class="check">✓ Signed SpendEnvelope</span></td>
+              <td class="text-gray-400">Stripe-hosted log</td>
+              <td class="text-gray-400">No standard</td>
             </tr>
             <tr>
-              <td class="text-gray-300 font-medium">Address Format</td>
-              <td><span class="text-emerald-400 font-mono text-xs">pq1[sha256 of ML-DSA pubkey]</span></td>
-              <td class="text-gray-400 font-mono text-xs">0x[keccak160]</td>
-              <td class="text-gray-400 font-mono text-xs">varies</td>
+              <td class="text-gray-300 font-medium">Multi-rail routing</td>
+              <td><span class="text-emerald-400">Airwallex · Wise · Stripe · USDC</span></td>
+              <td class="text-gray-400">Stripe only</td>
+              <td class="text-gray-400">Google Pay only</td>
             </tr>
             <tr>
-              <td class="text-gray-300 font-medium">Open Source</td>
-              <td><span class="check">✓ MIT License</span></td>
-              <td class="text-gray-400">Partial</td>
-              <td class="text-gray-400">Varies</td>
+              <td class="text-gray-300 font-medium">Vendor lock-in</td>
+              <td><span class="check">✓ MIT, self-host</span></td>
+              <td class="text-gray-400">Stripe account required</td>
+              <td class="text-gray-400">Google Cloud required</td>
             </tr>
             <tr>
-              <td class="text-gray-300 font-medium">Manifest Version</td>
-              <td><span class="text-emerald-400">Chrome MV3</span></td>
-              <td class="text-gray-400">MV3</td>
-              <td class="text-gray-400">Varies</td>
+              <td class="text-gray-300 font-medium">Framework plugins</td>
+              <td><span class="text-emerald-400">LangChain · CrewAI · Mastra</span></td>
+              <td class="text-gray-400">Stripe SDK</td>
+              <td class="text-gray-400">Vertex AI</td>
             </tr>
           </tbody>
         </table>
@@ -1143,8 +1140,7 @@
         <line x1="12" y1="17" x2="12.01" y2="17"/>
       </svg>
       <p class="text-sm text-red-300 leading-relaxed">
-        <strong>Harvest Now, Decrypt Later:</strong> Adversaries are already recording encrypted traffic today to decrypt once quantum computers exist.
-        "Store now, decrypt later" attacks mean the threat is <em>already active</em> — migration cannot wait.
+        <strong>The 7-year audit window is the timer:</strong> HKMA, MAS, FCA, and FFIEC all mandate 7-year retention for financial transaction records. Every payment your agent signs with ECDSA today must remain verifiable in 2033 — well inside the window quantum hardware is expected to break it. PQSafe is the only stack where the signature is post-quantum from day one.
       </p>
     </div>
   </section>
@@ -1244,7 +1240,7 @@
               <div>
                 <label class="text-xs text-gray-500 block mb-1.5">Message to Sign</label>
                 <div class="w-full p-2.5 rounded-lg bg-black/40 border border-gray-700 text-xs text-gray-300 font-mono min-h-[60px]">
-                  Hello, post-quantum world!<br>Timestamp: 2025-01-15
+                  Hello, post-quantum world!<br>Timestamp: 2026-04-29
                 </div>
               </div>
               <button class="w-full py-2.5 rounded-lg font-semibold text-sm text-black" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
@@ -1336,7 +1332,7 @@
         <div class="fade-in-up">
           <div class="section-label mb-4" style="font-family: sans-serif;">中文介绍</div>
           <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6 leading-tight" style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;">
-            全球首个<br><span class="gradient-text">AI 代理支付基础设施</span>
+            後量子安全的<br><span class="gradient-text">AI 代理支付基礎設施</span>
           </h2>
           <p class="text-gray-300 leading-loose text-base mb-6" style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;">
             PQSafe AgentPay 讓 AI 代理真正能夠付款 — 通過 <strong class="text-emerald-400">NIST FIPS 204 標準的 ML-DSA-65</strong>
@@ -1496,106 +1492,8 @@
     </div>
   </section>
 
-  <!-- ====== FOUNDERS ====== -->
-  <div class="section-divider"></div>
-  <section id="founders" class="py-24 max-w-5xl mx-auto px-6">
-    <div class="text-center mb-16 fade-in-up">
-      <div class="section-label">Founders</div>
-      <h2 class="text-3xl sm:text-4xl font-bold text-white">Who's Building This</h2>
-      <p class="mt-4 text-gray-400 max-w-xl mx-auto">Two co-founders who have shipped together across eight ventures. PQSafe is the first at venture scale.</p>
-    </div>
+  <!-- Founders section removed — bios live on YC application + LinkedIn -->
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in-up delay-100">
-
-      <!-- Raymond Chau -->
-      <div class="bg-[#0f0f1a] rounded-2xl p-8 card-glow flex flex-col gap-6">
-        <!-- Headshot placeholder -->
-        <div class="flex items-center gap-5">
-          <div class="flex-shrink-0 w-20 h-20 rounded-2xl flex items-center justify-center font-mono font-bold text-2xl text-emerald-400"
-               style="background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(6,182,212,0.08) 100%); border: 1px solid rgba(16,185,129,0.25);">
-            RC
-          </div>
-          <div>
-            <div class="font-bold text-white text-xl leading-tight">Raymond Chau Yik-Chun</div>
-            <div class="mt-1">
-              <span class="badge badge-emerald text-xs">Founder, CEO &amp; Engineering</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bio -->
-        <p class="text-gray-400 text-sm leading-relaxed">
-          HKU MSc FinTech (research with Prof. S.M. Yiu, Executive Director of HKU-SCF FinTech Academy). Eight-venture serial entrepreneur — including SeniorDeli (HKD 1M+ revenue, 100+ Greater Bay Area hospitals) and Pinnacle Robotics (USD 15M Series A in progress). Built the PQSafe stack solo: Python and TypeScript SDKs, LangChain, CrewAI, and Mastra plugins, and the post-quantum ML-DSA-65 signing pipeline.
-        </p>
-
-        <!-- Links -->
-        <div class="flex items-center gap-5 mt-auto">
-          <a href="#" class="flex items-center gap-2 text-sm text-gray-400 hover:text-emerald-400 transition-colors">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
-              <rect x="2" y="9" width="4" height="12"/>
-              <circle cx="4" cy="4" r="2"/>
-            </svg>
-            LinkedIn
-          </a>
-          <a href="https://github.com/rayc00210" target="_blank" rel="noopener"
-             class="flex items-center gap-2 text-sm text-gray-400 hover:text-emerald-400 transition-colors">
-            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-            </svg>
-            @rayc00210
-          </a>
-        </div>
-      </div>
-
-      <!-- Tris Au Yeung -->
-      <div class="bg-[#0f0f1a] rounded-2xl p-8 card-glow flex flex-col gap-6">
-        <!-- Headshot placeholder -->
-        <div class="flex items-center gap-5">
-          <div class="flex-shrink-0 w-20 h-20 rounded-2xl flex items-center justify-center font-mono font-bold text-2xl text-cyan-400"
-               style="background: linear-gradient(135deg, rgba(6,182,212,0.12) 0%, rgba(16,185,129,0.08) 100%); border: 1px solid rgba(6,182,212,0.25);">
-            TA
-          </div>
-          <div>
-            <div class="font-bold text-white text-xl leading-tight">Tris Au Yeung Hiu Tung</div>
-            <div class="mt-1">
-              <span class="badge badge-cyan text-xs">Co-founder, COO &amp; GTM</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bio -->
-        <p class="text-gray-400 text-sm leading-relaxed">
-          15+ startup pitching competition wins across 4 continents — Future Food Asia All-Asia Champion, All-Europe 1st Prize (Suzhou Government), All-UK 1st Prize (Tsinghua Yangtze Delta Institute), Silver at All-China 創青春 (Central Communist Youth League, Ministry of Human Resources, Ministry of Commerce). Cumulatively secured millions HKD in non-dilutive government grants for SeniorDeli through those wins. Co-founded every prior Raymond venture.
-        </p>
-
-        <!-- Links -->
-        <div class="flex items-center gap-5 mt-auto">
-          <a href="#" class="flex items-center gap-2 text-sm text-gray-400 hover:text-cyan-400 transition-colors">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
-              <rect x="2" y="9" width="4" height="12"/>
-              <circle cx="4" cy="4" r="2"/>
-            </svg>
-            LinkedIn
-          </a>
-          <a href="mailto:tris@pqsafe.xyz"
-             class="flex items-center gap-2 text-sm text-gray-400 hover:text-cyan-400 transition-colors">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
-            tris@pqsafe.xyz
-          </a>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="mt-10 text-center fade-in-up delay-200">
-      <p class="text-xs text-gray-700">Last updated 2026-04-18</p>
-    </div>
-  </section>
 
   <!-- ====== FOOTER ====== -->
   <footer class="border-t border-gray-800 py-12">
@@ -1654,7 +1552,7 @@
         <a href="https://github.com/paulmillr/noble-post-quantum" class="text-gray-600 hover:text-gray-400 transition-colors">@noble/post-quantum</a>.
         CRYSTALS-Dilithium and CRYSTALS-Kyber are NIST-standardized as FIPS 204 and FIPS 203 respectively.
         &nbsp;&middot;&nbsp;
-        <span class="text-gray-700">Last updated 2026-04-18</span>
+        <span class="text-gray-700">Last updated 2026-04-29</span>
       </div>
     </div>
   </footer>
