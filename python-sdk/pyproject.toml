@@ -7,7 +7,7 @@ name = "pqsafe-agent-pay"
 version = "0.1.0"
 description = "PQSafe AgentPay Python SDK — post-quantum safe payments for AI agents"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.10"
 authors = [{ name = "PQSafe", email = "dev@pqsafe.xyz" }]
 keywords = [
@@ -22,7 +22,6 @@ keywords = [
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -47,6 +46,7 @@ dev = [
 Homepage = "https://pqsafe.xyz"
 Documentation = "https://pqsafe.xyz/handbook"
 Repository = "https://github.com/PQSafe/pqsafe"
+Issues = "https://github.com/PQSafe/pqsafe/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

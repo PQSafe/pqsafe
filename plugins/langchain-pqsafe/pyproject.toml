@@ -7,14 +7,13 @@ name = "langchain-pqsafe"
 version = "0.1.0"
 description = "LangChain integration for PQSafe AgentPay — post-quantum safe payments for AI agents"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.10"
 authors = [{ name = "PQSafe", email = "dev@pqsafe.xyz" }]
 keywords = ["langchain", "pqsafe", "payments", "ai-agents", "post-quantum"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
