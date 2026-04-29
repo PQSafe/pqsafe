@@ -21,19 +21,21 @@ Real transfers executed against `api-demo.airwallex.com`.
 | # | Date (UTC) | Transfer ID | Amount | Currency | Reference | Status |
 |---|---|---|---|---|---|---|
 | 1 | 2026-04-15T17:36:46Z | `38873dbc-abfa-4ab5-be25-050496d4a0c3` | 49 | USD→GBP | `Anthropic API credits — softmeal content officer` | PROCESSING |
-| 2 | 2026-04-15T17:3x:xxZ | `ca7e2951-0094-4cef-ae24-b7f192fbc83f` | 49 | USD→GBP | same | PROCESSING |
-| 3 | 2026-04-15T17:3x:xxZ | `067f5e1a-fd74-4901-869a-c20521c07859` | 49 | USD→GBP | same | PROCESSING |
+| 2 | 2026-04-15T17:36:46Z | `ca7e2951-0094-4cef-ae24-b7f192fbc83f` | 49 | USD→GBP | same | PROCESSING |
+| 3 | 2026-04-15T17:36:46Z | `067f5e1a-fd74-4901-869a-c20521c07859` | 49 | USD→GBP | same | PROCESSING |
 | 4 | 2026-04-24T~18:00Z | `af82cb1e-204e-44e7-8192-d90fde9cc09f` | 49 | USD LOCAL/ABA | `AgentPay/content-officer-softmeal` | SUBMITTED |
 | 5 | 2026-04-24T~18:00Z | `8ca8d4a3-95d2-44fa-808e-0931df1be200` | 49 | USD LOCAL/ABA | `AgentPay/content-officer-softmeal` | SUBMITTED |
 
 All entries reachable via `GET https://api-demo.airwallex.com/api/v1/transfers/{id}` with valid sandbox credentials.
 
-**Reproduce:**
+**Reproduce** (via [`examples/agentpay_demo.ts`](examples/agentpay_demo.ts)):
 ```bash
+git clone https://github.com/PQSafe/pqsafe.git && cd pqsafe/agent-pay
+npm install
 export AIRWALLEX_CLIENT_ID=<your client id>
 export AIRWALLEX_API_KEY=<your api key>
 export AIRWALLEX_ENV=demo
-npm run demo
+npm run demo   # runs examples/agentpay_demo.ts
 ```
 
 ---
