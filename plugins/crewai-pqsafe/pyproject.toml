@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "crewai-pqsafe"
-version = "0.1.0"
+version = "0.1.1"
 description = "CrewAI integration for PQSafe AgentPay — post-quantum safe payments for AI crews"
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.14"
 authors = [{ name = "PQSafe", email = "dev@pqsafe.xyz" }]
 keywords = ["crewai", "pqsafe", "payments", "ai-agents", "post-quantum"]
 classifiers = [
