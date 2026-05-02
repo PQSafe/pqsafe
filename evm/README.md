@@ -53,7 +53,7 @@ function computeEnvelopeId(bytes calldata envelopeJsonBytes) external pure retur
 | Network           | Address |
 |-------------------|---------|
 | Arbitrum One      | _TBD_   |
-| Arbitrum Sepolia  | _TBD_   |
+| Arbitrum Sepolia  | [0x142bA5626bf8B032EB0B59052421C42595417F5d](https://sepolia.arbiscan.io/address/0x142bA5626bf8B032EB0B59052421C42595417F5d#code) |
 
 ## Setup
 
