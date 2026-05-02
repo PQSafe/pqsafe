@@ -465,7 +465,7 @@
         parameters — <code>pq_alg</code> and <code>pq_sig</code> — to the existing JWT header used in
         AP2 v0.2 mandate credentials. The primary algorithm identifier is <code>"ML-DSA-65"</code>,
         corresponding to NIST FIPS 204 (initial public draft qualifier: NIST IR 8547 ipd). A hybrid profile
-        <code>"Ed25519+ML-DSA-65"</code> is defined for deployments requiring both classical interoperability
+        <code>"ES256+ML-DSA-65"</code> is defined for deployments requiring both classical interoperability
         and quantum resistance in a single signing operation. The extension is strictly backward-compatible:
         classical verifiers that do not recognize <code>pq_alg</code> continue to verify the
         <code>alg: "ES256"</code> signature and ignore the additional header parameters.
@@ -637,7 +637,7 @@
       <dl>
         <dt>pq_alg</dt>
         <dd><strong>Parameter value type:</strong> String</dd>
-        <dd><strong>Allowed values:</strong> <code>"ML-DSA-65"</code> | <code>"Ed25519+ML-DSA-65"</code></dd>
+        <dd><strong>Allowed values:</strong> <code>"ML-DSA-65"</code> | <code>"ES256+ML-DSA-65"</code></dd>
         <dd>Identifies the post-quantum (or hybrid) algorithm used to produce the <code>pq_sig</code> value.
           The classical <code>alg</code> parameter MUST remain present and MUST be a valid JOSE algorithm
           identifier; <code>pq_alg</code> is additive, not a replacement. MUST be ignored by verifiers that
@@ -691,17 +691,18 @@ pq_sig        = BASE64URL(pq_sig_bytes)          # 4412 chars, unpadded</code></
         canonicalization step is present.
       </p>
 
-      <h3>2.5 Hybrid Profile: <code>"Ed25519+ML-DSA-65"</code></h3>
-      <p>When <code>pq_alg: "Ed25519+ML-DSA-65"</code> is declared:</p>
+      <h3>2.5 Hybrid Profile: <code>"ES256+ML-DSA-65"</code></h3>
+      <p>When <code>pq_alg: "ES256+ML-DSA-65"</code> is declared:</p>
       <ul>
         <li>The <code>pq_sig</code> value encodes two concatenated signatures:
-          <code>Ed25519_sig (64 bytes) || ML-DSA-65_sig (3309 bytes)</code> = 3,373 bytes total,
+          <code>ECDSA_P256_sig (64 bytes, R||S fixed-width) || ML-DSA-65_sig (3309 bytes)</code> = 3,373 bytes total,
           Base64url-encoded.</li>
-        <li>The Ed25519 signature covers the same JWS Signing Input as the ML-DSA-65 signature (both in
-          HashML-DSA mode for ML-DSA-65; Ed25519 signs the full input directly per RFC 8032).</li>
+        <li>The ECDSA P-256 signature (alg: <code>ES256</code>) covers the same JWS Signing Input as the ML-DSA-65 signature (both in
+          HashML-DSA mode for ML-DSA-65; the ECDSA P-256 component uses SHA-256 over the JWS Signing Input per RFC 7518 §3.4).</li>
         <li>Verifiers implementing the hybrid profile MUST verify both component signatures. Failure of
           either MUST result in verification failure.</li>
-        <li>This profile is intended for deployments that require a second classical algorithm as a fallback
+        <li>This profile is intended for deployments that require a dual-algorithm audit trail with an additional
+          ECDSA P-256 signature in <code>pq_sig</code>, alongside the JOSE <code>alg: "ES256"</code> signature,
           while ML-DSA-65 implementations mature.</li>
       </ul>
 
@@ -710,7 +711,7 @@ pq_sig        = BASE64URL(pq_sig_bytes)          # 4412 chars, unpadded</code></
         <thead><tr><th>Algorithm</th><th>OID</th><th>Standard</th></tr></thead>
         <tbody>
           <tr><td>ML-DSA-65</td><td><code>2.16.840.1.101.3.4.3.18</code></td><td>NIST FIPS 204 (initial public draft qualifier)</td></tr>
-          <tr><td>Ed25519</td><td><code>1.3.101.112</code></td><td>RFC 8410</td></tr>
+          <tr><td>ECDSA P-256 (ES256)</td><td><code>1.2.840.10045.3.1.7</code></td><td>RFC 5480, RFC 7518 §3.4</td></tr>
         </tbody>
       </table>
       <p>
@@ -725,7 +726,7 @@ pq_sig        = BASE64URL(pq_sig_bytes)          # 4412 chars, unpadded</code></
         <tbody>
           <tr><td>ML-DSA-65 signature</td><td>3,309</td><td>4,412</td></tr>
           <tr><td>ML-DSA-65 public key</td><td>1,952</td><td>~2,603</td></tr>
-          <tr><td>Ed25519 signature (hybrid)</td><td>64</td><td>86</td></tr>
+          <tr><td>ECDSA P-256 signature, R||S (hybrid)</td><td>64</td><td>86</td></tr>
           <tr><td>Hybrid pq_sig total</td><td>3,373</td><td>~4,498</td></tr>
         </tbody>
       </table>
