@@ -21,7 +21,7 @@ AI agents are increasingly authorized to spend real money — booking travel, pa
 
 ## What this plugin does
 
-`@pqsafe/openclaw` is an [OpenClaw](https://openclaw.dev) skill plugin that wraps the **PQSafe AgentPay AP2-PQ profile**. It enables any OpenClaw-compatible AI agent to:
+`@pqsafe/openclaw` is an [OpenClaw](https://docs.openclaw.ai) skill plugin that wraps the **PQSafe AgentPay AP2-PQ profile**. It enables any OpenClaw-compatible AI agent to:
 
 1. **`create_envelope`** — build and ML-DSA-65 sign a `SpendEnvelope` authorizing an agent to spend up to a configured limit on a specified payment rail
 2. **`verify_envelope`** — verify signature validity and temporal bounds (fully local, no network)

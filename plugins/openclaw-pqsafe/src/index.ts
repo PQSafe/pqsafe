@@ -37,6 +37,7 @@ export type {
 
 /**
  * Rail values supported by the PQSafe AgentPay router.
+ * (Re-exported from @pqsafe/agent-pay for convenience — same values.)
  *
  * Live sandbox (real money in sandbox mode):
  *   airwallex  — Airwallex multi-currency
@@ -47,7 +48,7 @@ export type {
  *   usdc-base  — USDC on Base L2
  *   x402       — HTTP 402 micropayment standard
  */
-export type Rail = 'airwallex' | 'wise' | 'stripe' | 'usdc-base' | 'x402'
+export type OpenClawRail = 'airwallex' | 'wise' | 'stripe' | 'usdc-base' | 'x402'
 
 /** Input for the create_envelope operation */
 export interface CreateEnvelopeInput {
@@ -71,7 +72,7 @@ export interface CreateEnvelopeInput {
   /** Time-to-live in seconds from now (default: 3600 = 1 hour, max: 86400) */
   ttlSeconds?: number
   /** Constrain to a specific payment rail (optional; omit to let router choose) */
-  rail?: Rail
+  rail?: OpenClawRail
   /**
    * Hex-encoded ML-DSA-65 secret key (4032 bytes = 8064 hex chars).
    * Required in production. Omit when PQSAFE_TEST_MODE=true.

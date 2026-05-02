@@ -1,5 +1,4 @@
 {
-  "$schema": "https://openclaw.dev/schemas/skill/v1.json",
   "id": "pqsafe.pay.v1",
   "version": "0.1.0",
   "name": "PQSafe Post-Quantum Payment",
