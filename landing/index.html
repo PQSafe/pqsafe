@@ -476,6 +476,26 @@
         </a>
       </div>
 
+      <!-- ── Trust bar (Addition #13) ── -->
+      <div class="fade-in-up delay-175 mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+        <a href="/verify" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold bg-emerald-900/20 border border-emerald-700/40 text-emerald-400 hover:bg-emerald-900/40 transition-colors">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          78 passing tests
+        </a>
+        <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold bg-gray-800/60 border border-gray-700/50 text-gray-300 hover:bg-gray-700/60 transition-colors">
+          <svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          Apache-2.0
+        </a>
+        <a href="https://sepolia.arbiscan.io/address/0x142bA5626bf8B032EB0B59052421C42595417F5d" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold bg-violet-900/20 border border-violet-700/40 text-violet-300 hover:bg-violet-900/40 transition-colors">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Arbitrum Sepolia: 0x142bA5&hellip;17F5d
+        </a>
+        <a href="https://github.com/paulmillr/noble-post-quantum" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold bg-cyan-900/20 border border-cyan-700/40 text-cyan-300 hover:bg-cyan-900/40 transition-colors">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          @noble/post-quantum 0.6.0
+        </a>
+      </div>
+
       <p class="mt-8 text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed fade-in-up delay-200">
         Your agent is mid-task and needs Perplexity Pro. It checks its <strong class="text-emerald-400">SpendEnvelope</strong> — a cryptographically signed budget —
         <strong class="text-cyan-400">PQSafe issues a virtual Visa</strong> via Airwallex, the agent pays, and resumes. No human logs in. Spending cap enforced at the SDK and Airwallex API layer.
@@ -1127,6 +1147,70 @@
 
   <div class="section-divider"></div>
 
+
+  <!-- ====== WHY NOW (Addition #12) ====== -->
+  <section id="why-now" class="py-24 max-w-5xl mx-auto px-6">
+    <div class="fade-in-up">
+      <div class="text-center mb-12">
+        <div class="section-label">Timing</div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-white">Why <span class="gradient-text">now</span></h2>
+        <p class="mt-4 text-gray-400 max-w-xl mx-auto">Three facts that make May 2026 the specific moment for post-quantum agent payment infrastructure.</p>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Bullet 1 -->
+        <div class="bg-[#0f0f1a] rounded-2xl p-6 card-glow flex gap-5 fade-in-up delay-100">
+          <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="flex items-baseline gap-3 mb-1">
+              <span class="text-xs font-bold font-mono text-emerald-400 bg-emerald-900/20 border border-emerald-800/30 px-2 py-0.5 rounded">April 28, 2026</span>
+              <span class="text-xs text-gray-500">Google &rarr; FIDO Alliance</span>
+            </div>
+            <p class="text-gray-300 text-sm leading-relaxed">
+              <strong class="text-white">Google contributed AP2 (Agent Payments Protocol) to the FIDO Alliance.</strong> The standards-track foundation for agent payments now exists, and FIDO&rsquo;s Payments TWG is actively scoping its post-quantum profile. The window to influence the standard is open — and closing.
+            </p>
+          </div>
+        </div>
+
+        <!-- Bullet 2 -->
+        <div class="bg-[#0f0f1a] rounded-2xl p-6 card-glow flex gap-5 fade-in-up delay-200">
+          <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div>
+            <div class="flex items-baseline gap-3 mb-1">
+              <span class="text-xs font-bold font-mono text-cyan-400 bg-cyan-900/20 border border-cyan-800/30 px-2 py-0.5 rounded">February 3, 2026</span>
+              <span class="text-xs text-gray-500">HKMA Quantum Preparedness Index</span>
+            </div>
+            <p class="text-gray-300 text-sm leading-relaxed">
+              <strong class="text-white">HKMA published its Quantum Preparedness Index</strong> — the first named regulator with a formal PQ-readiness framework for licensed financial institutions. Every HKMA-licensed payment processor now has a regulatory obligation to plan for post-quantum migration. PQSafe is the only SDK that makes that plan executable today.
+            </p>
+          </div>
+        </div>
+
+        <!-- Bullet 3 -->
+        <div class="bg-[#0f0f1a] rounded-2xl p-6 card-glow flex gap-5 fade-in-up delay-300">
+          <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#a78bfa" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          </div>
+          <div>
+            <div class="flex items-baseline gap-3 mb-1">
+              <span class="text-xs font-bold font-mono text-violet-400 bg-violet-900/20 border border-violet-800/30 px-2 py-0.5 rounded">180% YoY</span>
+              <span class="text-xs text-gray-500">Sumsub KYA demand report</span>
+            </div>
+            <p class="text-gray-300 text-sm leading-relaxed">
+              <strong class="text-white">Sumsub reports 180% year-on-year growth in KYA (Know Your Agent) demand</strong> from regulated platforms. The receiver-side compliance market is forming faster than the agent-side authorization layer can supply. PQSafe sits at that intersection — post-quantum signatures (ML-DSA-65) wrapping the AP2 envelope format, with first-class FIDO TWG engagement.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
   <!-- ====== COMPARISON TABLE ====== -->
   <section id="compare" class="py-24 max-w-5xl mx-auto px-6">
     <div class="text-center mb-16 fade-in-up">
@@ -1225,6 +1309,90 @@
       </svg>
       Try the SpendEnvelope demo at demo.pqsafe.xyz
     </a>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ====== BUILDER / SAAS SPLIT (Addition #14) ====== -->
+  <section id="two-sides" class="py-24 max-w-5xl mx-auto px-6">
+    <div class="fade-in-up text-center mb-12">
+      <div class="section-label">Who It&rsquo;s For</div>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">Built for two sides of the <span class="gradient-text">agent economy</span></h2>
+      <p class="mt-4 text-gray-400 max-w-xl mx-auto">Free for the builders who create agents. Revenue-generating for the platforms that receive agent payments.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up delay-100">
+
+      <!-- For agent builders -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-8 card-glow flex flex-col gap-5">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/20 border border-emerald-800/30 text-emerald-400 mb-4">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            For agent builders &mdash; free
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Ship spend-safe agents in minutes</h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-5">Sign spending budgets before every payment call. Your agent cannot exceed what you authorized — enforced cryptographically at the SDK layer, not by policy.</p>
+        </div>
+        <ul class="space-y-3 text-sm flex-1">
+          <li class="flex items-start gap-3">
+            <span class="text-emerald-400 mt-0.5 flex-shrink-0">&#x2713;</span>
+            <span class="text-gray-300"><code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">npm install @pqsafe/agent-pay</code> — up in 30 seconds</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-emerald-400 mt-0.5 flex-shrink-0">&#x2713;</span>
+            <span class="text-gray-300">SDK signs SpendEnvelopes locally — keys never leave your environment</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-emerald-400 mt-0.5 flex-shrink-0">&#x2713;</span>
+            <span class="text-gray-300">Open-source MIT-style integration code — no black boxes, no telemetry</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-emerald-400 mt-0.5 flex-shrink-0">&#x2713;</span>
+            <span class="text-gray-300">Plugins for LangChain, CrewAI, and Mastra ship in the same package</span>
+          </li>
+        </ul>
+        <a href="/handbook" class="btn-primary text-sm px-5 py-2.5 self-start">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Read the developer handbook
+        </a>
+      </div>
+
+      <!-- For SaaS receivers -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-8 card-glow-cyan flex flex-col gap-5">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-900/20 border border-cyan-800/30 text-cyan-400 mb-4">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            For SaaS receivers &mdash; 5&ndash;25 bps per agent transaction
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Verify agent authorization before you charge</h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-5">Drop-in receiver verification. Build a compliance evidence chain — signed envelope + replay-resistant nonce — that satisfies HKMA, MAS, or FCA audit requirements for seven years.</p>
+        </div>
+        <ul class="space-y-3 text-sm flex-1">
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 mt-0.5 flex-shrink-0">&#x2713;</span>
+            <span class="text-gray-300">Drop-in receiver verification — one API call, cryptographic proof returned</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 mt-0.5 flex-shrink-0">&#x2713;</span>
+            <span class="text-gray-300">Compliance evidence chain: signed envelope + replay-resistant nonce, audit-ready for 7 years</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 mt-0.5 flex-shrink-0">&#x2713;</span>
+            <span class="text-gray-300">Stripe/Plaid-style integration on the receiving end — your existing checkout unchanged</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 mt-0.5 flex-shrink-0">&#x2713;</span>
+            <span class="text-gray-300">Revenue model: 5&ndash;25 bps on verified agent transactions, not a flat seat fee</span>
+          </li>
+        </ul>
+        <a href="mailto:raymond@pqsafe.xyz?subject=PQSafe%20receiver%20pilot" class="btn-secondary text-sm px-5 py-2.5 self-start" style="border-color: rgba(6,182,212,0.4);">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Pilot launching June 2026 &mdash; request access
+        </a>
+      </div>
+
+    </div>
   </section>
 
   <div class="section-divider"></div>
