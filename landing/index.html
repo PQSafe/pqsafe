@@ -1216,123 +1216,15 @@
 
   <div class="section-divider"></div>
 
-  <!-- ====== EXTENSION SCREENSHOTS ====== -->
-  <section id="screenshots" class="py-24 overflow-hidden">
-    <div class="max-w-5xl mx-auto px-6">
-      <div class="text-center mb-16 fade-in-up">
-        <div class="section-label">Extension Preview</div>
-        <h2 class="text-3xl sm:text-4xl font-bold text-white">See it in action</h2>
-        <p class="mt-4 text-gray-400 max-w-xl mx-auto">Clean, minimal UI. Everything you need — nothing you don't.</p>
-      </div>
-
-      <div class="flex flex-col sm:flex-row items-start justify-center gap-6 fade-in-up delay-100">
-
-        <!-- Screen 1: Welcome -->
-        <div class="ext-mock">
-          <div class="ext-header">
-            <div class="flex items-center gap-2">
-              <span class="pq-logo text-xs py-0.5 px-1.5">PQ</span>
-              <span class="font-semibold text-sm text-white">PQSafe</span>
-            </div>
-            <span class="badge badge-emerald text-xs">Beta</span>
-          </div>
-          <div class="ext-body">
-            <div class="text-center py-4">
-              <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-                   style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.2)); border: 1px solid rgba(16,185,129,0.3);">
-                <svg width="30" height="30" fill="none" stroke="#10b981" stroke-width="1.5" viewBox="0 0 24 24">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-              </div>
-              <h3 class="text-white font-bold text-lg">PQSafe AgentPay</h3>
-              <p class="text-gray-500 text-xs mt-2 leading-relaxed">Signed spend envelopes for AI agents<br>Multi-rail · ML-DSA-65 future-proof</p>
-            </div>
-            <div class="space-y-3 mt-4">
-              <button class="w-full py-2.5 rounded-lg font-semibold text-sm text-black" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
-                Create New Wallet
-              </button>
-              <button class="w-full py-2.5 rounded-lg font-semibold text-sm text-gray-300 border border-gray-700 bg-transparent">
-                Import Existing Key
-              </button>
-            </div>
-            <p class="text-center text-xs text-gray-600 mt-4">Keys never leave your browser</p>
-          </div>
-        </div>
-
-        <!-- Screen 2: Dashboard -->
-        <div class="ext-mock sm:-mt-6">
-          <div class="ext-header">
-            <div class="flex items-center gap-2">
-              <span class="pq-logo text-xs py-0.5 px-1.5">PQ</span>
-              <span class="font-semibold text-sm text-white">Dashboard</span>
-            </div>
-            <div class="w-2 h-2 rounded-full bg-emerald-400" title="Connected"></div>
-          </div>
-          <div class="ext-body">
-            <!-- Address -->
-            <div class="p-3 rounded-lg bg-black/40 border border-gray-800 mb-4">
-              <div class="text-xs text-gray-500 mb-1">Your PQ Address</div>
-              <div class="font-mono text-xs text-emerald-400 break-all leading-relaxed">pq1a8f3e2d...b7c91f</div>
-            </div>
-            <!-- Stats grid -->
-            <div class="grid grid-cols-2 gap-3 mb-4">
-              <div class="p-3 rounded-lg bg-black/40 border border-gray-800 text-center">
-                <div class="text-xs text-gray-500">Algorithm</div>
-                <div class="text-sm font-bold text-emerald-400 mt-1">ML-DSA-65</div>
-              </div>
-              <div class="p-3 rounded-lg bg-black/40 border border-gray-800 text-center">
-                <div class="text-xs text-gray-500">Security</div>
-                <div class="text-sm font-bold text-cyan-400 mt-1">Level 3</div>
-              </div>
-            </div>
-            <!-- Pubkey preview -->
-            <div class="p-3 rounded-lg bg-black/40 border border-gray-800">
-              <div class="flex items-center justify-between mb-2">
-                <div class="text-xs text-gray-500">Public Key (1952 bytes)</div>
-                <button class="text-xs text-emerald-400 hover:text-emerald-300">Copy</button>
-              </div>
-              <div class="font-mono text-xs text-gray-600 break-all">3059301306...a12f8e4c...</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Screen 3: Sign Message -->
-        <div class="ext-mock">
-          <div class="ext-header">
-            <div class="flex items-center gap-2">
-              <span class="pq-logo text-xs py-0.5 px-1.5">PQ</span>
-              <span class="font-semibold text-sm text-white">Sign Message</span>
-            </div>
-          </div>
-          <div class="ext-body">
-            <div class="space-y-3">
-              <div>
-                <label class="text-xs text-gray-500 block mb-1.5">Message to Sign</label>
-                <div class="w-full p-2.5 rounded-lg bg-black/40 border border-gray-700 text-xs text-gray-300 font-mono min-h-[60px]">
-                  Hello, post-quantum world!<br>Timestamp: 2026-04-29
-                </div>
-              </div>
-              <button class="w-full py-2.5 rounded-lg font-semibold text-sm text-black" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
-                Sign with ML-DSA-65
-              </button>
-              <div>
-                <label class="text-xs text-gray-500 block mb-1.5">Signature (3309 bytes)</label>
-                <div class="w-full p-2.5 rounded-lg bg-black/40 border border-emerald-800/50 text-xs text-emerald-400/70 font-mono break-all leading-relaxed">
-                  b3a1f9c2e4...d891ac3f2b...7e4f12dc...
-                </div>
-              </div>
-              <div class="flex items-center gap-2 p-2 rounded-lg bg-emerald-900/20 border border-emerald-800/40">
-                <svg width="14" height="14" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                <span class="text-xs text-emerald-400">Signature verified ✓</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
+  <!-- ====== SPEND ENVELOPE DEMO LINK ====== -->
+  <section id="demo-link" class="py-16 max-w-5xl mx-auto px-6 text-center fade-in-up">
+    <p class="text-gray-400 text-lg mb-4">Ready to see it working end-to-end?</p>
+    <a href="https://demo.pqsafe.xyz" target="_blank" rel="noopener" class="btn-primary text-base px-8 py-3.5">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+      Try the SpendEnvelope demo at demo.pqsafe.xyz
+    </a>
   </section>
 
   <div class="section-divider"></div>
@@ -1500,10 +1392,7 @@
         <a href="https://www.npmjs.com/package/@pqsafe/agent-pay" target="_blank" rel="noopener" class="hover:text-gray-400 transition-colors">npm</a>
         <span class="text-gray-800">&middot;</span>
         <a href="https://pypi.org/project/pqsafe-agent-pay/" target="_blank" rel="noopener" class="hover:text-gray-400 transition-colors">PyPI</a>
-        <span class="text-gray-800">&middot;</span>
-        <a href="#" class="hover:text-gray-400 transition-colors">Discord</a>
-        <span class="text-gray-800">&middot;</span>
-        <a href="#" class="hover:text-gray-400 transition-colors">Twitter</a>
+
       </div>
 
       <div class="mt-4 text-center text-xs text-gray-700">
