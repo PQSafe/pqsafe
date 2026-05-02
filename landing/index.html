@@ -412,6 +412,9 @@
         <span class="font-bold text-lg text-white tracking-tight">PQSafe</span>
       </a>
       <div class="flex items-center gap-4">
+        <a href="#integrations" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
+          Integrations
+        </a>
         <a href="/handbook" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
           Handbook
         </a>
@@ -1148,6 +1151,225 @@
         All plugins on GitHub
       </a>
     </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== INTEGRATIONS ====== -->
+  <section id="integrations" class="py-24 max-w-5xl mx-auto px-6">
+    <div class="text-center mb-16 fade-in-up">
+      <div class="section-label">Integrations</div>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">Every major agent framework, <span class="gradient-text">covered</span></h2>
+      <p class="mt-4 text-gray-400 max-w-xl mx-auto">PQSafe plugs into OpenClaw, Mastra, LangChain, and CrewAI. One import adds ML-DSA-65 signed spend envelopes to any agent stack.</p>
+    </div>
+
+    <!-- Framework cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up delay-100">
+
+      <!-- OpenClaw -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3);">
+            <svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/>
+              <path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+              <path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/>
+              <path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/>
+              <path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/>
+              <path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/>
+              <path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/>
+              <path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">OpenClaw</div>
+            <div class="text-xs text-gray-500">Skill PR · May 2026</div>
+          </div>
+          <span class="ml-auto text-xs px-2 py-0.5 rounded-full font-medium" style="background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.25);">Coming May 4</span>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Native OpenClaw skill that wraps <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">AgentPay.authorize()</code> — adds PQSafe spend gating to any OpenClaw agent in a single tool registration, no custom middleware needed.
+        </p>
+        <div class="bg-black/50 rounded-xl border border-gray-800 overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">npm i @pqsafe/openclaw-skill</div>
+        </div>
+        <a href="/openclaw-skill/" class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View skill spec
+        </a>
+      </div>
+
+      <!-- Mastra -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#a78bfa" stroke-width="2" viewBox="0 0 24 24">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">Mastra</div>
+            <div class="text-xs text-gray-500">TypeScript</div>
+          </div>
+          <span class="ml-auto text-xs px-2 py-0.5 rounded-full font-medium" style="background: rgba(139,92,246,0.12); color: #a78bfa; border: 1px solid rgba(139,92,246,0.25);">Live on npm</span>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Attach <code class="text-violet-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">pqsafePayTool</code> to any Mastra agent definition — envelope creation and multi-rail payment routing handled automatically, with full TypeScript types.
+        </p>
+        <div class="bg-black/50 rounded-xl border border-gray-800 overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">npm i @pqsafe/mastra</div>
+        </div>
+        <a href="https://www.npmjs.com/package/@pqsafe/mastra" target="_blank" rel="noopener"
+           class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View on npm
+        </a>
+      </div>
+
+      <!-- LangChain -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">LangChain</div>
+            <div class="text-xs text-gray-500">Python &amp; JS</div>
+          </div>
+          <span class="ml-auto text-xs px-2 py-0.5 rounded-full font-medium" style="background: rgba(6,182,212,0.1); color: #06b6d4; border: 1px solid rgba(6,182,212,0.25);">Live on PyPI</span>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Adds <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">AgentPayTool</code> to any LangChain agent — issues a signed spend envelope before every payment call. No envelope, no spend.
+        </p>
+        <div class="bg-black/50 rounded-xl border border-gray-800 overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">pip install langchain-pqsafe</div>
+        </div>
+        <a href="https://pypi.org/project/langchain-pqsafe/" target="_blank" rel="noopener"
+           class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View on PyPI
+        </a>
+      </div>
+
+      <!-- CrewAI -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">CrewAI</div>
+            <div class="text-xs text-gray-500">Python</div>
+          </div>
+          <span class="ml-auto text-xs px-2 py-0.5 rounded-full font-medium" style="background: rgba(6,182,212,0.1); color: #06b6d4; border: 1px solid rgba(6,182,212,0.25);">Live on PyPI</span>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Wraps any CrewAI <code class="text-cyan-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">Task</code> with a spend envelope — per-task budget ceilings enforced cryptographically, ML-DSA-65 signed before execution.
+        </p>
+        <div class="bg-black/50 rounded-xl border border-gray-800 overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">pip install crewai-pqsafe</div>
+        </div>
+        <a href="https://pypi.org/project/crewai-pqsafe/" target="_blank" rel="noopener"
+           class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View on PyPI
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Package install grid -->
+    <div class="mt-12 fade-in-up delay-200">
+      <h3 class="text-lg font-semibold text-white mb-6 text-center">All packages — copy &amp; paste</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <a href="https://www.npmjs.com/package/@pqsafe/agent-pay" target="_blank" rel="noopener"
+           class="block bg-black/40 rounded-xl border border-gray-800 hover:border-emerald-500 transition-colors overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-emerald-400 font-mono font-medium">npm</span>
+            <span class="text-xs text-gray-500 ml-auto">Core JS SDK</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">npm i @pqsafe/agent-pay</div>
+        </a>
+
+        <a href="https://www.npmjs.com/package/@pqsafe/mastra" target="_blank" rel="noopener"
+           class="block bg-black/40 rounded-xl border border-gray-800 hover:border-violet-500 transition-colors overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-emerald-400 font-mono font-medium">npm</span>
+            <span class="text-xs text-gray-500 ml-auto">Mastra plugin</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">npm i @pqsafe/mastra</div>
+        </a>
+
+        <div class="block bg-black/40 rounded-xl border border-gray-800 overflow-hidden opacity-75">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-emerald-400 font-mono font-medium">npm</span>
+            <span class="text-xs text-gray-500 ml-auto">OpenClaw skill</span>
+            <span class="text-xs px-1.5 py-0.5 rounded font-medium" style="background: rgba(16,185,129,0.1); color: #10b981;">May 4</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-gray-500">npm i @pqsafe/openclaw-skill</div>
+        </div>
+
+        <a href="https://pypi.org/project/pqsafe-agent-pay/" target="_blank" rel="noopener"
+           class="block bg-black/40 rounded-xl border border-gray-800 hover:border-cyan-500 transition-colors overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-cyan-400 font-mono font-medium">pip</span>
+            <span class="text-xs text-gray-500 ml-auto">Core Python SDK</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-cyan-400">pip install pqsafe-agent-pay</div>
+        </a>
+
+        <a href="https://pypi.org/project/langchain-pqsafe/" target="_blank" rel="noopener"
+           class="block bg-black/40 rounded-xl border border-gray-800 hover:border-cyan-500 transition-colors overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-cyan-400 font-mono font-medium">pip</span>
+            <span class="text-xs text-gray-500 ml-auto">LangChain plugin</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-cyan-400">pip install langchain-pqsafe</div>
+        </a>
+
+        <a href="https://pypi.org/project/crewai-pqsafe/" target="_blank" rel="noopener"
+           class="block bg-black/40 rounded-xl border border-gray-800 hover:border-cyan-500 transition-colors overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-cyan-400 font-mono font-medium">pip</span>
+            <span class="text-xs text-gray-500 ml-auto">CrewAI plugin</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-cyan-400">pip install crewai-pqsafe</div>
+        </a>
+
+      </div>
+    </div>
+
   </section>
 
   <div class="section-divider"></div>
