@@ -4,63 +4,221 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy — PQSafe</title>
-  <meta name="description" content="PQSafe privacy policy. No data collection. No telemetry. No network calls. Everything stays in your browser.">
+  <meta name="description" content="PQSafe collects no personal data. No analytics, no cookies, no tracking. Full source on GitHub.">
+  <link rel="canonical" href="https://pqsafe.xyz/privacy/">
+  <meta name="robots" content="index, follow">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2310b981'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='bold' font-size='14' fill='white'>PQ</text></svg>">
-  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    body {
-      background: #0a0a0f;
-      color: #e5e7eb;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    /* Reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Tokens */
+    :root {
+      --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --color-bg: #0f172a;
+      --color-bg-subtle: #1e293b;
+      --color-border: #334155;
+      --color-text: #e2e8f0;
+      --color-muted: #94a3b8;
+      --color-subtle: #64748b;
+      --color-accent: #34d399;
+      --color-accent-hover: #6ee7b7;
+      --color-accent-dim: rgba(52, 211, 153, 0.12);
+      --color-accent-border: rgba(52, 211, 153, 0.3);
+      --max-width: 720px;
     }
-    h1, h2 { color: #fff; }
-    h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 1rem; }
-    h2 { font-size: 1.25rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; color: #34d399; }
-    p, li { color: #cbd5e1; line-height: 1.7; }
-    a { color: #34d399; }
-    a:hover { color: #6ee7b7; }
-    code { background: #1f2937; padding: 2px 6px; border-radius: 4px; color: #a7f3d0; font-size: 0.9em; }
-    .container { max-width: 720px; margin: 0 auto; padding: 4rem 1.5rem; }
-    .badge { display: inline-block; padding: 2px 10px; border-radius: 9999px; background: rgba(16,185,129,0.15); color: #34d399; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(16,185,129,0.3); }
-    .back { color: #6b7280; font-size: 0.875rem; }
+
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+      padding: 0 1rem;
+    }
+
+    .page-wrap {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 3.5rem 0 5rem;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      font-size: 0.875rem;
+      color: var(--color-subtle);
+      text-decoration: none;
+      margin-bottom: 2.5rem;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--color-accent); }
+
+    /* Header */
+    .doc-header {
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .doc-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-accent);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: #fff;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+    }
+
+    .doc-date {
+      font-size: 0.8125rem;
+      color: var(--color-subtle);
+    }
+
+    /* TL;DR badge block */
+    .tldr {
+      background: var(--color-accent-dim);
+      border: 1px solid var(--color-accent-border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.9375rem;
+      color: var(--color-text);
+    }
+    .tldr strong { color: var(--color-accent); }
+
+    /* Sections */
+    h2 {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 2.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      font-size: 0.9375rem;
+      color: var(--color-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    ul li {
+      font-size: 0.9375rem;
+      color: var(--color-muted);
+      padding-left: 1.25rem;
+      position: relative;
+      margin-bottom: 0.4rem;
+    }
+
+    ul li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--color-subtle);
+    }
+
+    a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+    a:hover { color: var(--color-accent-hover); text-decoration: underline; }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      color: #a7f3d0;
+    }
+
+    /* Footer */
+    .doc-footer {
+      border-top: 1px solid var(--color-border);
+      margin-top: 3.5rem;
+      padding-top: 1.5rem;
+      font-size: 0.8125rem;
+      color: var(--color-subtle);
+    }
+    .doc-footer a { color: var(--color-subtle); }
+    .doc-footer a:hover { color: var(--color-accent); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <a href="/" class="back">← Back to pqsafe.xyz</a>
-    <h1 class="mt-6">Privacy Policy</h1>
-    <p class="text-sm text-gray-500">Last updated: 14 April 2026</p>
-    <p class="mt-6"><span class="badge">TL;DR</span> PQSafe collects nothing. The extension makes no network calls. All keys and data stay in your browser.</p>
+  <div class="page-wrap">
 
-    <h2>1. What we collect</h2>
-    <p>Nothing. PQSafe does not collect, transmit, store, or share any personal information, wallet data, cryptographic material, usage statistics, or telemetry of any kind.</p>
+    <a href="/" class="back-link">← pqsafe.xyz</a>
 
-    <h2>2. Where your keys live</h2>
-    <p>Every PQSafe key pair is generated inside your browser and persisted only in <code>chrome.storage.local</code>, which is scoped to your local Chrome profile on your device. Keys never leave your browser. There is no cloud, no backup server, no remote store.</p>
+    <header class="doc-header">
+      <div class="doc-label">Legal</div>
+      <h1>Privacy Policy</h1>
+      <div class="doc-date">Effective date: 2026-05-02</div>
+    </header>
 
-    <h2>3. Network activity</h2>
-    <p>The PQSafe extension makes no outbound network requests. It does not contact any analytics, telemetry, crash-reporting, advertising, or third-party service. You can verify this by inspecting the source at <a href="https://github.com/PQSafe/pqsafe">github.com/PQSafe/pqsafe</a> or by watching the Network tab in Chrome DevTools while using the extension.</p>
+    <div class="tldr">
+      <strong>TL;DR</strong> — pqsafe.xyz collects no personal data. No analytics, no cookies, no tracking pixels, no third-party scripts. This is a static site backed by fully open-source code.
+    </div>
 
-    <h2>4. Permissions the extension requests</h2>
-    <ul class="list-disc pl-6 mt-2">
-      <li><code>storage</code> — required to persist your post-quantum key pair in <code>chrome.storage.local</code>. Used only for local wallet data.</li>
-      <li><code>clipboardWrite</code> — required so you can copy your public key from the Dashboard view. Nothing is ever read from the clipboard.</li>
+    <h2>1. Data we collect</h2>
+    <p>None. pqsafe.xyz does not collect, store, or transmit any personal information. There are no sign-up forms, no accounts, and no user-submitted data of any kind on this website.</p>
+
+    <h2>2. Cookies &amp; local storage</h2>
+    <p>This site sets no cookies and uses no browser storage (localStorage, sessionStorage, IndexedDB). There are no consent banners because there is nothing to consent to.</p>
+
+    <h2>3. Analytics &amp; tracking</h2>
+    <p>We run no analytics platform, no tracking pixels, and no third-party JavaScript analytics (e.g. Google Analytics, Plausible, Mixpanel, Segment, or similar). The page source is fully inspectable and contains no third-party script tags.</p>
+
+    <h2>4. Email contacts</h2>
+    <p>If you email us at <a href="mailto:raymond@pqsafe.xyz">raymond@pqsafe.xyz</a> or <a href="mailto:tris@pqsafe.xyz">tris@pqsafe.xyz</a>, we will use your email address and message solely to reply to your inquiry. We do not add you to mailing lists, share your address with third parties, or retain correspondence beyond what is necessary to resolve your query.</p>
+
+    <h2>5. GitHub &amp; npm packages</h2>
+    <p>PQSafe's source code is published at <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">github.com/PQSafe/pqsafe</a> and distributed as npm packages under standard open-source metadata (package name, version, author, license). These registries may collect standard request logs (IP address, timestamp) subject to their own privacy policies:</p>
+    <ul>
+      <li><a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a></li>
+      <li><a href="https://www.npmjs.com/policies/privacy" target="_blank" rel="noopener">npm Privacy Policy</a></li>
     </ul>
-    <p>PQSafe requests no host permissions, no content scripts, no tabs permission, and no identity permission.</p>
+    <p>We do not embed telemetry in any published package. No PII is included in package metadata.</p>
 
-    <h2>5. Cookies and tracking</h2>
-    <p>This website (pqsafe.xyz) is a static page hosted on GitHub Pages. It sets no cookies of its own and runs no analytics or trackers. GitHub's own edge infrastructure may log request metadata at the network level; see the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub privacy statement</a> for details.</p>
+    <h2>6. Hosting infrastructure</h2>
+    <p>pqsafe.xyz is a static site hosted on GitHub Pages. GitHub's edge infrastructure may log standard request metadata (IP address, User-Agent, timestamp) at the network level. This is outside our control; see the GitHub Privacy Statement linked above.</p>
 
-    <h2>6. Children</h2>
-    <p>PQSafe is a general-purpose cryptography tool and is not directed at children under 13.</p>
+    <h2>7. Third-party services</h2>
+    <p>This site loads no third-party fonts, no CDN-hosted scripts, and no embedded iframes. All assets are served from <code>pqsafe.xyz</code> directly.</p>
 
-    <h2>7. Changes to this policy</h2>
-    <p>If this policy ever changes — for example, if PQSafe adds optional features that involve network calls — the change will be announced in the project's GitHub repository and reflected here with a new "last updated" date. Existing functionality will remain offline-only.</p>
+    <h2>8. Children</h2>
+    <p>PQSafe is a general-purpose post-quantum cryptography tool and is not directed at children under 13. We do not knowingly collect information from minors.</p>
 
-    <h2>8. Contact</h2>
-    <p>Questions: <a href="mailto:hello@pqsafe.xyz">hello@pqsafe.xyz</a> or open an issue at <a href="https://github.com/PQSafe/pqsafe/issues">github.com/PQSafe/pqsafe/issues</a>.</p>
+    <h2>9. Changes to this policy</h2>
+    <p>If this policy changes, the updated version will be published here with a new effective date and announced in the project's <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">GitHub repository</a>. All existing commitments remain in force.</p>
 
-    <p class="mt-12 text-xs text-gray-600">PQSafe is open-source software (MIT license). Cryptographic primitives are provided by <a href="https://github.com/paulmillr/noble-post-quantum">@noble/post-quantum</a>, implementing NIST FIPS 203 (ML-KEM) and FIPS 204 (ML-DSA).</p>
+    <h2>10. Contact</h2>
+    <p>Privacy questions: <a href="mailto:raymond@pqsafe.xyz">raymond@pqsafe.xyz</a></p>
+
+    <footer class="doc-footer">
+      <p>PQSafe is open-source software (MIT license). Full source: <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">github.com/PQSafe/pqsafe</a></p>
+    </footer>
+
   </div>
 </body>
 </html>
