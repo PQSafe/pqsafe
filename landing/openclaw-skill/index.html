@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PQSafe OpenClaw Payment Skill — Post-quantum signed spend envelopes for AI agents</title>
+  <title>PQSafe OpenClaw Skill — PQ-signed payments for AI agents</title>
   <meta name="description" content="ML-DSA-65 signed SpendEnvelopes for OpenClaw agents. Multi-rail (Airwallex / Wise / Stripe / USDC-Base / x402). Apache-2.0.">
-  <link rel="canonical" href="https://pqsafe.xyz/openclaw-skill">
+  <link rel="canonical" href="https://pqsafe.xyz/openclaw-skill/">
 
   <!-- Open Graph -->
   <meta property="og:title" content="PQSafe OpenClaw Payment Skill — Post-quantum signed spend envelopes for AI agents">
@@ -13,7 +13,7 @@
   <meta property="og:image" content="https://pqsafe.xyz/og/home.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:url" content="https://pqsafe.xyz/openclaw-skill">
+  <meta property="og:url" content="https://pqsafe.xyz/openclaw-skill/">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="PQSafe AgentPay">
 
@@ -389,6 +389,19 @@
       .data-table th, .data-table td { padding: var(--spacing-sm) var(--spacing-sm); }
     }
   </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PQSafe OpenClaw Payment Skill",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "description": "ML-DSA-65 signed SpendEnvelopes for OpenClaw agents. Multi-rail payment execution with post-quantum cryptographic signatures.",
+  "url": "https://pqsafe.xyz/openclaw-skill/",
+  "license": "https://www.apache.org/licenses/LICENSE-2.0",
+  "publisher": { "@type": "Organization", "name": "PQSafe AgentPay", "url": "https://pqsafe.xyz" }
+}
+</script>
 </head>
 <body>
 <div class="page-wrap">
@@ -398,7 +411,7 @@
     <p class="doc-meta">Skill Documentation &middot; PQSafe AgentPay</p>
     <h1 class="doc-title">PQSafe OpenClaw Payment Skill <span style="font-weight:400;color:var(--color-muted)">(pqsafe.pay.v1)</span></h1>
     <p class="doc-subtitle">Post-quantum signed spend envelopes for OpenClaw-compatible AI agents</p>
-    <p class="doc-date">Saturday, May 2, 2026 &middot; <a href="https://pqsafe.xyz/openclaw-skill" style="color:var(--color-subtle);text-decoration:none;">pqsafe.xyz/openclaw-skill</a></p>
+    <p class="doc-date">Saturday, May 2, 2026 &middot; <a href="https://pqsafe.xyz/openclaw-skill/" style="color:var(--color-subtle);text-decoration:none;">pqsafe.xyz/openclaw-skill</a></p>
   </header>
 
   <!-- ===== Body ===== -->
@@ -569,6 +582,12 @@ const envelope = await claw.invoke("pqsafe.pay.v1/create_envelope", {
 
     <!-- ===== Get the skill ===== -->
     <h2>Get the skill</h2>
+
+    <p style="margin: var(--spacing-md) 0;">
+      <img src="https://img.shields.io/npm/v/@pqsafe/openclaw?label=npm" alt="npm version" style="display:inline-block; margin-right: 6px; vertical-align: middle;">
+      <img src="https://img.shields.io/npm/dm/@pqsafe/openclaw?label=downloads" alt="npm downloads" style="display:inline-block; margin-right: 6px; vertical-align: middle;">
+      <img src="https://img.shields.io/github/stars/PQSafe/pqsafe?label=GitHub%20stars&style=flat" alt="GitHub stars" style="display:inline-block; vertical-align: middle;">
+    </p>
 
     <div class="get-skill">
       <ul>
