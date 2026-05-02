@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PQSafe AgentPay — The signed permission slip for AI agents spending money</title>
   <meta name="description" content="Your AI agent needs Perplexity Pro mid-task? PQSafe issues a virtual Visa via Airwallex — capped, signed with post-quantum ML-DSA-65, and auditable. Spend delegation for AI agents. Multi-rail: Airwallex, Wise, Stripe, USDC-Base.">
-  <meta name="keywords" content="AI agent payments, agent payment infrastructure, post-quantum cryptography, spend envelope, ML-DSA, ML-KEM, NIST FIPS 203, FIPS 204, agent SDK, Airwallex, Wise, USDC, x402">
+  <meta name="keywords" content="AI agent payments, agent payment infrastructure, post-quantum cryptography, spend envelope, ML-DSA, NIST FIPS 204, agent SDK, Airwallex, Wise, USDC, x402">
 
   <!-- Open Graph -->
   <meta property="og:title" content="PQSafe AgentPay — The signed permission slip for AI agents spending money">
@@ -394,13 +394,6 @@
       animation: pulseRing 2.5s ease-out infinite;
     }
 
-    /* Chinese section */
-    .chinese-section {
-      background: linear-gradient(135deg, rgba(16,185,129,0.05) 0%, rgba(6,182,212,0.04) 50%, rgba(139,92,246,0.04) 100%);
-      border-top: 1px solid rgba(16,185,129,0.12);
-      border-bottom: 1px solid rgba(16,185,129,0.12);
-    }
-
     /* Responsive flex column on mobile */
     @media (max-width: 640px) {
       .ext-mock { width: 100%; max-width: 320px; }
@@ -425,6 +418,7 @@
         <a href="https://ledger.pqsafe.xyz" target="_blank" rel="noopener"
            class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
           Ledger
+          <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 font-medium">Beta · pilot launches Jun 2026</span>
         </a>
         <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener"
            class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
@@ -484,7 +478,7 @@
 
       <p class="mt-8 text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed fade-in-up delay-200">
         Your agent is mid-task and needs Perplexity Pro. It checks its <strong class="text-emerald-400">SpendEnvelope</strong> — a cryptographically signed budget —
-        <strong class="text-cyan-400">PQSafe issues a virtual Visa</strong> via Airwallex, the agent pays, and resumes. No human logs in. Spending cap enforced at the Visa network level.
+        <strong class="text-cyan-400">PQSafe issues a virtual Visa</strong> via Airwallex, the agent pays, and resumes. No human logs in. Spending cap enforced at the SDK and Airwallex API layer.
         Any SaaS accepting Visa is instantly PQSafe-compatible.
         Every authorization is signed with <strong class="text-emerald-400">ML-DSA-65</strong> (NIST FIPS 204) — quantum-safe from day one, ready for the post-quantum mandate every regulated institution eventually faces.
       </p>
@@ -510,6 +504,7 @@
             <path d="M3 9h18M3 15h18M9 3v18"/>
           </svg>
           View Ledger
+          <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 font-medium">Beta · pilot launches Jun 2026</span>
         </a>
       </div>
 
@@ -518,11 +513,11 @@
         <span class="badge badge-cyan">Virtual Visa via Airwallex</span>
         <span class="badge badge-emerald">Signed Spend Envelopes</span>
         <span class="badge badge-blue">Airwallex · Wise · Stripe · USDC</span>
-        <span class="badge badge-violet">Spend Cap at Visa Network Level</span>
+        <span class="badge badge-violet">Spend Cap via SDK &amp; Airwallex API</span>
         <span class="badge badge-orange">ML-DSA-65 · NIST FIPS 204</span>
         <a href="/handbook" class="badge badge-emerald" style="text-decoration:none;">Agent Payments Handbook</a>
         <a href="https://demo.pqsafe.xyz" target="_blank" rel="noopener" class="badge badge-cyan" style="text-decoration:none;">Live Demo</a>
-        <a href="https://ledger.pqsafe.xyz" target="_blank" rel="noopener" class="badge badge-blue" style="text-decoration:none;">Public Ledger</a>
+        <a href="https://ledger.pqsafe.xyz" target="_blank" rel="noopener" class="badge badge-blue" style="text-decoration:none;">Public Ledger <span class="ml-1 text-xs px-1.5 py-0.5 rounded-full bg-slate-700 text-slate-300 font-medium">Beta · pilot launches Jun 2026</span></a>
       </div>
 
       <!-- Scroll indicator -->
@@ -597,16 +592,21 @@
         <div class="text-white font-semibold">PQSafe/pqsafe</div>
         <div class="text-xs text-gray-400 mt-1">Source · Tests · CI</div>
       </a>
-      <a href="https://github.com/google-agentic-commerce/AP2/issues/250" target="_blank" rel="noopener" class="block p-4 rounded-lg border border-gray-800 hover:border-yellow-500 transition bg-black/30">
-        <div class="text-xs text-yellow-400 font-mono mb-1">Standards · AP2 RFC</div>
+      <a href="/fido-pq-letter/" class="block p-4 rounded-lg border border-gray-800 hover:border-yellow-500 transition bg-black/30">
+        <div class="text-xs text-yellow-400 font-mono mb-1">Standards · FIDO Alliance</div>
         <div class="text-white font-semibold">PQ Extension Proposal</div>
-        <div class="text-xs text-gray-400 mt-1">Filed on Google's AP2 repo</div>
+        <div class="text-xs text-gray-400 mt-1">Open letter to FIDO Alliance Payments TWG — pq profile contribution</div>
       </a>
       <a href="https://demo.pqsafe.xyz" target="_blank" rel="noopener" class="block p-4 rounded-lg border border-gray-800 hover:border-emerald-500 transition bg-black/30">
         <div class="text-xs text-emerald-400 font-mono mb-1">Live Demo</div>
         <div class="text-white font-semibold">demo.pqsafe.xyz</div>
         <div class="text-xs text-gray-400 mt-1">Try the SDK end-to-end</div>
       </a>
+      <div class="block p-4 rounded-lg border border-gray-800 bg-black/30">
+        <div class="text-xs text-blue-400 font-mono mb-1">Ledger</div>
+        <div class="text-white font-semibold">ledger.pqsafe.xyz</div>
+        <div class="bg-amber-500/10 border-l-4 border-amber-400 text-amber-300 px-3 py-2 text-sm mt-2">Beta — pilot launches Jun 2026. No live transaction data shown.</div>
+      </div>
     </div>
   </section>
 
@@ -661,7 +661,7 @@
             </div>
           </div>
           <p class="text-gray-400 text-sm leading-relaxed">
-            <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">pay.envelope({ amount, currency, rail })</code>
+            <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">createEnvelope({ maxAmount, currency, allowedRecipients })</code>
             returns a budget signed with <strong class="text-emerald-400">ML-DSA-65</strong> (NIST FIPS 204). Amount cap, payee allowlist, and TTL enforced cryptographically — your agent cannot exceed any of them.
           </p>
           <div class="mt-5">
@@ -688,7 +688,7 @@
             </div>
           </div>
           <p class="text-gray-400 text-sm leading-relaxed">
-            <code class="text-cyan-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">pay.authorize(envelope)</code>
+            <code class="text-cyan-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">executeAgentPayment(signed, { recipient, amount })</code>
             routes the payment through <strong class="text-cyan-400">Airwallex, Wise, Stripe, or USDC-Base</strong>, returns a real transfer UUID, and writes a signed receipt your auditor can verify seven years from now.
           </p>
           <div class="mt-5">
@@ -764,15 +764,15 @@
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
         </div>
-        <h3 class="font-bold text-white text-lg mb-3">ML-KEM for Key Exchange</h3>
+        <h3 class="font-bold text-white text-lg mb-3">ML-KEM for Key Exchange <span class="text-xs text-gray-500 font-normal">(Q3 2026 roadmap)</span></h3>
         <p class="text-gray-400 text-sm leading-relaxed">
           <strong class="text-cyan-400">CRYSTALS-Kyber (ML-KEM-768)</strong> is NIST FIPS 203 standardized — the
           post-quantum Key Encapsulation Mechanism. Enables quantum-safe encrypted key exchange. AES-192 equivalent security.
-          Already deployed by Apple, Google, and Cloudflare.
+          Already deployed by Apple, Google, and Cloudflare. Coming to @pqsafe/agent-pay in Q3 2026.
         </p>
         <div class="mt-5 flex flex-wrap gap-2">
           <span class="badge badge-cyan">FIPS 203</span>
-          <span class="badge badge-cyan">KEM-768</span>
+          <span class="badge badge-cyan">Roadmap Q3 2026</span>
         </div>
       </div>
     </div>
@@ -838,11 +838,11 @@
             </div>
           </div>
 
-          <!-- ML-KEM block -->
-          <div>
+          <!-- ML-KEM block (roadmap) -->
+          <div class="opacity-70">
             <div class="text-cyan-400 text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
               <span class="inline-block w-2 h-2 rounded-full bg-cyan-400"></span>
-              ML-KEM-768 (Key Encapsulation)
+              ML-KEM-768 (Key Encapsulation) &mdash; <span class="text-gray-500 normal-case font-normal tracking-normal">Roadmap Q3 2026</span>
             </div>
             <div class="space-y-3 text-sm font-mono">
               <div class="flex justify-between border-b border-gray-800 pb-2">
@@ -888,8 +888,8 @@
             <span class="px-3 py-1.5 rounded-lg bg-black/60 border border-gray-700 text-gray-300">
               <span class="text-emerald-400">import</span> { ml_dsa65 } <span class="text-emerald-400">from</span> <span class="text-yellow-400">'@noble/post-quantum'</span>
             </span>
-            <span class="px-3 py-1.5 rounded-lg bg-black/60 border border-gray-700 text-gray-300">
-              <span class="text-emerald-400">import</span> { ml_kem768 } <span class="text-emerald-400">from</span> <span class="text-yellow-400">'@noble/post-quantum'</span>
+            <span class="px-3 py-1.5 rounded-lg bg-black/60 border border-gray-700 text-gray-400 opacity-60" title="ML-KEM-768 — Roadmap Q3 2026">
+              <span class="text-gray-500">import</span> { ml_kem768 } <span class="text-gray-500">from</span> <span class="text-gray-600">'@noble/post-quantum'</span> <span class="text-gray-600 text-xs">// Q3 2026</span>
             </span>
           </div>
           <p class="mt-3 text-xs text-gray-600 font-mono"># Powered by @noble/post-quantum — audited, zero-dependency, pure TypeScript</p>
@@ -961,16 +961,18 @@
           <div>
             <div class="text-gray-600 text-xs mb-2">// Quickstart</div>
             <div class="bg-black/60 rounded-lg p-3 leading-relaxed">
-              <span class="text-violet-400">import</span> <span class="text-gray-400">{</span> <span class="text-cyan-400">AgentPay</span> <span class="text-gray-400">}</span> <span class="text-violet-400">from</span> <span class="text-green-400">'@pqsafe/agent-pay'</span><span class="text-gray-400">;</span><br>
+              <span class="text-violet-400">import</span> <span class="text-gray-400">{</span> <span class="text-cyan-400">createEnvelope</span><span class="text-gray-400">,</span> <span class="text-cyan-400">signEnvelope</span><span class="text-gray-400">,</span> <span class="text-cyan-400">executeAgentPayment</span> <span class="text-gray-400">}</span><br>
+              &nbsp;&nbsp;<span class="text-violet-400">from</span> <span class="text-green-400">'@pqsafe/agent-pay'</span><span class="text-gray-400">;</span><br>
               <br>
-              <span class="text-gray-500">// Issue a signed spend envelope</span><br>
-              <span class="text-violet-400">const</span> <span class="text-white">pay</span> <span class="text-gray-400">=</span> <span class="text-violet-400">new</span> <span class="text-cyan-400">AgentPay</span><span class="text-gray-400">({</span> <span class="text-yellow-400">apiKey</span><span class="text-gray-400">:</span> <span class="text-green-400">'...'</span> <span class="text-gray-400">});</span><br>
-              <span class="text-violet-400">const</span> <span class="text-white">env</span> <span class="text-gray-400">=</span> <span class="text-violet-400">await</span> <span class="text-white">pay</span><span class="text-gray-400">.</span><span class="text-cyan-400">envelope</span><span class="text-gray-400">({</span><br>
-              &nbsp;&nbsp;<span class="text-yellow-400">amount</span><span class="text-gray-400">:</span> <span class="text-green-400">'50.00'</span><span class="text-gray-400">,</span><br>
-              &nbsp;&nbsp;<span class="text-yellow-400">currency</span><span class="text-gray-400">:</span> <span class="text-green-400">'USD'</span><span class="text-gray-400">,</span><br>
-              &nbsp;&nbsp;<span class="text-yellow-400">rail</span><span class="text-gray-400">:</span> <span class="text-green-400">'airwallex'</span><br>
+              <span class="text-gray-500">// Build + sign a spend envelope (ML-DSA-65)</span><br>
+              <span class="text-violet-400">const</span> <span class="text-white">envelope</span> <span class="text-gray-400">=</span> <span class="text-cyan-400">createEnvelope</span><span class="text-gray-400">({</span><br>
+              &nbsp;&nbsp;<span class="text-yellow-400">maxAmount</span><span class="text-gray-400">:</span> <span class="text-green-400">50</span><span class="text-gray-400">,</span> <span class="text-yellow-400">currency</span><span class="text-gray-400">:</span> <span class="text-green-400">'USD'</span><span class="text-gray-400">,</span><br>
+              &nbsp;&nbsp;<span class="text-yellow-400">allowedRecipients</span><span class="text-gray-400">:</span> <span class="text-green-400">['anthropic.com/billing']</span><br>
               <span class="text-gray-400">});</span><br>
-              <span class="text-violet-400">const</span> <span class="text-white">result</span> <span class="text-gray-400">=</span> <span class="text-violet-400">await</span> <span class="text-white">pay</span><span class="text-gray-400">.</span><span class="text-cyan-400">authorize</span><span class="text-gray-400">(</span><span class="text-white">env</span><span class="text-gray-400">);</span>
+              <span class="text-violet-400">const</span> <span class="text-white">signed</span> <span class="text-gray-400">=</span> <span class="text-cyan-400">signEnvelope</span><span class="text-gray-400">(</span><span class="text-white">envelope</span><span class="text-gray-400">,</span> <span class="text-white">privateKey</span><span class="text-gray-400">);</span><br>
+              <span class="text-gray-500">// Execute the payment</span><br>
+              <span class="text-violet-400">const</span> <span class="text-white">result</span> <span class="text-gray-400">=</span> <span class="text-violet-400">await</span> <span class="text-cyan-400">executeAgentPayment</span><span class="text-gray-400">(</span><span class="text-white">signed</span><span class="text-gray-400">,</span><br>
+              &nbsp;&nbsp;<span class="text-gray-400">{</span> <span class="text-yellow-400">recipient</span><span class="text-gray-400">:</span> <span class="text-green-400">'anthropic.com/billing'</span><span class="text-gray-400">,</span> <span class="text-yellow-400">amount</span><span class="text-gray-400">:</span> <span class="text-green-400">50</span> <span class="text-gray-400">});</span>
             </div>
           </div>
         </div>
@@ -1355,7 +1357,7 @@
           <span class="badge badge-orange">Chrome MV3</span>
           <span class="badge badge-cyan">Vite</span>
           <span class="badge badge-emerald">ML-DSA-65</span>
-          <span class="badge badge-emerald">ML-KEM-768</span>
+          <span class="badge badge-emerald" style="opacity:0.5" title="Roadmap Q3 2026">ML-KEM-768 (roadmap)</span>
           <span class="badge badge-blue">@noble/post-quantum</span>
           <span class="badge badge-violet">Tailwind CSS</span>
         </div>
@@ -1389,116 +1391,6 @@
     </div>
   </section>
 
-  <div class="section-divider"></div>
-
-  <!-- ====== CHINESE SECTION ====== -->
-  <section id="chinese" class="chinese-section py-24">
-    <div class="max-w-5xl mx-auto px-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <!-- Text -->
-        <div class="fade-in-up">
-          <div class="section-label mb-4" style="font-family: sans-serif;">中文介绍</div>
-          <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6 leading-tight" style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;">
-            后量子安全的<br><span class="gradient-text">AI 代理支付基础设施</span>
-          </h2>
-          <p class="text-gray-300 leading-loose text-base mb-6" style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;">
-            PQSafe AgentPay 让 AI 代理真正能够付款 — 通过 <strong class="text-emerald-400">NIST FIPS 204 标准的 ML-DSA-65</strong>
-            数字签名授权一个「支出信封（SpendEnvelope）」：设定金额上限、收款人白名单、有效期，AI 代理在此范围内可自动完成跨境汇款或稳定币结算。
-          </p>
-          <p class="text-gray-400 leading-loose text-sm mb-8" style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;">
-            当其他代理支付方案还在使用即将被量子计算机破解的 ECDSA 时，PQSafe 已经领先一步 —
-            我们的签名层从第一天起就建立在 2024 年由 NIST 正式标准化的 FIPS 204（ML-DSA-65）之上，无需在 2030 年前做任何加密迁移。
-          </p>
-          <div class="flex flex-wrap gap-3 mb-8">
-            <span class="badge badge-emerald" style="font-family: 'PingFang SC', sans-serif;">后量子安全</span>
-            <span class="badge badge-cyan" style="font-family: 'PingFang SC', sans-serif;">NIST 认证</span>
-            <span class="badge badge-violet" style="font-family: 'PingFang SC', sans-serif;">AI 原生</span>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            <a href="https://demo.pqsafe.xyz" target="_blank" rel="noopener" class="btn-primary text-sm py-2.5 px-5" style="font-family: 'PingFang SC', sans-serif;">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <polygon points="5 3 19 12 5 21 5 3"/>
-              </svg>
-              查看实时 Demo
-            </a>
-            <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="btn-secondary text-sm py-2.5 px-5" style="font-family: 'PingFang SC', sans-serif;">
-              <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-              </svg>
-              GitHub SDK
-            </a>
-            <a href="/handbook" class="btn-secondary text-sm py-2.5 px-5" style="font-family: 'PingFang SC', sans-serif;">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-              </svg>
-              Agent Payments Handbook
-            </a>
-          </div>
-        </div>
-
-        <!-- Info grid -->
-        <div class="space-y-4 fade-in-up delay-200">
-          <div class="bg-[#0f0f1a] rounded-xl p-5 border border-emerald-900/40 flex gap-4">
-            <div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
-                 style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);">
-              <svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
-                <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-              </svg>
-            </div>
-            <div>
-              <div class="font-semibold text-white text-sm mb-1" style="font-family: 'PingFang SC', sans-serif;">支出信封 SpendEnvelope</div>
-              <div class="text-gray-400 text-xs leading-relaxed" style="font-family: 'PingFang SC', sans-serif;">
-                为 AI 代理签发有金额上限、收款人白名单、有效期的授权封包 — 代理永不触碰凭证
-              </div>
-            </div>
-          </div>
-          <div class="bg-[#0f0f1a] rounded-xl p-5 border border-cyan-900/40 flex gap-4">
-            <div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
-                 style="background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25);">
-              <svg width="18" height="18" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
-              </svg>
-            </div>
-            <div>
-              <div class="font-semibold text-white text-sm mb-1" style="font-family: 'PingFang SC', sans-serif;">多通道自动路由</div>
-              <div class="text-gray-400 text-xs leading-relaxed" style="font-family: 'PingFang SC', sans-serif;">
-                一次 API 调用，自动选择最便宜通道：Airwallex · Wise · Stripe · USDC-Base
-              </div>
-            </div>
-          </div>
-          <div class="bg-[#0f0f1a] rounded-xl p-5 border border-violet-900/40 flex gap-4">
-            <div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
-                 style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25);">
-              <svg width="18" height="18" fill="none" stroke="#a78bfa" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-            </div>
-            <div>
-              <div class="font-semibold text-white text-sm mb-1" style="font-family: 'PingFang SC', sans-serif;">NIST FIPS 204 原生</div>
-              <div class="text-gray-400 text-xs leading-relaxed" style="font-family: 'PingFang SC', sans-serif;">
-                ML-DSA-65 量子安全签名，2030 年监管到期前无需重建 — 所有竞品都得重写
-              </div>
-            </div>
-          </div>
-          <div class="bg-[#0f0f1a] rounded-xl p-5 border border-gray-800 flex gap-4">
-            <div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
-                 style="background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.25);">
-              <svg width="18" height="18" fill="none" stroke="#fb923c" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-              </svg>
-            </div>
-            <div>
-              <div class="font-semibold text-white text-sm mb-1" style="font-family: 'PingFang SC', sans-serif;">公开可审计账本</div>
-              <div class="text-gray-400 text-xs leading-relaxed" style="font-family: 'PingFang SC', sans-serif;">
-                ledger.pqsafe.xyz 上每笔代理支付匿名公开，合规团队可即时核查
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <div class="section-divider"></div>
 
@@ -1576,10 +1468,10 @@
 
         <div class="flex flex-col items-center gap-2 text-center">
           <div class="flex items-center gap-2">
-            <span class="badge badge-emerald text-xs">MIT License</span>
-            <span class="px-2 py-0.5 rounded text-xs bg-yellow-900/30 text-yellow-500 border border-yellow-800/40 font-semibold">BETA</span>
+            <span class="badge badge-emerald text-xs">Apache-2.0</span>
+            <span class="px-2 py-0.5 rounded text-xs bg-cyan-900/30 text-cyan-400 border border-cyan-800/40 font-semibold">Technical Preview</span>
           </div>
-          <p class="text-xs text-gray-600">Not production-ready. Use at your own risk. This is experimental software.</p>
+          <p class="text-xs text-gray-600"><strong class="text-gray-500">Status: technical preview.</strong> Cryptography is FIPS 204 compliant (ML-DSA-65). SDK + rails are sandbox-validated; first SaaS receiver pilot launches June 2026. Not yet for production payments at scale.</p>
         </div>
 
         <div class="flex items-center gap-4">
