@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post-Quantum considerations for AP2 + Verifiable Intent — PQSafe open letter to FIDO Alliance</title>
+  <meta name="description" content="An open letter from PQSafe AgentPay to the FIDO Alliance Agentic Authentication and Payments Technical Working Groups, proposing a post-quantum profile for AP2 mandate signatures.">
+  <link rel="canonical" href="https://pqsafe.xyz/fido-pq-letter">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Post-Quantum considerations for AP2 + Verifiable Intent — PQSafe open letter to FIDO Alliance">
+  <meta property="og:description" content="An open letter from PQSafe AgentPay to the FIDO Alliance Agentic Authentication and Payments Technical Working Groups, proposing a post-quantum profile for AP2 mandate signatures.">
+  <meta property="og:image" content="https://pqsafe.xyz/og/fido-pq-letter.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://pqsafe.xyz/fido-pq-letter">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="PQSafe AgentPay">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PQSafeAgentPay">
+  <meta name="twitter:title" content="Post-Quantum considerations for AP2 + Verifiable Intent — PQSafe open letter to FIDO Alliance">
+  <meta name="twitter:description" content="An open letter from PQSafe AgentPay to the FIDO Alliance Agentic Authentication and Payments Technical Working Groups, proposing a post-quantum profile for AP2 mandate signatures.">
+  <meta name="twitter:image" content="https://pqsafe.xyz/og/fido-pq-letter.png">
+
+  <!-- Robots -->
+  <meta name="robots" content="index, follow">
+
+  <style>
+    /* Reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Tokens */
+    :root {
+      --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-subtle: #888;
+      --color-border: #d1d5db;
+      --color-bg: #fff;
+      --color-bg-subtle: #f9fafb;
+      --color-accent: #1d4ed8;
+      --color-accent-hover: #1e40af;
+      --max-width: 720px;
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2.5rem;
+      --spacing-2xl: 4rem;
+    }
+
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--color-text);
+      background: var(--color-bg);
+      line-height: 1.7;
+      padding: 0 var(--spacing-md);
+    }
+
+    /* Layout */
+    .page-wrap {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--spacing-2xl) 0;
+    }
+
+    /* Header / document metadata block */
+    .doc-header {
+      border-bottom: 2px solid var(--color-text);
+      padding-bottom: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .doc-meta {
+      font-size: 0.8125rem;
+      color: var(--color-muted);
+      margin-bottom: var(--spacing-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .doc-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: var(--spacing-sm);
+      letter-spacing: -0.01em;
+    }
+
+    .doc-subtitle {
+      font-size: 1rem;
+      color: var(--color-muted);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .doc-date {
+      font-size: 0.875rem;
+      color: var(--color-subtle);
+    }
+
+    /* Addressee block */
+    .addressee-block {
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-subtle);
+      padding: var(--spacing-md) var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+      border-radius: 2px;
+    }
+
+    .addressee-block h2 {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-muted);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .addressee-block ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .addressee-block ul li {
+      font-size: 0.9375rem;
+      color: var(--color-text);
+      padding: 0.2rem 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .addressee-block ul li:last-child {
+      border-bottom: none;
+    }
+
+    .addressee-role {
+      color: var(--color-muted);
+      font-size: 0.875rem;
+    }
+
+    /* Letter body */
+    .letter-body {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .salutation {
+      margin-bottom: var(--spacing-lg);
+      font-size: 1rem;
+    }
+
+    .letter-body p {
+      margin-bottom: var(--spacing-md);
+      font-size: 1rem;
+    }
+
+    .letter-body h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-top: var(--spacing-xl);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    /* Three questions */
+    .questions-section {
+      margin-top: var(--spacing-xl);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .questions-section h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .questions-list {
+      list-style: none;
+      padding: 0;
+      counter-reset: q-counter;
+    }
+
+    .questions-list li {
+      counter-increment: q-counter;
+      display: flex;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .questions-list li::before {
+      content: counter(q-counter) ".";
+      font-weight: 700;
+      min-width: 1.25rem;
+      padding-top: 0.025rem;
+    }
+
+    /* Closing paragraph */
+    .closing-para {
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    /* Author block */
+    .author-block {
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--spacing-lg) 0;
+      margin: var(--spacing-xl) 0;
+    }
+
+    .author-block h2 {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-muted);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .author-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .author-name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .author-title {
+      font-size: 0.9375rem;
+      color: var(--color-muted);
+    }
+
+    .author-email {
+      font-size: 0.9375rem;
+    }
+
+    .author-email a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .author-email a:hover {
+      color: var(--color-accent-hover);
+      text-decoration: underline;
+    }
+
+    .author-org {
+      font-size: 0.9375rem;
+      color: var(--color-muted);
+      margin-top: var(--spacing-xs);
+    }
+
+    /* References */
+    .references {
+      margin: var(--spacing-xl) 0;
+    }
+
+    .references h2 {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-muted);
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .references ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .references ul li {
+      font-size: 0.9rem;
+      margin-bottom: var(--spacing-sm);
+      padding-left: 1rem;
+      position: relative;
+      color: var(--color-muted);
+    }
+
+    .references ul li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--color-subtle);
+    }
+
+    .references ul li a {
+      color: var(--color-accent);
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .references ul li a:hover {
+      text-decoration: underline;
+    }
+
+    /* Inline code */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      padding: 0.1em 0.35em;
+      border-radius: 2px;
+    }
+
+    /* Footer */
+    .site-footer {
+      border-top: 2px solid var(--color-text);
+      padding-top: var(--spacing-lg);
+      margin-top: var(--spacing-2xl);
+    }
+
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-md) var(--spacing-xl);
+      margin-bottom: var(--spacing-md);
+      font-size: 0.9rem;
+    }
+
+    .footer-nav a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .footer-nav a:hover {
+      color: var(--color-accent-hover);
+      text-decoration: underline;
+    }
+
+    .footer-meta {
+      font-size: 0.8125rem;
+      color: var(--color-subtle);
+      line-height: 1.6;
+    }
+
+    .footer-meta a {
+      color: var(--color-subtle);
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .doc-title { font-size: 1.25rem; }
+      .page-wrap { padding: var(--spacing-xl) 0; }
+      .addressee-block { padding: var(--spacing-md); }
+      .footer-nav { gap: var(--spacing-sm) var(--spacing-lg); }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ===== Document Header ===== -->
+  <header class="doc-header">
+    <p class="doc-meta">Open Letter &middot; PQSafe AgentPay</p>
+    <h1 class="doc-title">Post-Quantum considerations for AP2&nbsp;+ Verifiable Intent</h1>
+    <p class="doc-subtitle">An open letter to the FIDO Alliance Agentic Authentication and Payments Technical Working Groups</p>
+    <p class="doc-date">Published Monday, May 4, 2026 &middot; <a href="https://pqsafe.xyz/fido-pq-letter" style="color:var(--color-subtle);text-decoration:none;">pqsafe.xyz/fido-pq-letter</a></p>
+  </header>
+
+  <!-- ===== Addressee Block ===== -->
+  <section class="addressee-block" aria-label="Addressed to">
+    <h2>Addressed to</h2>
+    <ul>
+      <li>
+        <strong>Andrew Shikiar</strong>
+        <span class="addressee-role"> &mdash; Executive Director and CEO, FIDO Alliance</span>
+      </li>
+      <li>
+        <strong>Jonathan Grossar</strong>
+        <span class="addressee-role"> &mdash; Vice President, Product Management, Mastercard &mdash; Payments TWG chair</span>
+      </li>
+      <li>
+        <strong>Henna Kapur</strong>
+        <span class="addressee-role"> &mdash; Director, Authentication Products Development, Visa &mdash; Payments TWG co-chair</span>
+      </li>
+      <li>
+        <strong>Christiaan Brand</strong>
+        <span class="addressee-role"> &mdash; Product Manager: Identity and Security, Google &mdash; Agentic Authentication TWG co-chair</span>
+      </li>
+      <li>
+        <strong>Nick Steele</strong>
+        <span class="addressee-role"> &mdash; Member of Technical Staff, OpenAI &mdash; Agentic Authentication TWG co-chair</span>
+      </li>
+      <li>
+        <strong>Dr. Abbie Barbir</strong>
+        <span class="addressee-role"> &mdash; Senior Security Advisor, CVS Health &mdash; Agentic Authentication TWG co-chair</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ===== Letter Body ===== -->
+  <main class="letter-body">
+
+    <p class="salutation">Dear Andrew, Jonathan, Henna, Christiaan, Nick, Abbie, and members of the FIDO Alliance Payments and Agentic Authentication Technical Working Groups,</p>
+
+    <p>We write as practitioners building post-quantum payment signing infrastructure for agent-initiated commerce in Hong Kong. The FIDO Alliance's April 28, 2026 announcement — establishing two new technical working groups drawing on Google's Agent Payments Protocol and Mastercard's Verifiable Intent — is the correct institutional move at the right moment. We are writing to contribute a technically concrete post-quantum signing profile to the TWGs' standards work at the earliest point in the process.</p>
+
+    <p>Raymond Chau and Tris Au Yeung are co-founders of PQSafe AgentPay, building open-source post-quantum signing infrastructure for AI agent payment authorization under Apache-2.0. This letter accompanies our reference implementation.</p>
+
+    <h3>The technical observation: AP2 v0.2's SD-JWT header placement makes this extension straightforward.</h3>
+
+    <p>AP2 v0.2, released April 28, specifies SD-JWT mandate credentials with <code>"alg": "ES256"</code> in the JOSE JWT header — elliptic curve signatures at approximately 112-bit classical security. Because the signing algorithm lives in the header rather than the mandate payload body, introducing a post-quantum identifier requires no new payload fields and no structural departure from AP2's existing SD-JWT architecture. The cleanest migration path is a <code>pq_alg</code> JOSE header parameter — backward-compatible with classical verifiers, requiring no payload modification. The architecture AP2 v0.2 chose makes this extension straightforward rather than invasive.</p>
+
+    <h3>The regulatory backdrop: retention windows make this a near-term concern, not a 2030 theory.</h3>
+
+    <p>Financial institutions under HKMA (Cap. 615) and PSD2 Article 69 must retain payment authorization records for five to seven years. NIST IR 8547 (initial public draft) proposes deprecation of 112-bit classical algorithms by 2030, with full disallowance by 2035. An <code>"alg": "ES256"</code> mandate committed to an immutable audit ledger in 2026 may be within its mandatory retention window when cryptographically-relevant quantum computers arrive — creating retrospective signature forgery risk on long-lived financial authorization records. This is a concrete compliance question for the specific category of records that AP2 and Verifiable Intent are designed to produce.</p>
+
+    <p>The HKMA announced its Quantum Preparedness Index on February 3, 2026 — a verified announcement, not a current mandate, signaling that post-quantum readiness has moved from research posture to regulatory expectation for Hong Kong-regulated institutions. Sumsub's 2025 Fraud Report documents 180% year-over-year growth in sophisticated AI-assisted multi-step fraud — the precise attack vector that mandate credentials must defend against. The intersection of retention windows and escalating AI-assisted fraud creates the right moment for an optional post-quantum signing layer in the TWGs' mandate specification work.</p>
+
+    <h3>The proposal: a <code>pq_alg</code> JOSE header parameter with <code>Ed25519+ML-DSA-65</code> hybrid profile.</h3>
+
+    <p>We propose two new JOSE header parameters: <code>pq_alg</code>, identifying the post-quantum or hybrid algorithm, and <code>pq_sig</code>, carrying the post-quantum signature over the JWS Signing Input (RFC 7515 §7.2.1), Base64url-encoded. The primary algorithm identifier is <code>"ML-DSA-65"</code> (FIPS 204; OID <code>2.16.840.1.101.3.4.3.18</code>; with the NIST IR 8547 initial public draft qualifier until finalized). A hybrid profile, <code>"Ed25519+ML-DSA-65"</code>, is defined for deployments requiring both classical interoperability and quantum resistance.</p>
+
+    <p>ML-DSA-65 at 3,309 bytes is preferred over Falcon-512 (timing side-channel risk from constant-time floating-point arithmetic requirements) and SLH-DSA (7,856–49,856-byte signatures impractical for per-transaction mandate payloads). Implementations use HashML-DSA mode (SHA-256 pre-hash per FIPS 204 §5.4) over the JWS Signing Input — an explicit interoperability note distinguishes this from pure-mode ML-DSA-65 verifiers.</p>
+
+    <p>The extension is backward-compatible: classical verifiers that do not recognize <code>pq_alg</code> continue to verify the <code>alg: "ES256"</code> signature and ignore the additional header parameters. No changes to the SD-JWT payload or <code>_sd</code> claim structure are required.</p>
+
+    <h3>On Mastercard Verifiable Intent.</h3>
+
+    <p>Verifiable Intent is functionally adjacent to the SpendEnvelope construct in our reference implementation — both are tamper-evident, user-authorized records of agent permissions. No public schema for Verifiable Intent has been released as of this writing; we make no claim about Mastercard's cryptographic design choices. Our proposal is intentionally format-agnostic at the signing layer: the <code>pq_alg</code> parameter applies to any mandate credential the TWGs standardize — AP2 SD-JWT, Verifiable Intent document, or any successor format.</p>
+
+    <h3>What we are offering.</h3>
+
+    <p>A working Apache-2.0 reference implementation is at <a href="https://github.com/PQSafe/pqsafe">github.com/PQSafe/pqsafe</a>: five deterministic test cases (TC1–TC5) reproducible on Mac, Linux x86-64, and Windows under GitHub Actions CI; TypeScript and Python verifiers; and a browser-based verifier at <a href="https://pqsafe.xyz/verify">pqsafe.xyz/verify</a>. The full JOSE header parameter specification is at <a href="https://pqsafe.xyz/ap2-pq-rfc">pqsafe.xyz/ap2-pq-rfc</a>.</p>
+
+    <section class="questions-section" aria-label="Three questions for TWG chairs">
+      <h3>Three specific questions for the TWG chairs.</h3>
+
+      <p>We are not asking the FIDO Alliance to adopt our implementation. We are asking three things of the working groups:</p>
+
+      <ol class="questions-list">
+        <li>Has the Payments TWG considered mandatory retention windows under HKMA and PSD2 as a near-term driver for optional post-quantum signing in mandate credentials — separate from general quantum-proofing timelines — and if so, is this within scope for the initial mandate credential specification?</li>
+        <li>Has the Agentic Authentication TWG discussed algorithm agility in the JOSE header for AP2-style mandate credentials, and is there an existing charter item or issue tracker where a <code>pq_alg</code> profile contribution should be filed?</li>
+        <li>If the TWGs find value in the reference implementation and deterministic test vectors, what is the preferred path for contributing an external Apache-2.0 artifact to the FIDO conformance testing process — and what is the preferred liaison mechanism for non-member organizations?</li>
+      </ol>
+    </section>
+
+    <p class="closing-para">We are ready to engage through a FIDO member organization, submit a formal liaison document, or participate through any mechanism the Alliance prefers. The reference implementation is available now. We welcome the dialogue.</p>
+
+  </main>
+
+  <!-- ===== Author Block ===== -->
+  <section class="author-block" aria-label="Authors">
+    <h2>Authors</h2>
+
+    <div class="author-row">
+      <span class="author-name">Raymond Chau Yik-Chun</span>
+      <span class="author-title">CEO / CTO, PQSafe AgentPay</span>
+      <span class="author-email"><a href="mailto:raymond@pqsafe.xyz">raymond@pqsafe.xyz</a></span>
+    </div>
+
+    <div class="author-row">
+      <span class="author-name">Tris Au Yeung Hiu Tung</span>
+      <span class="author-title">COO, PQSafe AgentPay</span>
+      <span class="author-email"><a href="mailto:tris@pqsafe.xyz">tris@pqsafe.xyz</a></span>
+    </div>
+
+    <p class="author-org">PQSafe AgentPay &mdash; Hong Kong &mdash; <a href="https://pqsafe.xyz" style="color:var(--color-accent);text-decoration:none;">pqsafe.xyz</a></p>
+  </section>
+
+  <!-- ===== References ===== -->
+  <section class="references" aria-label="References">
+    <h2>References</h2>
+    <ul>
+      <li>FIDO Alliance &mdash; Agentic Authentication and Payments TWG announcement (April 28, 2026): <a href="https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/" rel="noopener">fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/</a></li>
+      <li>Google Agent Payments Protocol (AP2) v0.2 &mdash; SD-JWT mandate credential specification</li>
+      <li>NIST FIPS 204 &mdash; Module-Lattice-Based Digital Signature Standard (ML-DSA): <a href="https://csrc.nist.gov/pubs/fips/204/final" rel="noopener">csrc.nist.gov/pubs/fips/204/final</a></li>
+      <li>NIST IR 8547 (initial public draft) &mdash; Transition to Post-Quantum Cryptography Standards: <a href="https://csrc.nist.gov/pubs/ir/8547/ipd" rel="noopener">csrc.nist.gov/pubs/ir/8547/ipd</a></li>
+      <li>IETF RFC 7515 &mdash; JSON Web Signature (JWS): <a href="https://datatracker.ietf.org/doc/html/rfc7515" rel="noopener">datatracker.ietf.org/doc/html/rfc7515</a></li>
+      <li>HKMA Quantum Preparedness Index &mdash; verified announcement, February 3, 2026: <a href="https://www.hkma.gov.hk" rel="noopener">hkma.gov.hk</a></li>
+      <li>Sumsub Identity Fraud Report 2025 &mdash; 180% year-over-year growth in AI-assisted multi-step fraud</li>
+      <li>ML-DSA-65 OID <code>2.16.840.1.101.3.4.3.18</code> &mdash; NIST CSOR: <a href="https://csrc.nist.gov/projects/computer-security-objects-register" rel="noopener">csrc.nist.gov/projects/computer-security-objects-register</a></li>
+      <li>PQSafe AgentPay AP2-PQ JOSE Header Profile Specification: <a href="https://pqsafe.xyz/ap2-pq-rfc">pqsafe.xyz/ap2-pq-rfc</a></li>
+      <li>PQSafe AgentPay reference implementation and test vectors (Apache-2.0): <a href="https://github.com/PQSafe/pqsafe" rel="noopener">github.com/PQSafe/pqsafe</a></li>
+    </ul>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Site navigation">
+      <a href="/">&larr; pqsafe.xyz home</a>
+      <a href="/ap2-pq-rfc">Read the AP2-PQ Profile RFC &rarr;</a>
+      <a href="/verify">Verify a SpendEnvelope &rarr;</a>
+      <a href="https://github.com/PQSafe/ap2-pq-test-vectors" rel="noopener">GitHub: PQSafe/ap2-pq-test-vectors</a>
+    </nav>
+    <p class="footer-meta">
+      &copy; 2026 PQSafe AgentPay, Hong Kong &mdash;
+      Licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0" rel="noopener">Apache-2.0</a> &mdash;
+      Contact: <a href="mailto:raymond@pqsafe.xyz">raymond@pqsafe.xyz</a>
+    </p>
+  </footer>
+
+</div><!-- /page-wrap -->
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Verify a PQSafe SpendEnvelope — agent payment authorization check</title>
+<meta name="description" content="Cryptographically verify any PQSafe SpendEnvelope. Runs entirely in your browser. ECDSA P-256 + ML-DSA-65 (FIPS 204). RFC 8785 JCS canonicalization." />
+<link rel="canonical" href="https://pqsafe.xyz/verify" />
+<meta property="og:title" content="Verify a PQSafe SpendEnvelope — agent payment authorization check" />
+<meta property="og:description" content="Cryptographically verify any PQSafe SpendEnvelope. Runs entirely in your browser. ECDSA P-256 + ML-DSA-65 (FIPS 204). RFC 8785 JCS canonicalization." />
+<meta property="og:image" content="https://pqsafe.xyz/og/verify.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://pqsafe.xyz/verify" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="PQSafe" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Verify a PQSafe SpendEnvelope — agent payment authorization check" />
+<meta name="twitter:description" content="Cryptographically verify any PQSafe SpendEnvelope. Runs entirely in your browser. ECDSA P-256 + ML-DSA-65 (FIPS 204). RFC 8785 JCS canonicalization." />
+<meta name="twitter:image" content="https://pqsafe.xyz/og/verify.png" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .truncate-mid { max-width: 100%; overflow-x: auto; white-space: nowrap; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🦞</span>
+      <div>
+        <a href="https://pqsafe.xyz" class="font-semibold text-slate-900 hover:underline">PQSafe</a>
+        <span class="text-slate-500"> &middot; SpendEnvelope Verifier</span>
+      </div>
+    </div>
+    <nav class="text-sm text-slate-600 flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">Home</a>
+      <a href="https://pqsafe.xyz/ap2-pq-rfc" class="hover:underline">AP2 PQ RFC</a>
+      <a href="https://pqsafe.xyz/fido-pq-letter" class="hover:underline">FIDO Letter</a>
+      <a href="https://github.com/PQSafe/ap2-pq-test-vectors" class="hover:underline">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-6 py-10">
+
+  <section class="mb-10">
+    <h1 class="text-3xl font-semibold tracking-tight">Verify a SpendEnvelope.</h1>
+    <p class="mt-2 text-slate-600 max-w-2xl">
+      Paste a PQSafe SpendEnvelope JSON below. Verification runs entirely in your browser —
+      nothing is sent to PQSafe servers. ECDSA P-256 + ML-DSA-65 (FIPS 204) dual-signature.
+      RFC 8785 JCS canonicalization.
+    </p>
+  </section>
+
+  <section class="mb-6 grid sm:grid-cols-5 gap-2">
+    <button data-load="tc1" class="example-btn px-3 py-2 text-sm bg-white border border-slate-300 rounded hover:bg-slate-100">Load TC1 (minimal)</button>
+    <button data-load="tc2" class="example-btn px-3 py-2 text-sm bg-white border border-slate-300 rounded hover:bg-slate-100">Load TC2 (array order)</button>
+    <button data-load="tc3" class="example-btn px-3 py-2 text-sm bg-white border border-slate-300 rounded hover:bg-slate-100">Load TC3 (decimal)</button>
+    <button data-load="tc4" class="example-btn px-3 py-2 text-sm bg-white border border-slate-300 rounded hover:bg-slate-100">Load TC4 (retention)</button>
+    <button data-load="tc5" class="example-btn px-3 py-2 text-sm bg-white border border-slate-300 rounded hover:bg-slate-100">Load TC5 (tampered ⚠️)</button>
+  </section>
+
+  <section class="mb-6">
+    <textarea id="envelope-input" rows="14" placeholder='Paste your envelope JSON here, or click an example above'
+      class="w-full p-4 mono text-sm bg-white border border-slate-300 rounded shadow-sm focus:ring-2 focus:ring-rose-400 focus:border-rose-400"></textarea>
+  </section>
+
+  <section class="mb-10 flex gap-3 items-center">
+    <button id="verify-btn" class="px-5 py-2 bg-rose-600 text-white rounded hover:bg-rose-700 font-medium">Verify</button>
+    <button id="clear-btn" class="px-3 py-2 text-sm text-slate-600 hover:text-slate-900">Clear</button>
+    <span id="status" class="ml-auto text-sm text-slate-500"></span>
+  </section>
+
+  <section id="result" class="hidden mb-10 p-6 bg-white border border-slate-200 rounded shadow-sm"></section>
+
+  <section class="mb-12 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-lg font-semibold mb-4">How this works</h2>
+    <ol class="space-y-3 text-sm text-slate-700">
+      <li><strong>1. Canonicalize.</strong> Mandate fields (without <code class="mono text-rose-700">signature</code>) are serialized via RFC 8785 JCS — a deterministic JSON canonical form.</li>
+      <li><strong>2. Fingerprint.</strong> SHA-256 of the canonical bytes produces a 32-byte fingerprint.</li>
+      <li><strong>3. Dual-sign.</strong> The fingerprint is signed twice: ECDSA P-256 (~71 bytes DER) and ML-DSA-65 (3309 bytes per FIPS 204) using the issuer's keys.</li>
+      <li><strong>4. Verify.</strong> Anyone with the public keys can verify both signatures against the recomputed fingerprint. Tampering any field invalidates both.</li>
+    </ol>
+    <div class="mt-4 text-xs text-slate-500">
+      Spec: <a class="text-rose-600 hover:underline" href="https://csrc.nist.gov/pubs/fips/204/final">NIST FIPS 204</a> ·
+      <a class="text-rose-600 hover:underline" href="https://datatracker.ietf.org/doc/rfc8785/">RFC 8785 JCS</a> ·
+      AP2 Post-Quantum Profile (<a class="text-rose-600 hover:underline" href="https://pqsafe.xyz/ap2-pq-rfc">RFC</a> · <a class="text-rose-600 hover:underline" href="https://pqsafe.xyz/fido-pq-letter">open letter to FIDO Payments TWG</a>)
+    </div>
+  </section>
+
+  <section class="mb-12 p-6 bg-amber-50 border border-amber-200 rounded">
+    <h2 class="text-lg font-semibold mb-3 text-amber-900">Try the failure modes</h2>
+    <p class="text-sm text-amber-900 mb-4">Cryptographic verification rejects tampered envelopes. Click below to see explicit fail cases:</p>
+    <div class="flex flex-wrap gap-2">
+      <button data-load="tampered" class="example-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100">Tampered amount (TC1 + 1¢)</button>
+      <button data-load="tc5" class="example-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100">Show TC5 tamper case</button>
+    </div>
+  </section>
+
+  <section class="mb-12 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-lg font-semibold mb-3">For SaaS receivers</h2>
+    <p class="text-sm text-slate-700 mb-3">
+      The same verification runs server-side via the PQSafe Verifier API.
+      Integrate once; reject agent payments that arrive without a valid SpendEnvelope.
+    </p>
+    <pre class="mono text-xs bg-slate-900 text-slate-100 p-4 rounded overflow-x-auto">curl -X POST https://api.pqsafe.xyz/v1/verify \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"envelope_jws": "...", "expected_amount": 50.00, "expected_currency": "HKD"}'</pre>
+    <p class="mt-3 text-sm">
+      <a href="https://github.com/PQSafe/pqsafe/tree/main/verifier-api" class="text-rose-600 hover:underline">Verifier API docs &rarr;</a>
+    </p>
+  </section>
+
+  <footer class="text-xs text-slate-500 mt-16 mb-8 border-t border-slate-200 pt-6 space-y-2">
+    <div class="flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">← pqsafe.xyz home</a>
+      <a href="https://pqsafe.xyz/ap2-pq-rfc" class="hover:underline">Read the AP2-PQ Profile RFC →</a>
+      <a href="https://pqsafe.xyz/fido-pq-letter" class="hover:underline">Read the FIDO open letter →</a>
+      <a href="https://github.com/PQSafe/ap2-pq-test-vectors" class="hover:underline">GitHub: PQSafe/ap2-pq-test-vectors</a>
+    </div>
+    <div>
+      Apache-2.0 · Verification runs client-side; no envelope data is sent to PQSafe servers.
+      PQSafe AgentPay · Hong Kong ·
+      <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a>
+    </div>
+  </footer>
+</main>
+
+<script type="module">
+import { verifyEnvelope, tamperEnvelope } from './verify.js';
+
+let vectors = null;
+const statusEl = document.getElementById('status');
+const inputEl = document.getElementById('envelope-input');
+const resultEl = document.getElementById('result');
+
+statusEl.textContent = 'Loading test vectors…';
+const res = await fetch('./vectors_inline.json');
+vectors = await res.json();
+statusEl.textContent = 'Ready.';
+
+document.querySelectorAll('.example-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.load;
+    if (id === 'tampered') {
+      const tampered = tamperEnvelope(vectors.tcs[0].envelope);
+      inputEl.value = JSON.stringify(tampered, null, 2);
+    } else if (id === 'tc5') {
+      const tcase = vectors.tcs[0]; // tc5 reuses tc1 sigs
+      const tampered = { ...vectors.tc5_tampered.tampered_mandate, signature: tcase.envelope.signature };
+      inputEl.value = JSON.stringify(tampered, null, 2);
+    } else {
+      const idx = ['tc1','tc2','tc3','tc4'].indexOf(id);
+      if (idx >= 0) inputEl.value = JSON.stringify(vectors.tcs[idx].envelope, null, 2);
+    }
+    statusEl.textContent = `Loaded ${id}. Click Verify.`;
+    resultEl.classList.add('hidden');
+  });
+});
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+  inputEl.value = '';
+  resultEl.classList.add('hidden');
+  statusEl.textContent = '';
+});
+
+document.getElementById('verify-btn').addEventListener('click', async () => {
+  if (!inputEl.value.trim()) { statusEl.textContent = 'Paste an envelope first.'; return; }
+  statusEl.textContent = 'Verifying…';
+  const t0 = performance.now();
+  const result = await verifyEnvelope(
+    inputEl.value,
+    vectors.ecdsa_public_key_compressed_hex,
+    vectors.mldsa_public_key_base64url
+  );
+  const ms = (performance.now() - t0).toFixed(0);
+  renderResult(result, ms);
+  statusEl.textContent = `Verified in ${ms}ms.`;
+});
+
+function renderResult(r, ms) {
+  resultEl.classList.remove('hidden');
+  const banner = r.valid
+    ? `<div class="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded"><div class="text-emerald-800 font-semibold">✓ Envelope verified</div><div class="text-sm text-emerald-700 mt-1">Both signatures match the envelope's canonical bytes.</div></div>`
+    : `<div class="mb-4 p-4 bg-rose-50 border border-rose-200 rounded"><div class="text-rose-800 font-semibold">✗ Envelope invalid</div><ul class="text-sm text-rose-700 mt-1 list-disc ml-5">${r.reasons.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+  const fields = r.fields ? Object.entries(r.fields).map(([k,v]) => `<tr class="border-t border-slate-100"><td class="py-1 pr-4 text-slate-500 mono">${k}</td><td class="py-1 mono text-slate-900">${escape(JSON.stringify(v))}</td></tr>`).join('') : '';
+  resultEl.innerHTML = `
+    ${banner}
+    <div class="grid sm:grid-cols-2 gap-6">
+      <div>
+        <div class="text-xs uppercase tracking-wide text-slate-500 mb-2">Signatures</div>
+        <table class="w-full text-sm">
+          <tr><td class="py-1 text-slate-500">ECDSA P-256</td><td class="py-1 mono">${r.ecdsaOk ? '✓' : '✗'} (${r.ecdsaSigBytes} bytes DER)</td></tr>
+          <tr><td class="py-1 text-slate-500">ML-DSA-65</td><td class="py-1 mono">${r.mldsaOk ? '✓' : '✗'} (${r.mldsaSigBytes} bytes)</td></tr>
+          <tr><td class="py-1 text-slate-500">JCS canonical</td><td class="py-1 mono">${r.canonicalBytes} bytes</td></tr>
+          <tr><td class="py-1 text-slate-500">Fingerprint</td><td class="py-1 mono text-xs truncate-mid">${r.fingerprint || '—'}</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="text-xs uppercase tracking-wide text-slate-500 mb-2">Mandate fields</div>
+        <table class="w-full text-sm"><tbody>${fields}</tbody></table>
+      </div>
+    </div>
+  `;
+}
+function escape(s) { return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+</script>
+
+</body>
+</html>

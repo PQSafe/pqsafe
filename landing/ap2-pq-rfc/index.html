@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary meta -->
+  <title>AP2 Post-Quantum Profile RFC — PQSafe contribution to FIDO Payments TWG</title>
+  <meta name="description" content="Reference specification for the post-quantum signature profile for AP2-style agent-payment mandates. JOSE pq_alg header parameter, ML-DSA-65, hybrid mode.">
+  <link rel="canonical" href="https://pqsafe.xyz/ap2-pq-rfc">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="AP2 Post-Quantum Profile RFC — PQSafe contribution to FIDO Payments TWG">
+  <meta property="og:description" content="Reference specification for the post-quantum signature profile for AP2-style agent-payment mandates. JOSE pq_alg header parameter, ML-DSA-65, hybrid mode.">
+  <meta property="og:url" content="https://pqsafe.xyz/ap2-pq-rfc">
+  <meta property="og:image" content="https://pqsafe.xyz/og/ap2-pq-rfc.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="PQSafe">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AP2 Post-Quantum Profile RFC — PQSafe contribution to FIDO Payments TWG">
+  <meta name="twitter:description" content="Reference specification for the post-quantum signature profile for AP2-style agent-payment mandates. JOSE pq_alg header parameter, ML-DSA-65, hybrid mode.">
+  <meta name="twitter:image" content="https://pqsafe.xyz/og/ap2-pq-rfc.png">
+
+  <!-- Highlight.js (light, ~35KB gzipped) for code syntax -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <style>
+    /* ---- Reset & base ---- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --border: #d1d5db;
+      --bg-code: #f6f8fa;
+      --link: #0969da;
+      --link-hover: #0550ae;
+      --sidebar-w: 240px;
+      --max-prose: 720px;
+      --header-h: 48px;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.6;
+    }
+
+    /* ---- Top header bar ---- */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      gap: 1.5rem;
+    }
+    .site-header a.brand {
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .site-header .sep { color: var(--border); user-select: none; }
+    .site-header .doc-title {
+      font-size: 0.85rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .site-header .nav-links {
+      margin-left: auto;
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.85rem;
+    }
+    .site-header .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .site-header .nav-links a:hover { color: var(--link); }
+
+    /* Mobile TOC toggle */
+    .toc-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    /* ---- Layout ---- */
+    .layout {
+      display: flex;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* ---- Sidebar TOC ---- */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      padding: 2rem 1.5rem 2rem 0;
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+    }
+    .sidebar h2 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+    .sidebar nav ol {
+      list-style: none;
+      font-size: 0.82rem;
+    }
+    .sidebar nav ol li {
+      margin-bottom: 0.35rem;
+    }
+    .sidebar nav ol li a {
+      color: var(--muted);
+      text-decoration: none;
+      display: block;
+      padding: 2px 0;
+      border-left: 2px solid transparent;
+      padding-left: 6px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sidebar nav ol li a:hover,
+    .sidebar nav ol li a.active {
+      color: var(--link);
+      border-left-color: var(--link);
+    }
+    .sidebar .doc-meta {
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .sidebar .doc-meta dt { font-weight: 600; margin-top: 0.5rem; }
+    .sidebar .doc-meta dd { margin-left: 0; }
+
+    /* ---- Main content ---- */
+    .content {
+      flex: 1;
+      min-width: 0;
+      padding: 2.5rem 0 4rem 2.5rem;
+      max-width: var(--max-prose);
+    }
+
+    /* ---- Document header (title block) ---- */
+    .doc-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .doc-header .doc-id {
+      font-size: 0.78rem;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .doc-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 1rem;
+    }
+    .doc-header .abstract-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .doc-header .abstract {
+      font-size: 0.95rem;
+      color: #333;
+      line-height: 1.65;
+    }
+    .meta-table {
+      margin-top: 1.25rem;
+      font-size: 0.82rem;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .meta-table td {
+      padding: 3px 0.75rem 3px 0;
+      vertical-align: top;
+    }
+    .meta-table td:first-child {
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+      width: 120px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #fff8e1;
+      color: #856404;
+      border: 1px solid #f0d060;
+    }
+
+    /* ---- Cross-link notice ---- */
+    .crosslink-bar {
+      background: #f0f6ff;
+      border: 1px solid #ccdff8;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+    }
+    .crosslink-bar a {
+      color: var(--link);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .crosslink-bar a:hover { text-decoration: underline; }
+
+    /* ---- Section headings ---- */
+    .content section { margin-bottom: 3rem; }
+    .content h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      padding-top: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+      scroll-margin-top: calc(var(--header-h) + 1rem);
+    }
+    .content h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.6rem;
+      scroll-margin-top: calc(var(--header-h) + 1rem);
+    }
+    .content h4 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-top: 1.25rem;
+      margin-bottom: 0.4rem;
+    }
+
+    /* ---- Prose ---- */
+    .content p { margin-bottom: 1rem; }
+    .content a { color: var(--link); }
+    .content a:hover { color: var(--link-hover); }
+
+    .content ul, .content ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .content ul li, .content ol li { margin-bottom: 0.3rem; }
+
+    /* RFC-style definitions */
+    .content dl { margin-bottom: 1rem; }
+    .content dt {
+      font-weight: 600;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.9rem;
+      color: #1a1a1a;
+      margin-top: 0.75rem;
+    }
+    .content dd {
+      margin-left: 1.5rem;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    /* ---- Code ---- */
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.85em;
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1em 0.35em;
+    }
+    pre {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      margin-bottom: 1.25rem;
+      font-size: 0.83rem;
+      line-height: 1.5;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    /* ---- Tables ---- */
+    .content table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 1.25rem;
+      font-size: 0.85rem;
+    }
+    .content th {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .content td {
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      vertical-align: top;
+    }
+
+    /* ---- RFC NOTE / IMPORTANT callout ---- */
+    .rfc-note {
+      background: #fffbe6;
+      border-left: 4px solid #f0c800;
+      border-radius: 0 4px 4px 0;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.88rem;
+    }
+    .rfc-note strong { display: block; margin-bottom: 0.25rem; }
+
+    .rfc-warn {
+      background: #fff0f0;
+      border-left: 4px solid #d73a49;
+      border-radius: 0 4px 4px 0;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.88rem;
+    }
+    .rfc-warn strong { display: block; margin-bottom: 0.25rem; }
+
+    /* ---- Footer ---- */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 2rem;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .site-footer a { color: var(--muted); }
+    .site-footer a:hover { color: var(--link); }
+
+    /* ---- Section number prefix ---- */
+    .sec-num {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-right: 0.4rem;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .sidebar.open { display: block; position: fixed; top: var(--header-h); left: 0; right: 0; height: auto; max-height: 60vh; background: #fff; z-index: 200; border-right: none; border-bottom: 1px solid var(--border); padding: 1rem; }
+      .content { padding: 1.5rem 0.5rem 3rem 0.5rem; }
+      .toc-toggle { display: inline-block; }
+      .layout { padding: 0 0.75rem; }
+      .site-header .doc-title { display: none; }
+      .doc-header h1 { font-size: 1.35rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================ HEADER ============================================================ -->
+<header class="site-header">
+  <a href="https://pqsafe.xyz" class="brand">PQSafe</a>
+  <span class="sep">/</span>
+  <span class="doc-title">AP2 Post-Quantum Profile RFC</span>
+  <button class="toc-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">Contents</button>
+  <nav class="nav-links">
+    <a href="https://pqsafe.xyz/fido-pq-letter">Open Letter</a>
+    <a href="https://pqsafe.xyz/verify">Verifier</a>
+    <a href="https://github.com/PQSafe/pqsafe" rel="noopener">GitHub</a>
+  </nav>
+</header>
+
+<!-- ============================================================ LAYOUT ============================================================ -->
+<div class="layout">
+
+  <!-- ---- Sidebar ---- -->
+  <aside class="sidebar">
+    <h2>Contents</h2>
+    <nav>
+      <ol>
+        <li><a href="#s0">Abstract</a></li>
+        <li><a href="#s1">1. Background</a></li>
+        <li><a href="#s2">2. Specification</a></li>
+        <li><a href="#s3">3. Wire Format</a></li>
+        <li><a href="#s4">4. Test Vectors</a></li>
+        <li><a href="#s5">5. Reference Implementation</a></li>
+        <li><a href="#s6">6. Backward Compatibility</a></li>
+        <li><a href="#s7">7. Security Considerations</a></li>
+        <li><a href="#s8">8. Open Questions</a></li>
+        <li><a href="#s9">9. References</a></li>
+        <li><a href="#s10">10. Authors &amp; License</a></li>
+      </ol>
+    </nav>
+
+    <dl class="doc-meta">
+      <dt>Document ID</dt>
+      <dd>AP2-PQ-EXT-01</dd>
+      <dt>Status</dt>
+      <dd>Community Draft</dd>
+      <dt>Version</dt>
+      <dd>v9 (2026-05-01)</dd>
+      <dt>License</dt>
+      <dd>Apache-2.0</dd>
+      <dt>Feedback</dt>
+      <dd><a href="mailto:rfc@pqsafe.xyz">rfc@pqsafe.xyz</a></dd>
+    </dl>
+  </aside>
+
+  <!-- ---- Main content ---- -->
+  <main class="content">
+
+    <!-- ---- Document header / title block ---- -->
+    <header class="doc-header" id="s0">
+      <p class="doc-id">AP2-PQ-EXT-01 &nbsp;·&nbsp; Standards Track (Community Draft) &nbsp;·&nbsp; <span class="status-badge">DRAFT</span></p>
+      <h1>Post-Quantum Signature Profile for AP2-style Agent-Payment Mandates</h1>
+      <p class="abstract-label">Abstract</p>
+      <p class="abstract">
+        This document specifies a post-quantum signing profile for AP2-style SD-JWT mandate credentials,
+        contributed to the FIDO Alliance Payments Technical Working Group. The profile adds two JOSE header
+        parameters — <code>pq_alg</code> and <code>pq_sig</code> — to the existing JWT header used in
+        AP2 v0.2 mandate credentials. The primary algorithm identifier is <code>"ML-DSA-65"</code>,
+        corresponding to NIST FIPS 204 (initial public draft qualifier: NIST IR 8547 ipd). A hybrid profile
+        <code>"Ed25519+ML-DSA-65"</code> is defined for deployments requiring both classical interoperability
+        and quantum resistance in a single signing operation. The extension is strictly backward-compatible:
+        classical verifiers that do not recognize <code>pq_alg</code> continue to verify the
+        <code>alg: "ES256"</code> signature and ignore the additional header parameters.
+      </p>
+      <table class="meta-table">
+        <tr><td>Authors</td><td>Raymond Chau, Tris Au Yeung — PQSafe AgentPay, Hong Kong</td></tr>
+        <tr><td>Contact</td><td><a href="mailto:raymond@pqsafe.xyz">raymond@pqsafe.xyz</a></td></tr>
+        <tr><td>Created</td><td>2026-04-28</td></tr>
+        <tr><td>Last revised</td><td>2026-05-01 (Revision 02)</td></tr>
+        <tr><td>Feedback</td><td><a href="mailto:rfc@pqsafe.xyz">rfc@pqsafe.xyz</a> · <a href="https://github.com/PQSafe/pqsafe/issues" rel="noopener">GitHub Issues</a> · Deadline: 2026-05-15</td></tr>
+        <tr><td>License</td><td>Apache-2.0</td></tr>
+      </table>
+    </header>
+
+    <!-- ---- Cross-link notice ---- -->
+    <div class="crosslink-bar">
+      <span>Related:</span>
+      <a href="https://pqsafe.xyz/fido-pq-letter">Open Letter to FIDO TWG</a>
+      <a href="https://pqsafe.xyz/verify">Live Verifier</a>
+      <a href="https://github.com/PQSafe/ap2-pq-test-vectors" rel="noopener">Test Vectors Repository</a>
+      <a href="https://github.com/PQSafe/pqsafe" rel="noopener">Reference Implementation</a>
+    </div>
+
+    <!-- ============================================================ SECTION 1 ============================================================ -->
+    <section id="s1">
+      <h2><span class="sec-num">§1</span> Background — Why Post-Quantum, Why Now</h2>
+
+      <h3>1.1 The Harvest-Now-Forge-Later Threat</h3>
+      <p>
+        "Harvest Now, Decrypt Later" (HNDL) is well understood: nation-state adversaries collect ciphertext
+        today for decryption once a cryptographically-relevant quantum computer (CRQC) arrives. AP2-style
+        mandate credentials face the less-discussed but structurally identical sibling threat:
+        <strong>Harvest Now, Forge Later (HNFL)</strong>.
+      </p>
+      <p>
+        In HNFL, an adversary collects classically-signed payment authorization records — SD-JWT mandate
+        credentials logged to immutable audit trails — and retrospectively forges them once a CRQC enables
+        reconstruction of ECDSA private keys from their corresponding public keys via Shor's algorithm. For
+        a 15-minute web session token, this risk is negligible. For a payment authorization mandate retained
+        in a financial audit log for seven years, the risk is material: the mandatory retention window
+        overlaps the projected CRQC arrival window for several credible threat timelines.
+      </p>
+
+      <p>AP2 mandate credentials have three properties that make them a higher-priority PQ migration target than standard OAuth access tokens or short-lived JWTs:</p>
+      <ol>
+        <li>
+          <strong>Long retention windows.</strong> Financial authorization records must be retained for
+          5–7 years under HKMA Anti-Money Laundering rules (Cap. 615), IRD requirements (Cap. 112), and
+          PSD2 Article 69 (5 years for payment service providers in EU jurisdictions). A mandate signed
+          today under <code>ES256</code> will still be within its mandatory retention window in 2032–2033.
+        </li>
+        <li>
+          <strong>Public key discoverability.</strong> AP2 mandate signing keys published in DID documents
+          or <code>/.well-known</code> authorization server metadata can be harvested at scale without
+          intercepting individual mandates. An adversary with a CRQC can reconstruct the private key from
+          the public key and forge any historically-collected mandate.
+        </li>
+        <li>
+          <strong>Dispute resolution utility.</strong> The cryptographic integrity of a mandate credential
+          is an evidentiary property in regulatory audits, insurance disputes, and litigation. Forged
+          mandates presented as authoritative audit evidence have direct legal and financial consequences
+          that extend beyond individual transaction amounts.
+        </li>
+      </ol>
+
+      <h3>1.2 Regulatory Drivers</h3>
+      <p>
+        Two active regulatory programs create near-term compliance obligations for institutions deploying
+        agent-payment mandate credentials in regulated jurisdictions.
+      </p>
+
+      <p>
+        <strong>NIST IR 8547 (2024, initial public draft).</strong>
+        The U.S. National Institute of Standards and Technology proposes deprecation of 112-bit classical
+        algorithms (including P-256 ECDSA, which underlies <code>ES256</code>) by 2030, and full
+        disallowance by 2035 for high-priority systems including payment-critical infrastructure. NIST IR 8547
+        explicitly references FIPS 204 (ML-DSA) as the standardized transition target for signature
+        schemes. Institutions treating 2030 as a planning horizon and working backward through procurement,
+        integration, and audit cycles have limited runway. <em>Status: initial public draft — not yet final
+        NIST policy.</em>
+      </p>
+
+      <p>
+        <strong>HKMA Quantum Preparedness Index (QPI), announced February 3, 2026.</strong>
+        The Hong Kong Monetary Authority has launched a formal quantum readiness assessment framework for
+        regulated entities operating in Hong Kong. The QPI references NIST PQC standards and requires
+        regulated institutions to begin quantum readiness assessments covering payment-critical systems.
+        For institutions deploying agent-payment workflows, mandate-layer PQ signing is within scope of
+        the HKMA's cryptographic inventory requirements. Retention obligations under Cap. 615 are 6 years;
+        under IRD Cap. 112 they extend to 7 years.
+      </p>
+
+      <p>
+        <strong>PSD2 Article 69.</strong>
+        Payment service providers subject to the revised Payment Services Directive in EU jurisdictions
+        are required to retain payment authorization records for a minimum of 5 years. A mandate issued
+        in 2026 remains within its mandatory PSD2 retention window until 2031 — a date that falls within
+        the most aggressive CRQC arrival estimates.
+      </p>
+
+      <h3>1.3 Algorithm Selection Rationale — Why ML-DSA-65, Not Falcon or SLH-DSA</h3>
+      <p>Three NIST-standardized post-quantum signature algorithms were evaluated:</p>
+
+      <p>
+        <strong>Falcon-512</strong> produces ~666-byte signatures — substantially smaller than ML-DSA-65's
+        3,309 bytes. However, Falcon's signing algorithm requires constant-time floating-point arithmetic
+        (discrete Gaussian sampling over lattices using floating-point rejection sampling). Software
+        implementations carry significant timing side-channel risk that is inappropriate for payment signing
+        infrastructure on general-purpose CPUs. Falcon is excluded on safety-of-implementation grounds.
+      </p>
+      <p>
+        <strong>SLH-DSA</strong> (NIST FIPS 205) rests on conservative hash-function security assumptions.
+        However, SLH-DSA-128s produces 7,856-byte signatures; larger parameter sets reach 49,856 bytes.
+        These sizes exceed practical limits for per-transaction mandate payloads. SLH-DSA is excluded on
+        wire-size grounds.
+      </p>
+      <p>
+        <strong>ML-DSA-65</strong> (NIST FIPS 204, λ=192 parameter set) provides NIST Category 3 security
+        (at least 128-bit classical-equivalent) with 3,309-byte signatures, constant-time software
+        implementations in production-grade libraries, and no floating-point arithmetic requirement.
+        ML-DSA-65 at 3,309 bytes is the appropriate tradeoff for regulated financial deployments with
+        mandatory retention requirements. The OID is <code>2.16.840.1.101.3.4.3.18</code> (verify against
+        the <a href="https://csrc.nist.gov/projects/computer-security-objects-register/algorithm-registration" rel="noopener">NIST CSOR registry</a>
+        before deployment, as OID assignments may be revised during the early standardization period).
+      </p>
+
+      <h3>1.4 Structural Alignment with AP2 v0.2 SD-JWT Architecture</h3>
+      <p>
+        AP2 v0.2 uses SD-JWT mandate credentials with <code>"alg": "ES256"</code> in the JWT header.
+        This profile follows the same structural convention: the signing algorithm is declared in the
+        JWT header, not the mandate payload body. This extension adds <code>pq_alg</code> and
+        <code>pq_sig</code> as additional JWT header parameters — additive, not replacing the classical
+        <code>alg</code> and its corresponding signature. The SD-JWT payload and <code>_sd</code> claim
+        structure are unchanged.
+      </p>
+    </section>
+
+    <!-- ============================================================ SECTION 2 ============================================================ -->
+    <section id="s2">
+      <h2><span class="sec-num">§2</span> Specification — JOSE Header Parameter Extension</h2>
+
+      <h3>2.1 Terminology</h3>
+      <p>
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHOULD", "RECOMMENDED", "MAY", and
+        "OPTIONAL" in this document are to be interpreted as described in BCP 14
+        (<a href="https://www.rfc-editor.org/rfc/rfc2119" rel="noopener">RFC 2119</a>,
+        <a href="https://www.rfc-editor.org/rfc/rfc8174" rel="noopener">RFC 8174</a>).
+      </p>
+
+      <table>
+        <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+        <tbody>
+          <tr><td><code>ML-DSA-65</code></td><td>Module-Lattice-Based Digital Signature Algorithm, NIST Category 3 parameter set, as specified in NIST FIPS 204 (August 2024, initial public draft qualifier: NIST IR 8547 ipd). Formerly known as Dilithium3.</td></tr>
+          <tr><td><code>pq_alg</code></td><td>JOSE header parameter identifying the post-quantum (or hybrid) algorithm used to produce <code>pq_sig</code>.</td></tr>
+          <tr><td><code>pq_sig</code></td><td>JOSE header parameter containing the post-quantum signature, Base64url-encoded.</td></tr>
+          <tr><td>JCS</td><td>JSON Canonicalization Scheme. RFC 8785. Deterministic UTF-8 serialization with keys sorted lexicographically at all nesting levels; array element order preserved.</td></tr>
+          <tr><td>JWS Signing Input</td><td>Per RFC 7515 §7.2.1: the ASCII bytes of <code>BASE64URL(JWS Protected Header) || '.' || BASE64URL(JWS Payload)</code>.</td></tr>
+          <tr><td>CRQC</td><td>Cryptographically Relevant Quantum Computer. A quantum computer with sufficient fault-tolerant qubit count to run Shor's algorithm against P-256 or equivalent elliptic-curve groups.</td></tr>
+          <tr><td>HNFL</td><td>Harvest Now, Forge Later. Adversarial strategy of collecting classically-signed records today for retrospective forgery once a CRQC is available.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2.2 Proposed JOSE Header Parameters</h3>
+      <p>
+        For AP2 v0.2 SD-JWT mandate credentials, this profile proposes two new JOSE header parameters,
+        registered in accordance with <a href="https://www.rfc-editor.org/rfc/rfc7515" rel="noopener">RFC 7515 §4.1</a>:
+      </p>
+
+      <dl>
+        <dt>pq_alg</dt>
+        <dd><strong>Parameter value type:</strong> String</dd>
+        <dd><strong>Allowed values:</strong> <code>"ML-DSA-65"</code> | <code>"Ed25519+ML-DSA-65"</code></dd>
+        <dd>Identifies the post-quantum (or hybrid) algorithm used to produce the <code>pq_sig</code> value.
+          The classical <code>alg</code> parameter MUST remain present and MUST be a valid JOSE algorithm
+          identifier; <code>pq_alg</code> is additive, not a replacement. MUST be ignored by verifiers that
+          do not implement this profile.</dd>
+
+        <dt>pq_sig</dt>
+        <dd><strong>Parameter value type:</strong> String (Base64url, RFC 4648 §5, unpadded)</dd>
+        <dd>The post-quantum signature over the JWS Signing Input per RFC 7515 §7.2.1 — the ASCII bytes
+          of <code>BASE64URL(JWS Protected Header) || '.' || BASE64URL(JWS Payload)</code>. The signing
+          algorithm is identified by <code>pq_alg</code>. Encoded length for
+          <code>"ML-DSA-65"</code>: 4,412 characters (3,309 bytes, Base64url-encoded).</dd>
+      </dl>
+
+      <h3>2.3 Example JWT Header</h3>
+      <pre><code class="language-json">{
+  "alg": "ES256",
+  "pq_alg": "ML-DSA-65",
+  "pq_sig": "&lt;Base64url-encoded ML-DSA-65 signature, 4412 chars&gt;",
+  "_sd_alg": "sha-256"
+}</code></pre>
+
+      <p>
+        Classical verifiers process <code>alg: "ES256"</code> and ignore <code>pq_alg</code> and
+        <code>pq_sig</code>. Post-quantum verifiers process both. No changes to the SD-JWT payload
+        or <code>_sd</code> claim structure are required.
+      </p>
+
+      <h3>2.4 HashML-DSA Mode (Normative)</h3>
+
+      <div class="rfc-note">
+        <strong>Normative requirement</strong>
+        Implementations MUST use HashML-DSA mode (FIPS 204 §5.4), not pure-mode ML-DSA. The signing
+        input is the SHA-256 digest of the JWS Signing Input bytes. Verifiers MUST reject
+        <code>pq_sig</code> values generated under pure-mode when <code>pq_alg: "ML-DSA-65"</code>
+        is declared.
+      </div>
+
+      <pre><code class="language-text">signing_input = ASCII(BASE64URL(header)) || 0x2E || ASCII(BASE64URL(payload))
+fingerprint   = SHA-256(signing_input)          # 32 bytes
+pq_sig_bytes  = ML-DSA-65.Sign(sk, fingerprint) # 3309 bytes
+pq_sig        = BASE64URL(pq_sig_bytes)          # 4412 chars, unpadded</code></pre>
+
+      <p>
+        Implementations using pure-mode ML-DSA-65 (signing the full JWS Signing Input without pre-hashing)
+        will produce non-interoperable signatures. This distinction MUST be explicit in any conforming
+        implementation.
+      </p>
+      <p>
+        RFC 8785 (JCS) canonicalization applies to the mandate payload prior to SD-JWT encoding. The same
+        canonical byte sequence feeds both the ECDSA and ML-DSA-65 signing operations where a pre-JWT
+        canonicalization step is present.
+      </p>
+
+      <h3>2.5 Hybrid Profile: <code>"Ed25519+ML-DSA-65"</code></h3>
+      <p>When <code>pq_alg: "Ed25519+ML-DSA-65"</code> is declared:</p>
+      <ul>
+        <li>The <code>pq_sig</code> value encodes two concatenated signatures:
+          <code>Ed25519_sig (64 bytes) || ML-DSA-65_sig (3309 bytes)</code> = 3,373 bytes total,
+          Base64url-encoded.</li>
+        <li>The Ed25519 signature covers the same JWS Signing Input as the ML-DSA-65 signature (both in
+          HashML-DSA mode for ML-DSA-65; Ed25519 signs the full input directly per RFC 8032).</li>
+        <li>Verifiers implementing the hybrid profile MUST verify both component signatures. Failure of
+          either MUST result in verification failure.</li>
+        <li>This profile is intended for deployments that require a second classical algorithm as a fallback
+          while ML-DSA-65 implementations mature.</li>
+      </ul>
+
+      <h3>2.6 OID Alignment</h3>
+      <table>
+        <thead><tr><th>Algorithm</th><th>OID</th><th>Standard</th></tr></thead>
+        <tbody>
+          <tr><td>ML-DSA-65</td><td><code>2.16.840.1.101.3.4.3.18</code></td><td>NIST FIPS 204 (initial public draft qualifier)</td></tr>
+          <tr><td>Ed25519</td><td><code>1.3.101.112</code></td><td>RFC 8410</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Implementers MUST verify the ML-DSA-65 OID against the
+        <a href="https://csrc.nist.gov/projects/computer-security-objects-register/algorithm-registration" rel="noopener">NIST CSOR registry</a>
+        before deployment; OID assignments may be revised during the early standardization period.
+      </p>
+
+      <h3>2.7 Byte-Level Encoding</h3>
+      <table>
+        <thead><tr><th>Component</th><th>Raw bytes</th><th>Base64url chars (unpadded)</th></tr></thead>
+        <tbody>
+          <tr><td>ML-DSA-65 signature</td><td>3,309</td><td>4,412</td></tr>
+          <tr><td>ML-DSA-65 public key</td><td>1,952</td><td>~2,603</td></tr>
+          <tr><td>Ed25519 signature (hybrid)</td><td>64</td><td>86</td></tr>
+          <tr><td>Hybrid pq_sig total</td><td>3,373</td><td>~4,498</td></tr>
+        </tbody>
+      </table>
+      <p>
+        All encoding uses Base64url (RFC 4648 §5, unpadded). Lowercase hex and padded Base64 encodings
+        are not conformant. Implementations MUST NOT accept signatures that decode to any length other
+        than 3,309 bytes (ML-DSA-65 mode) or 3,373 bytes (hybrid mode).
+      </p>
+    </section>
+
+    <!-- ============================================================ SECTION 3 ============================================================ -->
+    <section id="s3">
+      <h2><span class="sec-num">§3</span> Wire Format — Before and After</h2>
+
+      <h3>3.1 Baseline AP2 Mandate (No PQ Extension)</h3>
+      <p>
+        The following example shows a complete AP2 SD-JWT mandate payload in its baseline form,
+        with the JWT header using only the standard <code>ES256</code> algorithm identifier.
+      </p>
+      <pre><code class="language-json">// JWT header (baseline)
+{
+  "alg": "ES256",
+  "_sd_alg": "sha-256"
+}
+
+// Mandate payload (illustrative — not all fields shown)
+{
+  "iss": "https://auth.example.com",
+  "sub": "did:web:user.example.com:alice",
+  "agent_id": "did:web:agents.example.com:purchasing-bot-v2",
+  "payee_constraints": [
+    { "payee_id": "did:web:stripe.com:merchant:acct_1A2B3C4D" },
+    { "payee_id": "did:web:airwallex.com:merchant:aw_1X2Y3Z" }
+  ],
+  "spend_cap": 500.00,
+  "currency": "USD",
+  "valid_from": "2026-05-01T00:00:00Z",
+  "valid_until": "2026-05-01T23:59:59Z",
+  "nonce": "a3f8c2e1d4b7906f2c5e8a1b4d7f0e3c"
+}</code></pre>
+
+      <h3>3.2 Same Mandate With PQ Profile Applied (JOSE Header Extension)</h3>
+      <p>
+        The PQ profile is applied entirely at the JWT header level. The mandate payload is unchanged.
+        Classical verifiers process <code>alg: "ES256"</code> and ignore the two additional header
+        parameters.
+      </p>
+      <pre><code class="language-json">// JWT header with pq_alg + pq_sig added
+{
+  "alg": "ES256",
+  "pq_alg": "ML-DSA-65",
+  "pq_sig": "&lt;Base64url-encoded ML-DSA-65 signature, 4412 chars — see §4 for test vectors&gt;",
+  "_sd_alg": "sha-256"
+}
+
+// Mandate payload — identical to baseline, no changes
+{
+  "iss": "https://auth.example.com",
+  "sub": "did:web:user.example.com:alice",
+  "agent_id": "did:web:agents.example.com:purchasing-bot-v2",
+  "payee_constraints": [
+    { "payee_id": "did:web:stripe.com:merchant:acct_1A2B3C4D" },
+    { "payee_id": "did:web:airwallex.com:merchant:aw_1X2Y3Z" }
+  ],
+  "spend_cap": 500.00,
+  "currency": "USD",
+  "valid_from": "2026-05-01T00:00:00Z",
+  "valid_until": "2026-05-01T23:59:59Z",
+  "nonce": "a3f8c2e1d4b7906f2c5e8a1b4d7f0e3c"
+}</code></pre>
+
+      <h3>3.3 Signing Input Construction</h3>
+      <p>The <code>pq_sig</code> value covers the JWS Signing Input per RFC 7515 §7.2.1:</p>
+      <pre><code class="language-text">signing_input = BASE64URL(JWS Protected Header) || "." || BASE64URL(JWS Payload)
+
+# HashML-DSA pre-hash (normative per §2.4):
+fingerprint = SHA-256(signing_input)    # 32 bytes
+
+# Sign the fingerprint, not the raw signing_input:
+pq_sig_bytes = ML-DSA-65.Sign(sk, fingerprint)   # 3309 bytes
+pq_sig       = BASE64URL(pq_sig_bytes)            # included in JWT header</code></pre>
+
+      <p>Key observations:</p>
+      <ul>
+        <li>The signing input is the Base64url-encoded header+payload string, not the raw mandate JSON body.</li>
+        <li>RFC 8785 JCS canonicalization applies to the mandate payload <em>before</em> SD-JWT encoding.
+          The same canonical byte sequence feeds both the ECDSA and ML-DSA-65 signing operations.</li>
+        <li>The ECDSA signature covers the JWS Signing Input directly per standard JWT processing.
+          The ML-DSA-65 signature covers the SHA-256 digest of the same JWS Signing Input (HashML-DSA mode).</li>
+      </ul>
+
+      <h3>3.4 Retention-Aware Mandate Example</h3>
+      <p>
+        The primary motivating use case is a mandate issued in 2026 that will still be within its
+        HKMA Cap. 615 mandatory retention window in 2033. A <code>retention_metadata</code> field
+        included in the signed bytes ensures any post-issuance modification to the retention timestamp
+        invalidates the original signature.
+      </p>
+      <pre><code class="language-json">// Mandate payload with retention metadata
+{
+  "agent_id": "did:web:agents.example.com:agent-tc4",
+  "amount": "88000.00",
+  "currency": "HKD",
+  "issued_at": "2026-05-01T00:00:00.000Z",
+  "nonce": "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+  "recipient": "did:web:payee.example.com:main",
+  "retention_metadata": {
+    "policy": "HKMA-Cap615-7yr",
+    "retention_until": "2033-05-01T00:00:00.000Z"
+  }
+}
+
+// JCS canonical form (object keys sorted lexicographically at all nesting levels):
+// {"agent_id":"did:web:agents.example.com:agent-tc4","amount":"88000.00",
+//  "currency":"HKD","issued_at":"2026-05-01T00:00:00.000Z",
+//  "nonce":"ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+//  "recipient":"did:web:payee.example.com:main",
+//  "retention_metadata":{"policy":"HKMA-Cap615-7yr",
+//  "retention_until":"2033-05-01T00:00:00.000Z"}}</code></pre>
+
+      <div class="rfc-note">
+        <strong>JCS number normalization (RFC 8785 §3.2.2)</strong>
+        <code>500.00</code> serializes as <code>500</code>; <code>1.10</code> serializes as <code>1.1</code>;
+        <code>100.0</code> serializes as <code>100</code>. Trailing zeros and unnecessary decimal points
+        are removed. String-typed amount fields (e.g., <code>"88000.00"</code>) are serialized verbatim —
+        no normalization applies to string values.
+      </div>
+    </section>
+
+    <!-- ============================================================ SECTION 4 ============================================================ -->
+    <section id="s4">
+      <h2><span class="sec-num">§4</span> Test Vectors</h2>
+
+      <p>
+        Five deterministic test cases (TC1–TC5) are published at
+        <a href="https://github.com/PQSafe/ap2-pq-test-vectors" rel="noopener">github.com/PQSafe/ap2-pq-test-vectors</a>
+        (Apache-2.0). The frozen byte-exact fixture is <code>vectors.json</code>, committed alongside the
+        generator (<code>generate_vectors.ts</code>).
+      </p>
+
+      <h3>Key Test Vector Parameters</h3>
+      <table>
+        <thead>
+          <tr><th>Parameter</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ML-DSA-65 key seed derivation</td><td><code>SHA-256("pqsafe-ap2-tc-mldsa")</code></td></tr>
+          <tr><td>ECDSA key seed derivation</td><td><code>SHA-256("pqsafe-ap2-tc-ecdsa")</code></td></tr>
+          <tr><td>Library versions</td><td><code>@noble/post-quantum@0.6.0</code> (exact, no caret), <code>@noble/curves@1.4.0</code>, <code>canonicalize@2.0.0</code></td></tr>
+          <tr><td>TC1 SHA-256 fingerprint</td><td><code>8617d93f851c2a1fb72f49c90a27e874666fd0c98b4992809d55eec6ef1da539</code></td></tr>
+          <tr><td>TC2 SHA-256 fingerprint</td><td><code>f447cb36ee1fe1dbbecbf5961bcb8ae7038a4881a84912bfc89809d998b07e01</code></td></tr>
+          <tr><td>Cross-platform CI</td><td>Mac, Linux x86-64, Windows (GitHub Actions)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="rfc-warn">
+        <strong>ML-DSA.Sign vs. HashML-DSA.Sign — critical implementation note</strong>
+        The generator calls <code>ml_dsa65.sign(sk, fingerprint)</code> — Algorithm 2, operating on the
+        32-byte SHA-256 fingerprint as a plain message. If <code>@noble/post-quantum</code> also exports
+        <code>hashMl_dsa65</code>, that export MUST NOT be used. HashML-DSA.Sign (Algorithm 4, FIPS 204
+        §5.4) adds an internal pre-hashing step, which would double-hash the already-SHA-256'd fingerprint
+        and produce non-interoperable signatures. Implementations that mix these two modes will fail
+        cross-platform verification.
+      </div>
+
+      <h3>Test Case Summary</h3>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>What it validates</th><th>Expected outcome</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>TC1</td>
+            <td>Minimal mandate</td>
+            <td>Baseline: minimum required fields, single payee, correct integer/string serialization</td>
+            <td>ECDSA ✓, ML-DSA-65 ✓</td>
+          </tr>
+          <tr>
+            <td>TC2</td>
+            <td>Array ordering</td>
+            <td>JCS preserves insertion order; deliberately reverse-alphabetical payee array MUST NOT be sorted</td>
+            <td>ECDSA ✓, ML-DSA-65 ✓</td>
+          </tr>
+          <tr>
+            <td>TC3</td>
+            <td>Decimal normalization</td>
+            <td>RFC 8785 §3.2.2: <code>1.10 → 1.1</code>, <code>100.0 → 100</code>. String fields not normalized.</td>
+            <td>ECDSA ✓, ML-DSA-65 ✓</td>
+          </tr>
+          <tr>
+            <td>TC4</td>
+            <td>7-year retention mandate</td>
+            <td>Retention metadata included in signed bytes; nested object keys sorted recursively; future dates accepted</td>
+            <td>ECDSA ✓, ML-DSA-65 ✓</td>
+          </tr>
+          <tr>
+            <td>TC5</td>
+            <td>Tamper detection</td>
+            <td>TC1 amount changed by 1 cent (<code>"125.00" → "125.01"</code>); original signatures applied to modified payload MUST fail both verifiers</td>
+            <td>ECDSA REJECT, ML-DSA-65 REJECT</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>TC5 — Tamper Detection Detail</h3>
+      <p>
+        TC5 is the security-critical assertion. The TC1 mandate has its
+        <code>amount</code> field changed from <code>"125.00"</code> to <code>"125.01"</code> (one cent
+        inflation). The TC1 signatures — computed over canonical bytes containing <code>"125.00"</code> —
+        are applied to the modified payload. Both ECDSA P-256 and ML-DSA-65 verification MUST return
+        <code>false</code>. Any implementation that returns <code>true</code> on this case has a critical
+        defect in its verification path.
+      </p>
+      <pre><code class="language-json">{
+  "id": "tc5-tamper-detection",
+  "description": "TC1 +1 cent tamper — MUST fail for both ECDSA and ML-DSA-65",
+  "ecdsa_verify_with_original_sig": false,
+  "mldsa_verify_with_original_sig": false,
+  "fingerprints_match": false
+}</code></pre>
+
+      <p>
+        In dual-sign mode, BOTH signatures MUST pass for the mandate to be accepted. A "partial
+        verification" mode that accepts a mandate when only one of the two signatures passes is a security
+        vulnerability — such an implementation degrades to single-algorithm security, defeating the purpose
+        of the hybrid profile.
+      </p>
+    </section>
+
+    <!-- ============================================================ SECTION 5 ============================================================ -->
+    <section id="s5">
+      <h2><span class="sec-num">§5</span> Reference Implementation</h2>
+
+      <p>
+        The PQSafe reference implementation is available at
+        <a href="https://github.com/PQSafe/pqsafe" rel="noopener">github.com/PQSafe/pqsafe</a>
+        under the Apache-2.0 license. A browser-based verifier is available at
+        <a href="https://pqsafe.xyz/verify">pqsafe.xyz/verify</a> (no build step required).
+      </p>
+
+      <h3>5.1 TypeScript</h3>
+      <pre><code class="language-typescript">import { ml_dsa65 } from '@noble/post-quantum/ml-dsa';
+import canonicalize from 'canonicalize';  // RFC 8785 JCS
+import { createHash } from 'node:crypto';
+
+// --- Signing ---
+// sdJwtHeader: the Base64url-encoded JWT protected header string
+// sdJwtPayload: the Base64url-encoded JWT payload string
+function pqSign(sdJwtHeader: string, sdJwtPayload: string, sk: Uint8Array): string {
+  // JWS Signing Input per RFC 7515 §7.2.1
+  const jwsInput = `${sdJwtHeader}.${sdJwtPayload}`;
+  // HashML-DSA: pre-hash with SHA-256 (normative per §2.4)
+  const fingerprint = createHash('sha256').update(jwsInput).digest();
+  // ML-DSA.Sign (Algorithm 2, FIPS 204 §5.2) — pass fingerprint as message
+  // Do NOT use hashMl_dsa65 — would double-hash and produce non-interoperable signatures
+  const sigma = ml_dsa65.sign(sk, fingerprint);
+  return Buffer.from(sigma).toString('base64url');  // 4412 chars, unpadded
+}
+
+// --- Verification ---
+function pqVerify(sdJwtHeader: string, sdJwtPayload: string, pqSig: string, pk: Uint8Array): boolean {
+  const jwsInput = `${sdJwtHeader}.${sdJwtPayload}`;
+  const fingerprint = createHash('sha256').update(jwsInput).digest();
+  const sigma = Buffer.from(pqSig, 'base64url');
+  if (sigma.length !== 3309) return false;  // reject wrong-length signatures
+  return ml_dsa65.verify(pk, fingerprint, new Uint8Array(sigma));
+}
+
+// Install: npm install @noble/post-quantum canonicalize</code></pre>
+
+      <h3>5.2 Python</h3>
+      <pre><code class="language-python">import hashlib, base64
+from cryptography.hazmat.primitives.asymmetric.dilithium import (
+    generate_private_key, MLDSAPrivateKey, MLDSAPublicKey
+)
+
+def pq_sign(sd_jwt_header: str, sd_jwt_payload: str, private_key: MLDSAPrivateKey) -> str:
+    # JWS Signing Input per RFC 7515 §7.2.1
+    jws_input = f"{sd_jwt_header}.{sd_jwt_payload}".encode('ascii')
+    # HashML-DSA: pre-hash with SHA-256 (normative per §2.4)
+    fingerprint = hashlib.sha256(jws_input).digest()
+    # ML-DSA.Sign (Algorithm 2, FIPS 204 §5.2)
+    sigma = private_key.sign(fingerprint)
+    return base64.urlsafe_b64encode(sigma).rstrip(b'=').decode('ascii')
+
+def pq_verify(sd_jwt_header: str, sd_jwt_payload: str, pq_sig: str, public_key: MLDSAPublicKey) -> bool:
+    jws_input = f"{sd_jwt_header}.{sd_jwt_payload}".encode('ascii')
+    fingerprint = hashlib.sha256(jws_input).digest()
+    # Re-pad for standard base64 decoding
+    padding = '=' * (4 - len(pq_sig) % 4) if len(pq_sig) % 4 else ''
+    sigma = base64.urlsafe_b64decode(pq_sig + padding)
+    if len(sigma) != 3309:
+        return False
+    try:
+        public_key.verify(sigma, fingerprint)
+        return True
+    except Exception:
+        return False
+
+# Install: pip install cryptography</code></pre>
+
+      <h3>5.3 Go and Rust</h3>
+      <p>
+        <strong>Go:</strong> <code>github.com/cloudflare/circl/sign/mldsa/mldsa65</code> from Cloudflare's CIRCL library.
+      </p>
+      <p>
+        <strong>Rust:</strong> <code>ml-dsa</code> crate from the RustCrypto organization (pure Rust, no-std compatible).
+      </p>
+      <p>
+        In both languages: compute the SHA-256 digest of the JWS Signing Input (the
+        <code>Base64url(header).Base64url(payload)</code> ASCII string), then pass the 32-byte digest as
+        the message argument to the ML-DSA-65 sign or verify function. Encode the resulting signature bytes
+        as Base64url (RFC 4648 §5, unpadded) for the <code>pq_sig</code> header parameter value.
+      </p>
+
+      <h3>5.4 Performance</h3>
+      <table>
+        <thead><tr><th>Operation</th><th>Approx. latency (modern x86-64 or Apple M-series)</th></tr></thead>
+        <tbody>
+          <tr><td>Key generation</td><td>~0.5 ms</td></tr>
+          <tr><td>Sign</td><td>~0.7 ms</td></tr>
+          <tr><td>Verify</td><td>~0.3 ms</td></tr>
+        </tbody>
+      </table>
+      <p>
+        These latencies are negligible relative to network round-trip times in AP2 payment flows.
+        Throughput exceeding 1,000 operations per second per core is achievable.
+      </p>
+    </section>
+
+    <!-- ============================================================ SECTION 6 ============================================================ -->
+    <section id="s6">
+      <h2><span class="sec-num">§6</span> Backward Compatibility</h2>
+
+      <h3>6.1 Guarantees for Existing Verifiers</h3>
+      <p>
+        Existing AP2 SD-JWT verifiers that do not implement this profile encounter mandate JWTs with
+        <code>pq_alg</code> and <code>pq_sig</code> in the JWT header and MUST treat them as follows:
+      </p>
+      <ol>
+        <li>
+          <strong>Unrecognized header parameters.</strong> Per RFC 7515 §4, JWT implementations SHOULD
+          ignore header parameters whose names are not recognized. <code>pq_alg</code> and
+          <code>pq_sig</code> are subject to the same treatment.
+        </li>
+        <li>
+          <strong>Classical signature unaffected.</strong> The <code>alg: "ES256"</code> signature
+          remains present and is verified independently. The PQ and classical verification paths are
+          orthogonal.
+        </li>
+        <li>
+          <strong>No wire format change.</strong> The mandate remains an SD-JWT. No new serialization
+          format, no CBOR wrapper, no changes to transport or AP2 authorization server configuration.
+        </li>
+        <li>
+          <strong>SD-JWT payload and <code>_sd</code> structure unchanged.</strong> No changes to the
+          mandate payload, selective disclosure claims, or the <code>_sd_alg</code> parameter.
+        </li>
+      </ol>
+
+      <h3>6.2 Dual-Signing Transition Protocol</h3>
+      <table>
+        <thead><tr><th>Phase</th><th>Timeline</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td>Phase 0 — Announce</td><td>Now</td><td>Publish key rotation schedule; update API documentation</td></tr>
+          <tr><td>Phase 1 — Dual-sign optional</td><td>2026 Q2–Q3</td><td>Senders MAY attach <code>pq_alg</code>/<code>pq_sig</code> alongside classical <code>alg</code></td></tr>
+          <tr><td>Phase 2 — Dual-sign required</td><td>2026 Q4–2027 Q1</td><td>All senders MUST include PQ header parameters; classical signature still verified</td></tr>
+          <tr><td>Phase 3 — PQ-only</td><td>2027 Q2+</td><td>Classical signature deprecated; ML-DSA-65 alone sufficient</td></tr>
+        </tbody>
+      </table>
+      <p>
+        During Phase 3, receivers MAY reject classical-only mandates with a recommended minimum of
+        6 months' advance notice.
+      </p>
+
+      <h3>6.3 Key Rotation</h3>
+      <p>
+        ML-DSA-65 key pairs SHOULD be rotated at least annually for long-lived agent identities.
+        Implementations MUST NOT reuse ML-DSA-65 key pairs for any purpose other than mandate signing —
+        in particular, the secret key MUST NOT be used for encryption or key encapsulation.
+      </p>
+    </section>
+
+    <!-- ============================================================ SECTION 7 ============================================================ -->
+    <section id="s7">
+      <h2><span class="sec-num">§7</span> Security Considerations</h2>
+
+      <h3>7.1 Classical Security Level</h3>
+      <p>
+        ML-DSA-65 targets NIST security Category 3, providing at least 128 bits of classical-equivalent
+        security. This matches or exceeds AES-128 and SHA-256, considered sufficient for sensitive financial
+        data under NIST SP 800-57 through at least 2030.
+      </p>
+
+      <h3>7.2 Post-Quantum Security Level</h3>
+      <p>
+        The security of ML-DSA-65 rests on the conjectured hardness of the Module Learning With Errors
+        (MLWE) and Module Short Integer Solution (MSIS) problems. No known quantum speedup analogous to
+        Shor's algorithm applies to these problems. The best known quantum attacks (BKZ-based lattice
+        sieving accelerated by Grover's algorithm) achieve only marginal speedups. NIST's Category 3
+        assessment accounts for these attacks in its parameter selection.
+      </p>
+
+      <h3>7.3 Hybrid vs. Pure-PQ — When to Use Which</h3>
+      <p>
+        During the transition period, dual-signing (classical + ML-DSA-65) is strictly stronger than
+        either algorithm alone. An adversary capable of breaking ECDSA (via a CRQC) but not ML-DSA-65
+        cannot forge a dual-signed mandate. Conversely, an adversary capable of breaking ML-DSA-65
+        (currently hypothetical) but not ECDSA is also blocked.
+      </p>
+
+      <p><strong>Use pure ML-DSA-65 (Phase 3) when:</strong></p>
+      <ul>
+        <li>Deployment is in a jurisdiction with a hard regulatory mandate for PQ-only cryptography.</li>
+        <li>All verifier implementations have confirmed ML-DSA-65 support and no classical-only fallback path exists.</li>
+        <li>Mandate size constraints make carrying dual signatures infeasible.</li>
+      </ul>
+
+      <p><strong>Use dual-signing (Phases 1–2) when:</strong></p>
+      <ul>
+        <li>Some verifiers in the ecosystem are not yet PQ-capable.</li>
+        <li>Regulatory requirements mandate documented transition rather than immediate cutover.</li>
+        <li>Defense-in-depth against ML-DSA-65 implementation defects is desired.</li>
+      </ul>
+
+      <h3>7.4 Deterministic Signing and Nonce Elimination</h3>
+      <p>
+        Unlike ECDSA, ML-DSA-65 does not require a per-signature random nonce <code>k</code>. The
+        catastrophic nonce-reuse vulnerabilities that have historically caused private key extraction in
+        ECDSA deployments are not present in ML-DSA-65. This is a meaningful operational improvement for
+        automated agent systems where entropy sources may be constrained or poorly seeded.
+      </p>
+
+      <h3>7.5 Side-Channel Resistance</h3>
+      <p>
+        Implementations MUST use a constant-time ML-DSA-65 implementation. The <code>@noble/post-quantum</code>
+        library employs constant-time arithmetic. Implementers using other libraries MUST verify equivalent
+        guarantees before deploying in production.
+      </p>
+
+      <h3>7.6 Signature Malleability</h3>
+      <p>
+        ML-DSA-65 signatures are non-malleable. The verification algorithm validates the full internal
+        structure of the signature encoding, making malleability infeasible. This is an improvement over
+        certain ECDSA encoding variants where signature malleability has caused double-spend attacks.
+      </p>
+
+      <h3>7.7 Key Reuse Across Protocols</h3>
+      <p>
+        AP2 agents MUST NOT reuse their ML-DSA-65 key pair for any purpose other than AP2 mandate signing.
+        Using the same key for both signing and encryption (or key encapsulation) introduces cross-protocol
+        attacks. The ML-DSA-65 secret key format is incompatible with ML-KEM (NIST FIPS 203) by design.
+      </p>
+
+      <h3>7.8 Input Length Enforcement</h3>
+      <p>
+        Receivers MUST enforce input length limits on the <code>pq_sig</code> header parameter. A
+        conformant implementation MUST reject any <code>pq_sig</code> value that decodes to a byte length
+        other than exactly 3,309 bytes (ML-DSA-65 mode) or 3,373 bytes (hybrid mode). When resolving ML-DSA-65
+        public keys for verification, a RECOMMENDED maximum response body size is 16 KB, preventing buffer
+        exhaustion attacks via oversized responses.
+      </p>
+    </section>
+
+    <!-- ============================================================ SECTION 8 ============================================================ -->
+    <section id="s8">
+      <h2><span class="sec-num">§8</span> Open Questions</h2>
+
+      <p>
+        The following questions are submitted to the FIDO Alliance Payments TWG and the AP2 community for
+        discussion. The authors have views on each but defer to the TWG's design authority.
+      </p>
+
+      <dl>
+        <dt>Q1 — NIST IR 8547 scope</dt>
+        <dd>Has NIST IR 8547 ipd compliance been discussed in the context of AP2 mandate retention
+          requirements? The 2030 deprecation and 2035 disallowance timeline proposed in the draft creates
+          a planning obligation for regulated financial deployments.</dd>
+
+        <dt>Q2 — Existing internal PQ work</dt>
+        <dd>Has the AP2 team or the FIDO Payments TWG discussed ML-DSA-65 or any other PQ algorithm
+          internally? The authors want to avoid duplicating work or creating conflicting extension tracks.</dd>
+
+        <dt>Q3 — Verification failure semantics for unresolvable keys</dt>
+        <dd>If <code>pq_sig</code> is present and the corresponding public key cannot be resolved at
+          verification time, should the profile mandate hard rejection (fail closed) or permit fallback to
+          classical-only verification with a warning? The authors lean toward hard rejection for regulated
+          deployments but recognize the deployment cost implication during the transition period.</dd>
+
+        <dt>Q4 — Mastercard Verifiable Intent alignment</dt>
+        <dd>The Verifiable Intent contribution going through the Payments TWG is functionally analogous to
+          the SpendEnvelope construct in the reference implementation: a tamper-evident, user-authorized log
+          of what an agent is permitted to do. No public schema for Verifiable Intent has been released as
+          of this writing. Does the TWG see value in aligning the <code>pq_alg</code>/<code>pq_sig</code>
+          header parameter extension with the Verifiable Intent document format?</dd>
+
+        <dt>Q5 — Scope: mandate credentials only, or also task results?</dt>
+        <dd>This proposal scopes PQ signing to mandate credentials. A natural follow-on is PQ signing of
+          task result records. Should this profile address task result signing, or should that be a separate
+          follow-on contribution?</dd>
+
+        <dt>Q6 — Retention-aware mandate field standardization</dt>
+        <dd>The TC4 test vector includes a <code>retention_metadata</code> field with HKMA policy context.
+          Should the TWG consider standardizing retention metadata fields as part of the mandate credential
+          schema, given their relevance to the HNFL threat model?</dd>
+      </dl>
+    </section>
+
+    <!-- ============================================================ SECTION 9 ============================================================ -->
+    <section id="s9">
+      <h2><span class="sec-num">§9</span> References</h2>
+
+      <h3>Normative References</h3>
+
+      <dl>
+        <dt>[FIPS-204]</dt>
+        <dd>National Institute of Standards and Technology. "Module-Lattice-Based Digital Signature Standard."
+          FIPS Publication 204, August 2024.<br>
+          <a href="https://doi.org/10.6028/NIST.FIPS.204" rel="noopener">https://doi.org/10.6028/NIST.FIPS.204</a></dd>
+
+        <dt>[RFC-8785]</dt>
+        <dd>Rundgren, A., Jordan, B., Erdtman, S. "JSON Canonicalization Scheme (JCS)." RFC 8785, June 2020.<br>
+          <a href="https://www.rfc-editor.org/rfc/rfc8785" rel="noopener">https://www.rfc-editor.org/rfc/rfc8785</a></dd>
+
+        <dt>[RFC-7515]</dt>
+        <dd>Jones, M., Bradley, J., Sakimura, N. "JSON Web Signature (JWS)." RFC 7515, May 2015.<br>
+          <a href="https://www.rfc-editor.org/rfc/rfc7515" rel="noopener">https://www.rfc-editor.org/rfc/rfc7515</a></dd>
+
+        <dt>[RFC-2119]</dt>
+        <dd>Bradner, S. "Key words for use in RFCs to Indicate Requirement Levels." RFC 2119, March 1997.<br>
+          <a href="https://www.rfc-editor.org/rfc/rfc2119" rel="noopener">https://www.rfc-editor.org/rfc/rfc2119</a></dd>
+
+        <dt>[RFC-8174]</dt>
+        <dd>Leiba, B. "Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words." RFC 8174, May 2017.<br>
+          <a href="https://www.rfc-editor.org/rfc/rfc8174" rel="noopener">https://www.rfc-editor.org/rfc/rfc8174</a></dd>
+
+        <dt>[RFC-4648]</dt>
+        <dd>Josefsson, S. "The Base16, Base32, and Base64 Data Encodings." RFC 4648, October 2006.<br>
+          <a href="https://www.rfc-editor.org/rfc/rfc4648" rel="noopener">https://www.rfc-editor.org/rfc/rfc4648</a></dd>
+
+        <dt>[AP2-SPEC]</dt>
+        <dd>AP2 Working Group. "AI Payments Protocol v2 Specification."<br>
+          <a href="https://github.com/google-agentic-commerce/AP2" rel="noopener">https://github.com/google-agentic-commerce/AP2</a></dd>
+      </dl>
+
+      <h3>Informative References</h3>
+
+      <dl>
+        <dt>[NIST-IR-8547]</dt>
+        <dd>National Institute of Standards and Technology. "Transition to Post-Quantum Cryptography Standards."
+          NIST IR 8547, 2024 (initial public draft).<br>
+          <a href="https://csrc.nist.gov/pubs/ir/8547/ipd" rel="noopener">https://csrc.nist.gov/pubs/ir/8547/ipd</a></dd>
+
+        <dt>[HKMA-QPI]</dt>
+        <dd>Hong Kong Monetary Authority. "Quantum Preparedness Index (QPI)." Announced February 3, 2026.<br>
+          <a href="https://www.hkma.gov.hk/" rel="noopener">https://www.hkma.gov.hk/</a>
+          (verify canonical URL against HKMA primary source before citing)</dd>
+
+        <dt>[PSD2-ART69]</dt>
+        <dd>European Parliament and Council. "Directive (EU) 2015/2366 on Payment Services in the Internal
+          Market (PSD2)." Article 69 — record-keeping for payment service providers. OJ L 337, 2015.<br>
+          <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32015L2366" rel="noopener">https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32015L2366</a></dd>
+
+        <dt>[NOBLE-PQ]</dt>
+        <dd>Miller, P. "@noble/post-quantum: Post-quantum cryptography for JavaScript."<br>
+          <a href="https://github.com/paulmillr/noble-post-quantum" rel="noopener">https://github.com/paulmillr/noble-post-quantum</a></dd>
+
+        <dt>[CIRCL]</dt>
+        <dd>Cloudflare. "CIRCL: Cloudflare Interoperable Reusable Cryptographic Library."<br>
+          <a href="https://github.com/cloudflare/circl" rel="noopener">https://github.com/cloudflare/circl</a></dd>
+
+        <dt>[HARVEST-NOW]</dt>
+        <dd>Mosca, M. "Cybersecurity in an Era with Quantum Computers: Will We Be Ready?" IEEE Security &amp; Privacy, 2018.</dd>
+
+        <dt>[PQSAFE-IMPL]</dt>
+        <dd>PQSafe. "PQSafe AgentPay Reference Implementation." Apache-2.0.<br>
+          <a href="https://github.com/PQSafe/pqsafe" rel="noopener">https://github.com/PQSafe/pqsafe</a></dd>
+
+        <dt>[NIST-CSOR]</dt>
+        <dd>National Institute of Standards and Technology. "Computer Security Objects Register — Algorithm Registration."<br>
+          <a href="https://csrc.nist.gov/projects/computer-security-objects-register/algorithm-registration" rel="noopener">https://csrc.nist.gov/projects/computer-security-objects-register/algorithm-registration</a></dd>
+      </dl>
+    </section>
+
+    <!-- ============================================================ SECTION 10 ============================================================ -->
+    <section id="s10">
+      <h2><span class="sec-num">§10</span> Authors and License</h2>
+
+      <h3>Authors</h3>
+      <p>
+        Raymond Chau<br>
+        PQSafe AgentPay, Hong Kong<br>
+        <a href="mailto:raymond@pqsafe.xyz">raymond@pqsafe.xyz</a> · <a href="https://github.com/PQSafe/pqsafe" rel="noopener">github.com/PQSafe/pqsafe</a>
+      </p>
+      <p style="margin-top: 0.75rem;">
+        Tris Au Yeung<br>
+        PQSafe AgentPay, Hong Kong
+      </p>
+
+      <h3 style="margin-top: 1.5rem;">License</h3>
+      <p>
+        This specification document is released under the
+        <strong><a href="https://www.apache.org/licenses/LICENSE-2.0" rel="noopener">Apache License, Version 2.0</a></strong>.
+        The reference implementation at
+        <a href="https://github.com/PQSafe/pqsafe" rel="noopener">github.com/PQSafe/pqsafe</a> is also
+        released under Apache-2.0. Copyright 2026 PQSafe.
+      </p>
+
+      <h3 style="margin-top: 1.5rem;">Acknowledgments</h3>
+      <p>
+        The authors thank the AP2 working group for AP2 v0.1's foundational design choices — particularly
+        the mandate of RFC 8785 JCS canonicalization, which simplifies this extension substantially. Thanks
+        to Paul Miller for the <code>@noble/post-quantum</code> library and to the NIST post-quantum
+        cryptography standardization team for FIPS 204.
+      </p>
+
+      <h3 style="margin-top: 1.5rem;">Document History</h3>
+      <table>
+        <thead><tr><th>Revision</th><th>Date</th><th>Summary</th></tr></thead>
+        <tbody>
+          <tr><td>00</td><td>2026-04-28</td><td>Initial draft</td></tr>
+          <tr><td>01</td><td>2026-05-01</td><td>Full specification landing page; §3 wire format examples with JCS canonical form walkthrough; 5 test vector cases TC1–TC5; §6 backward-compatibility guarantees; §7 security considerations including hybrid vs. pure-PQ tradeoff; open questions expanded to 6</td></tr>
+          <tr><td>02 (v9)</td><td>2026-05-01</td><td>Core structural change: mechanism shifted from JSON payload fields (<code>pq_signature</code>, <code>pq_algorithm</code>) to JOSE header parameters (<code>pq_alg</code>, <code>pq_sig</code>) — realignment with AP2 v0.2 SD-JWT architecture. HashML-DSA signing input corrected to JWS Signing Input per RFC 7515 §7.2.1. Hybrid profile defined as single <code>pq_alg</code> value with explicit byte-concatenation format. Bank of Israel removed; PSD2 Article 69 retained. All encoding confirmed as Base64url (RFC 4648 §5, unpadded). NIST IR 8547 consistently marked as initial public draft.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============================================================ FOOTER ============================================================ -->
+<footer class="site-footer">
+  <span>Copyright 2026 PQSafe · Apache-2.0</span>
+  <a href="mailto:raymond@pqsafe.xyz">raymond@pqsafe.xyz</a>
+  <a href="https://pqsafe.xyz">pqsafe.xyz</a>
+  <a href="https://github.com/PQSafe/pqsafe" rel="noopener">GitHub</a>
+  <span style="margin-left: auto; color: #aaa;">AP2-PQ-EXT-01 rev 02 · 2026-05-01</span>
+</footer>
+
+<!-- Active TOC scroll-spy -->
+<script>
+(function() {
+  const sections = document.querySelectorAll('section[id], header[id]');
+  const links = document.querySelectorAll('.sidebar nav a');
+  const headerH = 56;
+
+  function onScroll() {
+    let current = '';
+    sections.forEach(function(sec) {
+      const top = sec.getBoundingClientRect().top;
+      if (top <= headerH + 20) current = sec.id;
+    });
+    links.forEach(function(a) {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>
