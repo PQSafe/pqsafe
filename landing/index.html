@@ -602,6 +602,11 @@
         <div class="text-white font-semibold">@pqsafe/mastra</div>
         <div class="text-xs text-gray-400 mt-1">Mastra framework plugin</div>
       </a>
+      <a href="https://www.npmjs.com/package/@pqsafe/mcp-server" target="_blank" rel="noopener" class="block p-4 rounded-lg border border-gray-800 hover:border-emerald-500 transition bg-black/30">
+        <div class="text-xs text-emerald-400 font-mono mb-1">npm</div>
+        <div class="text-white font-semibold">@pqsafe/mcp-server</div>
+        <div class="text-xs text-gray-400 mt-1">MCP server for Claude Desktop / Cursor</div>
+      </a>
       <a href="https://pypi.org/project/pqsafe-agent-pay/" target="_blank" rel="noopener" class="block p-4 rounded-lg border border-gray-800 hover:border-cyan-500 transition bg-black/30">
         <div class="text-xs text-cyan-400 font-mono mb-1">PyPI</div>
         <div class="text-white font-semibold">pqsafe-agent-pay</div>
@@ -1275,6 +1280,40 @@
         </a>
       </div>
 
+      <!-- MCP Server -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3);">
+            <svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <path d="M8 21h8M12 17v4"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">Claude Desktop / Cursor</div>
+            <div class="text-xs text-gray-500">MCP host</div>
+          </div>
+          <span class="ml-auto text-xs px-2 py-0.5 rounded-full font-medium" style="background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.25);">Live on npm</span>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          MCP server that exposes PQ-safe payment tools to any MCP host — Claude Desktop, Cursor, or any app that speaks the Model Context Protocol. One global install, instant PQ hardening.
+        </p>
+        <div class="bg-black/50 rounded-xl border border-gray-800 overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">npm i -g @pqsafe/mcp-server</div>
+        </div>
+        <a href="https://www.npmjs.com/package/@pqsafe/mcp-server" target="_blank" rel="noopener"
+           class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View on npm
+        </a>
+      </div>
+
       <!-- LangChain -->
       <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-4">
         <div class="flex items-center gap-3">
@@ -1365,6 +1404,15 @@
             <span class="text-xs text-gray-500 ml-auto">Mastra plugin</span>
           </div>
           <div class="p-3 font-mono text-xs text-emerald-400">npm i @pqsafe/mastra</div>
+        </a>
+
+        <a href="https://www.npmjs.com/package/@pqsafe/mcp-server" target="_blank" rel="noopener"
+           class="block bg-black/40 rounded-xl border border-gray-800 hover:border-emerald-500 transition-colors overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-emerald-400 font-mono font-medium">npm</span>
+            <span class="text-xs text-gray-500 ml-auto">MCP server</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">npm i -g @pqsafe/mcp-server</div>
         </a>
 
         <div class="block bg-black/40 rounded-xl border border-gray-800 overflow-hidden opacity-75">
