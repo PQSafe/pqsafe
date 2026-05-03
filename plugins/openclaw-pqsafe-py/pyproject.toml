@@ -1,0 +1,99 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pqsafe-openclaw"
+version = "0.1.0"
+description = "PQSafe AgentPay skill for OpenClaw / ClawHub — post-quantum payments for AI agents"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [{ name = "PQSafe", email = "dev@pqsafe.xyz" }]
+keywords = [
+    "pqsafe",
+    "openclaw",
+    "clawhub",
+    "payments",
+    "ai-agents",
+    "post-quantum",
+    "ml-dsa",
+    "fips-204",
+    "ap2",
+    "langchain",
+    "crewai",
+    "spend-delegation",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Office/Business :: Financial",
+]
+dependencies = [
+    "pqsafe-agent-pay>=0.1.0",
+    "canonicaljson>=2.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+# Full post-quantum backend (required for production)
+pq = [
+    "pqcrypto>=0.4.0",
+]
+# ECDSA-P256 for AP2 dual-signing
+ecdsa = [
+    "cryptography>=41.0",
+]
+# Everything for AP2 dual-signing (ML-DSA-65 + ECDSA-P256)
+ap2 = [
+    "pqcrypto>=0.4.0",
+    "cryptography>=41.0",
+]
+# Development and testing
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "pqcrypto>=0.4.0",
+    "cryptography>=41.0",
+]
+
+[project.urls]
+Homepage = "https://pqsafe.xyz"
+Documentation = "https://pqsafe.xyz/handbook"
+Repository = "https://github.com/PQSafe/pqsafe"
+Issues = "https://github.com/PQSafe/pqsafe/issues"
+"AP2 RFC" = "https://pqsafe.xyz/ap2-pq-rfc"
+"OpenClaw" = "https://docs.openclaw.ai"
+"ClawHub" = "https://clawhub.ai"
+
+[project.scripts]
+pqsafe-openclaw = "pqsafe_openclaw.skill:_cli_main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pqsafe_openclaw*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "integration: integration tests that require pqcrypto and pqsafe-agent-pay",
+]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]  # line length handled by formatter
