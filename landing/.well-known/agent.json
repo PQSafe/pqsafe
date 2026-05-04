@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "0.2",
+  "name": "PQSafe AgentPay",
+  "description": "Post-quantum signed spend authorization for AI agents. Issues ML-DSA-65 signed SpendEnvelopes (NIST FIPS 204) constraining agent identity, budget, allowed recipients, and validity window. Routes payments across Airwallex, Wise, Stripe, USDC-Base, and x402 rails.",
+  "url": "https://pqsafe.xyz",
+  "provider": {
+    "organization": "Asaptic (Hong Kong) Limited",
+    "url": "https://pqsafe.xyz"
+  },
+  "version": "0.1.1",
+  "documentationUrl": "https://pqsafe.xyz/handbook/",
+  "capabilities": [
+    "ml-dsa-65-signing",
+    "spend-envelope-authorization",
+    "multi-rail-payment-execution",
+    "envelope-verification",
+    "arbitrum-on-chain-anchoring",
+    "replay-attack-prevention",
+    "agent-identity-scoping"
+  ],
+  "endpoints": {
+    "verifier": "https://pqsafe.xyz/verify/",
+    "ledger": "https://ledger.pqsafe.xyz",
+    "demo": "https://demo.pqsafe.xyz",
+    "mcp": "https://mcp.pqsafe.xyz/mcp",
+    "openapi": "https://pqsafe.xyz/openapi.yaml"
+  },
+  "packages": {
+    "npm": [
+      {
+        "name": "@pqsafe/agent-pay",
+        "version": "0.1.1",
+        "url": "https://www.npmjs.com/package/@pqsafe/agent-pay",
+        "description": "Core TypeScript SDK — createEnvelope, signEnvelope, verifyEnvelope, executeAgentPayment"
+      },
+      {
+        "name": "@pqsafe/mcp-server",
+        "version": "0.1.0",
+        "url": "https://www.npmjs.com/package/@pqsafe/mcp-server",
+        "description": "MCP server for Claude Desktop, Cursor, and MCP-compatible hosts",
+        "runCommand": "npx -y @pqsafe/mcp-server"
+      },
+      {
+        "name": "@pqsafe/openclaw",
+        "version": "0.1.0",
+        "url": "https://www.npmjs.com/package/@pqsafe/openclaw",
+        "description": "OpenClaw skill registry integration"
+      },
+      {
+        "name": "@pqsafe/mastra",
+        "version": "0.1.1",
+        "url": "https://www.npmjs.com/package/@pqsafe/mastra",
+        "description": "Mastra framework integration"
+      }
+    ],
+    "pypi": [
+      {
+        "name": "pqsafe-agent-pay",
+        "url": "https://pypi.org/project/pqsafe-agent-pay/",
+        "description": "Core Python SDK"
+      },
+      {
+        "name": "langchain-pqsafe",
+        "url": "https://pypi.org/project/langchain-pqsafe/",
+        "description": "LangChain tool integration"
+      },
+      {
+        "name": "crewai-pqsafe",
+        "url": "https://pypi.org/project/crewai-pqsafe/",
+        "description": "CrewAI integration"
+      }
+    ]
+  },
+  "paymentRails": [
+    { "name": "airwallex", "status": "live-sandbox" },
+    { "name": "wise", "status": "live-sandbox" },
+    { "name": "stripe", "status": "mock" },
+    { "name": "usdc-base", "status": "mock" },
+    { "name": "x402", "status": "mock" }
+  ],
+  "cryptography": {
+    "algorithm": "ML-DSA-65",
+    "standard": "NIST FIPS 204",
+    "signatureBytes": 3309,
+    "publicKeyBytes": 1952,
+    "securityLevel": "NIST Level 3",
+    "serialization": "RFC 8785 JCS"
+  },
+  "onChain": {
+    "network": "Arbitrum Sepolia",
+    "contract": "0x142bA5626bf8B032EB0B59052421C42595417F5d",
+    "explorer": "https://sepolia.arbiscan.io/address/0x142bA5626bf8B032EB0B59052421C42595417F5d"
+  },
+  "standards": [
+    "NIST FIPS 204",
+    "NIST IR 8547 (initial public draft)",
+    "AP2-aligned proposal (FIDO Alliance)",
+    "PSD2 Article 69",
+    "HKMA Quantum Preparedness Index Feb 2026"
+  ],
+  "github": [
+    "https://github.com/PQSafe/pqsafe",
+    "https://github.com/PQSafe/ap2-pq-test-vectors"
+  ],
+  "contact": {
+    "email": "raymond@pqsafe.xyz"
+  }
+}

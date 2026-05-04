@@ -1,0 +1,5 @@
+Contact: mailto:raymond@pqsafe.xyz
+Expires: 2027-05-04T00:00:00Z
+Preferred-Languages: en
+Canonical: https://pqsafe.xyz/.well-known/security.txt
+Policy: https://github.com/PQSafe/pqsafe/blob/main/SECURITY.md

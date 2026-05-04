@@ -1,0 +1,391 @@
+openapi: "3.1.0"
+
+info:
+  title: PQSafe AgentPay API
+  version: "0.1.1"
+  description: |
+    Verifier and Ledger API for PQSafe AgentPay — post-quantum signed spend authorization
+    for AI agents.
+
+    Every SpendEnvelope is signed with ML-DSA-65 (NIST FIPS 204). The verifier checks
+    signature validity, schema conformance, and temporal validity. The ledger provides
+    read-only access to committed envelope records.
+
+    **Legal entity:** Asaptic (Hong Kong) Limited (HKR No. 73202453)
+    **Brand:** PQSafe
+  contact:
+    email: raymond@pqsafe.xyz
+    url: https://pqsafe.xyz
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: https://verify.pqsafe.xyz
+    description: Production verifier
+  - url: https://demo.pqsafe.xyz
+    description: Sandbox / demo environment
+
+security:
+  - ApiKeyHeader: []
+
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-PQSafe-API-Key
+      description: |
+        API key for write endpoints. Informational — not yet enforced in sandbox.
+        Contact raymond@pqsafe.xyz to request a key.
+
+  schemas:
+    SpendEnvelope:
+      type: object
+      required:
+        - version
+        - issuer
+        - agent
+        - maxAmount
+        - currency
+        - allowedRecipients
+        - validFrom
+        - validUntil
+        - nonce
+      properties:
+        version:
+          type: integer
+          enum: [1]
+          description: Schema version. Must be 1.
+          example: 1
+        issuer:
+          type: string
+          pattern: "^pq1[0-9a-f]{40}$"
+          description: PQSafe wallet address of the human issuer (pq1 + 40 hex chars).
+          example: "pq1a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b"
+        agent:
+          type: string
+          minLength: 1
+          maxLength: 128
+          description: Agent identifier. Free-form string.
+          example: "my-research-agent-v1"
+        maxAmount:
+          type: number
+          exclusiveMinimum: 0
+          description: Maximum total spend amount (in the given currency).
+          example: 50.00
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 5
+          description: ISO 4217 currency code or crypto token symbol (stored uppercase).
+          example: "USD"
+        allowedRecipients:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: |
+            Allowlist of recipients. Agent may only pay to addresses in this list.
+            Rail-specific format: IBAN for Airwallex/Wise, EVM address for USDC-Base,
+            Stripe Customer ID for Stripe, payment pointer for x402.
+          example: ["GB33BUKB20201555555555"]
+        validFrom:
+          type: integer
+          description: Unix timestamp (seconds). Envelope not valid before this time.
+          example: 1746345600
+        validUntil:
+          type: integer
+          description: Unix timestamp (seconds). Envelope expires after this time.
+          example: 1746349200
+        nonce:
+          type: string
+          pattern: "^[0-9a-f]{32}$"
+          description: 128-bit random nonce (32 lowercase hex chars). Prevents replay attacks.
+          example: "a3f8c2d1e4b5a6f7c8d9e0f1a2b3c4d5"
+        rail:
+          type: string
+          enum: [airwallex, wise, stripe, usdc-base, x402]
+          description: Optional. Constrain to a specific payment rail. Omit to let router choose.
+          example: "airwallex"
+
+    SignedSpendEnvelope:
+      type: object
+      required:
+        - envelopeJson
+        - signature
+        - dsaPublicKey
+      properties:
+        envelopeJson:
+          type: string
+          description: |
+            The SpendEnvelope serialized using RFC 8785 JSON Canonicalization Scheme (JCS).
+            The ML-DSA-65 signature is computed over the UTF-8 bytes of this string.
+          example: '{"agent":"my-research-agent-v1","allowedRecipients":["GB33BUKB20201555555555"],"currency":"USD","issuer":"pq1a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b","maxAmount":50,"nonce":"a3f8c2d1e4b5a6f7c8d9e0f1a2b3c4d5","validFrom":1746345600,"validUntil":1746349200,"version":1}'
+        signature:
+          type: string
+          description: ML-DSA-65 signature over envelopeJson bytes, hex-encoded. 6618 hex chars = 3309 bytes.
+          example: "1a2b3c4d..."
+        dsaPublicKey:
+          type: string
+          description: Issuer's ML-DSA-65 public key, hex-encoded. 3904 hex chars = 1952 bytes.
+          example: "5e6f7a8b..."
+
+    VerifyResponse:
+      type: object
+      required:
+        - valid
+        - envelopeId
+      properties:
+        valid:
+          type: boolean
+          description: True if the envelope signature is valid and the envelope is within its validity window.
+        envelopeId:
+          type: string
+          description: SHA-256 hash of the canonical envelope JSON, hex-encoded. Stable identifier.
+          example: "0xabc123..."
+        reason:
+          type: string
+          description: Human-readable reason if valid is false.
+          example: "envelope expired (validUntil=1746349200)"
+        envelope:
+          $ref: "#/components/schemas/SpendEnvelope"
+        verifiedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of verification.
+          example: "2026-05-04T12:00:00Z"
+
+    LedgerEntry:
+      type: object
+      required:
+        - envelopeId
+        - committedAt
+        - sigFingerprint
+      properties:
+        envelopeId:
+          type: string
+          description: SHA-256 of the canonical envelope JSON, hex-encoded.
+          example: "0xabc123..."
+        committedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when envelope was committed.
+          example: "2026-05-04T12:00:00Z"
+        sigFingerprint:
+          type: string
+          description: First 32 bytes of the ML-DSA-65 signature, hex-encoded.
+          example: "0x1a2b3c4d..."
+        txHash:
+          type: string
+          description: Arbitrum Sepolia transaction hash (if committed on-chain).
+          example: "0xdeadbeef..."
+        onChainContract:
+          type: string
+          description: SpendEnvelopeRegistry contract address on Arbitrum Sepolia.
+          example: "0x142bA5626bf8B032EB0B59052421C42595417F5d"
+        envelope:
+          $ref: "#/components/schemas/SpendEnvelope"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message.
+          example: "envelope signature verification failed"
+        code:
+          type: string
+          description: Machine-readable error code.
+          example: "SIGNATURE_INVALID"
+
+paths:
+  /verify/health:
+    get:
+      operationId: getVerifyHealth
+      summary: Health check
+      description: Returns 200 if the verifier service is operational.
+      security: []
+      tags: [Verifier]
+      responses:
+        "200":
+          description: Service is healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  service:
+                    type: string
+                    example: "pqsafe-verifier"
+                  version:
+                    type: string
+                    example: "0.1.1"
+
+  /verify:
+    post:
+      operationId: verifyEnvelope
+      summary: Verify a signed SpendEnvelope
+      description: |
+        Verifies an ML-DSA-65 signed SpendEnvelope. Checks:
+        1. Signature validity (ML-DSA-65 under NIST FIPS 204)
+        2. Envelope schema conformance
+        3. Temporal validity (validFrom <= now <= validUntil)
+
+        Does NOT execute any payment. Use the MCP `pqsafe_pay` tool or the pay endpoint to
+        execute after verification.
+      tags: [Verifier]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignedSpendEnvelope"
+            example:
+              envelopeJson: '{"agent":"my-research-agent-v1","allowedRecipients":["GB33BUKB20201555555555"],"currency":"USD","issuer":"pq1a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b","maxAmount":50,"nonce":"a3f8c2d1e4b5a6f7c8d9e0f1a2b3c4d5","validFrom":1746345600,"validUntil":1746349200,"version":1}'
+              signature: "1a2b3c4d..."
+              dsaPublicKey: "5e6f7a8b..."
+      responses:
+        "200":
+          description: Verification completed (check `valid` field for result).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyResponse"
+              examples:
+                valid:
+                  summary: Valid envelope
+                  value:
+                    valid: true
+                    envelopeId: "0xabc123..."
+                    verifiedAt: "2026-05-04T12:00:00Z"
+                    envelope:
+                      version: 1
+                      issuer: "pq1a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b"
+                      agent: "my-research-agent-v1"
+                      maxAmount: 50
+                      currency: "USD"
+                      allowedRecipients: ["GB33BUKB20201555555555"]
+                      validFrom: 1746345600
+                      validUntil: 1746349200
+                      nonce: "a3f8c2d1e4b5a6f7c8d9e0f1a2b3c4d5"
+                invalid:
+                  summary: Invalid envelope
+                  value:
+                    valid: false
+                    envelopeId: "0xabc123..."
+                    reason: "envelope signature verification failed"
+        "400":
+          description: Malformed request body.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Envelope schema validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /ledger/{envelopeId}:
+    get:
+      operationId: getLedgerEntry
+      summary: Look up a committed envelope by ID
+      description: |
+        Returns the ledger record for a previously committed SpendEnvelope.
+        The envelopeId is the SHA-256 hash of the canonical envelope JSON, hex-encoded
+        (with or without 0x prefix).
+      tags: [Ledger]
+      parameters:
+        - name: envelopeId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: SHA-256 hash of the canonical envelope JSON (hex, with or without 0x prefix).
+          example: "0xabc123def456..."
+      responses:
+        "200":
+          description: Ledger entry found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LedgerEntry"
+        "404":
+          description: No committed envelope found for this ID.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "envelope not found"
+                code: "NOT_FOUND"
+
+  /ledger:
+    get:
+      operationId: listLedgerEntries
+      summary: List committed envelopes
+      description: |
+        Returns a paginated list of committed envelopes. Results are ordered by
+        committedAt descending (most recent first).
+      tags: [Ledger]
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Maximum number of entries to return.
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          description: Pagination cursor from a previous response.
+        - name: issuer
+          in: query
+          schema:
+            type: string
+            pattern: "^pq1[0-9a-f]{40}$"
+          description: Filter by issuer PQSafe address.
+        - name: agent
+          in: query
+          schema:
+            type: string
+          description: Filter by agent identifier (exact match).
+      responses:
+        "200":
+          description: List of ledger entries.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [entries]
+                properties:
+                  entries:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LedgerEntry"
+                  cursor:
+                    type: string
+                    description: Pagination cursor. Absent if this is the last page.
+                  total:
+                    type: integer
+                    description: Total number of matching entries (approximate).
+
+tags:
+  - name: Verifier
+    description: ML-DSA-65 envelope verification endpoints.
+  - name: Ledger
+    description: Read-only access to committed envelope records.
+
+externalDocs:
+  description: PQSafe Agent Payments Handbook
+  url: https://pqsafe.xyz/handbook/
