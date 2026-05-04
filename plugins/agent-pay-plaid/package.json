@@ -1,0 +1,50 @@
+{
+  "name": "@pqsafe/agent-pay-plaid",
+  "version": "0.1.0",
+  "description": "Plaid Transfer API gated by PQSafe SpendEnvelope verification — ACH agent payments with post-quantum authorization",
+  "keywords": ["plaid", "pqsafe", "payments", "ai-agents", "post-quantum", "ml-dsa", "fips-204", "spend-envelope", "ach", "transfer"],
+  "license": "Apache-2.0",
+  "author": "PQSafe <dev@pqsafe.xyz>",
+  "homepage": "https://pqsafe.xyz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PQSafe/pqsafe.git",
+    "directory": "plugins/agent-pay-plaid"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/cjs/index.cjs"
+    }
+  },
+  "scripts": {
+    "build:cjs": "tsc -p tsconfig.cjs.json && mv dist/cjs/index.js dist/cjs/index.cjs",
+    "build": "tsc && npm run build:cjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@pqsafe/agent-pay": "^0.1.0"
+  },
+  "devDependencies": {
+    "@pqsafe/agent-pay": "^0.1.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}
