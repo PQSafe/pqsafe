@@ -2,6 +2,18 @@
 
 > Post-quantum signed spend authorization for AI agents — the Okta-for-AI-agents pattern.
 
+## Machine-readable formats
+
+- [Homepage (Markdown)](https://pqsafe.xyz/index.md): full homepage content as clean markdown
+- [Agent Payments Handbook (Markdown)](https://pqsafe.xyz/handbook/index.md): complete developer guide
+- [OpenClaw Skill (Markdown)](https://pqsafe.xyz/openclaw-skill/index.md): pqsafe.pay.v1 skill documentation
+- [FIDO Open Letter (Markdown)](https://pqsafe.xyz/fido-pq-letter/index.md): open letter to FIDO Payments TWG
+- [AP2-PQ Profile RFC (Markdown)](https://pqsafe.xyz/ap2-pq-rfc/index.md): full JOSE header parameter specification
+- [SpendEnvelope Verifier (Markdown)](https://pqsafe.xyz/verify/index.md): verifier tool documentation
+- [OpenAPI spec](https://pqsafe.xyz/openapi.yaml): machine-readable API definition
+- [Agent manifest](https://pqsafe.xyz/.well-known/agent.json): agent capability declaration
+- [MCP manifest](https://pqsafe.xyz/.well-known/mcp.json): MCP server discovery
+
 PQSafe AgentPay lets a human issue a cryptographically bounded SpendEnvelope to an AI agent.
 Every envelope is signed with ML-DSA-65 (NIST FIPS 204, signature size 3,309 bytes), specifying
 the agent identity, maximum spend amount, allowed recipients, validity window, and optional rail.
