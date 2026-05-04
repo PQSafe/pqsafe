@@ -1,0 +1,25 @@
+{
+  "name": "pqsafe",
+  "version": "0.1.0",
+  "description": "Post-quantum signed SpendEnvelopes for AI agent payments. ML-DSA-65 (NIST FIPS 204) over Airwallex / Wise / Stripe / USDC-Base / x402. FIDO AP2-PQ profile aligned.",
+  "author": {
+    "name": "PQSafe",
+    "email": "dev@pqsafe.xyz",
+    "url": "https://pqsafe.xyz"
+  },
+  "homepage": "https://pqsafe.xyz/claude-skill",
+  "repository": "https://github.com/PQSafe/pqsafe/tree/main/plugins/claude-pqsafe",
+  "license": "Apache-2.0",
+  "keywords": [
+    "payments",
+    "ai-agents",
+    "post-quantum",
+    "ml-dsa",
+    "fips-204",
+    "spend-envelope",
+    "claude-code",
+    "agentic-commerce",
+    "fido",
+    "ap2-pq"
+  ]
+}
