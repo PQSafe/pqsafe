@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "0.1",
+  "name": "pqsafe-mcp",
+  "displayName": "PQSafe AgentPay MCP Server",
+  "description": "MCP server exposing PQSafe payment primitives. Allows any MCP-compatible host (Claude Desktop, Cursor, etc.) to create, verify, and execute ML-DSA-65 signed SpendEnvelopes across multiple payment rails.",
+  "version": "0.1.0",
+  "package": {
+    "registry": "npm",
+    "name": "@pqsafe/mcp-server",
+    "version": "0.1.0",
+    "url": "https://www.npmjs.com/package/@pqsafe/mcp-server"
+  },
+  "github": "https://github.com/PQSafe/pqsafe",
+  "runCommand": "npx -y @pqsafe/mcp-server",
+  "transport": "stdio",
+  "remoteEndpoint": "https://mcp.pqsafe.xyz/mcp",
+  "tools": [
+    {
+      "name": "pqsafe_create_envelope",
+      "description": "Create a SpendEnvelope JSON object ready for ML-DSA-65 signing. Returns the unsigned envelope that the wallet owner must sign before any payment can be made.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["issuer", "agent", "max_amount", "currency", "allowed_recipients"],
+        "properties": {
+          "issuer": { "type": "string", "description": "PQSafe wallet address (pq1 + 40 hex chars)" },
+          "agent": { "type": "string", "description": "Agent identifier (max 128 chars)" },
+          "max_amount": { "type": "number", "description": "Maximum spend amount (positive)" },
+          "currency": { "type": "string", "description": "ISO 4217 currency code (e.g. USD, HKD)" },
+          "allowed_recipients": { "type": "array", "items": { "type": "string" }, "description": "Recipient addresses allowed by this envelope" },
+          "ttl_seconds": { "type": "number", "description": "Envelope validity duration in seconds (default: 3600)" },
+          "rail": { "type": "string", "enum": ["airwallex", "wise", "stripe", "usdc-base", "x402"], "description": "Optional: constrain to a specific payment rail" }
+        }
+      }
+    },
+    {
+      "name": "pqsafe_pay",
+      "description": "Verify a PQ-signed SpendEnvelope and execute a payment. Checks: ML-DSA-65 signature, temporal validity, recipient allowlist, amount ceiling, nonce replay. Returns transferId, status, amount, recipient.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["envelope_json", "signature", "dsa_public_key", "recipient", "amount"],
+        "properties": {
+          "envelope_json": { "type": "string", "description": "Canonical envelope JSON string" },
+          "signature": { "type": "string", "description": "ML-DSA-65 signature, hex-encoded" },
+          "dsa_public_key": { "type": "string", "description": "Issuer ML-DSA-65 public key, hex-encoded" },
+          "recipient": { "type": "string", "description": "Recipient address (must be in allowedRecipients)" },
+          "amount": { "type": "number", "description": "Amount to transfer (must be <= maxAmount)" },
+          "memo": { "type": "string", "description": "Optional payment reference / memo" }
+        }
+      }
+    },
+    {
+      "name": "pqsafe_check_balance",
+      "description": "Inspect a signed SpendEnvelope and return its constraints without executing a payment. Useful for an agent to verify it has sufficient budget before attempting a payment.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["envelope_json", "signature", "dsa_public_key"],
+        "properties": {
+          "envelope_json": { "type": "string", "description": "Canonical envelope JSON string" },
+          "signature": { "type": "string", "description": "ML-DSA-65 signature, hex-encoded" },
+          "dsa_public_key": { "type": "string", "description": "Issuer ML-DSA-65 public key, hex-encoded" }
+        }
+      }
+    },
+    {
+      "name": "pqsafe_commit_onchain",
+      "description": "Commit a signed SpendEnvelope hash to the Arbitrum SpendEnvelope Registry for an immutable on-chain audit record. Call after pqsafe_pay succeeds.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["envelope_json", "signature", "airwallex_tx_id"],
+        "properties": {
+          "envelope_json": { "type": "string", "description": "Canonical envelope JSON string" },
+          "signature": { "type": "string", "description": "ML-DSA-65 signature, hex-encoded" },
+          "airwallex_tx_id": { "type": "string", "description": "Transaction ID returned by pqsafe_pay" }
+        }
+      }
+    }
+  ],
+  "contact": {
+    "email": "raymond@pqsafe.xyz"
+  },
+  "documentationUrl": "https://pqsafe.xyz/handbook/"
+}

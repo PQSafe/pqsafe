@@ -1,0 +1,58 @@
+# PQSafe AgentPay
+
+> Post-quantum signed spend authorization for AI agents — the Okta-for-AI-agents pattern.
+
+PQSafe AgentPay lets a human issue a cryptographically bounded SpendEnvelope to an AI agent.
+Every envelope is signed with ML-DSA-65 (NIST FIPS 204, signature size 3,309 bytes), specifying
+the agent identity, maximum spend amount, allowed recipients, validity window, and optional rail.
+The agent carries the signed envelope to a payment router that verifies the ML-DSA-65 signature,
+enforces the constraints, and executes across one of five rails: Airwallex, Wise, Stripe,
+USDC-Base, or x402. An optional on-chain commitment step hashes the envelope to the Arbitrum
+Sepolia SpendEnvelope Registry for an immutable audit trail.
+
+Legal entity: Asaptic (Hong Kong) Limited (HKR No. 73202453). Brand: PQSafe.
+YC S26 applicant. Contact: raymond@pqsafe.xyz
+
+## Core docs
+
+- [Agent Payments Handbook](https://pqsafe.xyz/handbook/): Full developer guide — envelope lifecycle, rail selection, key management, Arbitrum registry, quickstart examples in TypeScript and Python.
+- [Public Envelope Verifier](https://pqsafe.xyz/verify/): Browser-based tool to verify any ML-DSA-65 signed SpendEnvelope without running any code.
+- [Ledger API](https://ledger.pqsafe.xyz): Read-only envelope ledger — look up any committed envelope by ID.
+- [Demo environment](https://demo.pqsafe.xyz): Live sandbox — create, sign, verify, and execute test envelopes against live sandbox rails (Airwallex + Wise).
+- [OpenAPI spec](https://pqsafe.xyz/openapi.yaml): Machine-readable API definition for the verifier and ledger endpoints.
+
+## Standards & policy
+
+- [FIDO Alliance open letter](https://pqsafe.xyz/fido-pq-letter/): Open letter to the FIDO Alliance Payments TWG (chaired by Mastercard + Visa) proposing the AP2-PQ profile — post-quantum extension to FIDO AP2 for agent-initiated payments.
+- [AP2-PQ RFC draft](https://pqsafe.xyz/ap2-pq-rfc/): Public RFC-style proposal for AP2-aligned post-quantum payment authorization. Donated to FIDO Alliance 2026-04-28.
+- Standards: NIST FIPS 204 (final), NIST IR 8547 (initial public draft), HKMA Quantum Preparedness Index Feb 2026, PSD2 Article 69.
+
+## SDK packages
+
+### npm (TypeScript / Node.js)
+
+- [@pqsafe/agent-pay v0.1.1](https://www.npmjs.com/package/@pqsafe/agent-pay): Core TypeScript SDK — createEnvelope, signEnvelope, verifyEnvelope, executeAgentPayment, commitToArbitrum. Works in Node.js and edge runtimes.
+- [@pqsafe/openclaw v0.1.0](https://www.npmjs.com/package/@pqsafe/openclaw): OpenClaw skill registry integration — publish and discover agent payment skills.
+- [@pqsafe/mcp-server v0.1.0](https://www.npmjs.com/package/@pqsafe/mcp-server): MCP server exposing PQSafe tools to Claude Desktop, Cursor, and any MCP-compatible host. Run with: `npx -y @pqsafe/mcp-server`
+- [@pqsafe/mastra v0.1.1](https://www.npmjs.com/package/@pqsafe/mastra): Mastra framework integration for PQSafe payment steps.
+
+### PyPI (Python)
+
+- [pqsafe-agent-pay](https://pypi.org/project/pqsafe-agent-pay/): Core Python SDK — envelope creation, ML-DSA-65 signing/verification, rail execution.
+- [langchain-pqsafe](https://pypi.org/project/langchain-pqsafe/): LangChain tool integration for PQSafe payments.
+- [crewai-pqsafe](https://pypi.org/project/crewai-pqsafe/): CrewAI integration for agent payment authorization.
+
+## OpenClaw skill
+
+- [OpenClaw Skill page](https://pqsafe.xyz/openclaw-skill/): PQSafe listed in OpenClaw — 367K stars, 50K+ tools, 180K devs. Skill allows any OpenClaw-compatible agent to call PQSafe payment tools.
+
+## Source & verification
+
+- [GitHub — PQSafe/pqsafe](https://github.com/PQSafe/pqsafe): Main monorepo. 518 tests passing across 5 sub-packages.
+- [GitHub — PQSafe/ap2-pq-test-vectors](https://github.com/PQSafe/ap2-pq-test-vectors): ML-DSA-65 test vectors for AP2-PQ interoperability testing.
+- [Arbitrum Sepolia contract](https://sepolia.arbiscan.io/address/0x142bA5626bf8B032EB0B59052421C42595417F5d): SpendEnvelopeRegistry.sol — verified on Arbiscan.
+
+## Optional
+
+- [Privacy policy](https://pqsafe.xyz/privacy/): Data handling and retention policy.
+- Contact: raymond@pqsafe.xyz

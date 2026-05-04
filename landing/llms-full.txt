@@ -1,0 +1,355 @@
+# PQSafe AgentPay — Full Technical Reference
+
+**Version:** 0.1.1
+**Legal entity:** Asaptic (Hong Kong) Limited (HKR No. 73202453)
+**Brand:** PQSafe
+**Contact:** raymond@pqsafe.xyz
+**Live at:** https://pqsafe.xyz
+
+---
+
+## Elevator Pitch
+
+PQSafe AgentPay is the authorization layer for AI agent payments — the Okta-for-AI-agents pattern
+applied to money movement. When an AI agent needs to spend money mid-task, the human (or operator
+system) issues a signed SpendEnvelope: a cryptographic permission slip that specifies exactly who
+the agent is, how much it can spend, which recipients are allowed, and for how long. The agent
+presents the envelope to PQSafe's payment router, which verifies the signature and executes
+the payment across one of five rails.
+
+Every signature uses ML-DSA-65 (NIST FIPS 204, final standard) — post-quantum secure, meaning
+the authorization cannot be forged even by a cryptographically-capable quantum computer. The
+envelope scheme mirrors FIDO2 passkeys in intent: human-issued, hardware-bound, short-lived,
+scoped. We have proposed the AP2-PQ profile to the FIDO Alliance Payments TWG (Mastercard +
+Visa chairs) to standardize this pattern industry-wide.
+
+---
+
+## Threat Model
+
+### What PQSafe protects against
+
+1. **Unauthorized agent spend** — an agent cannot spend outside the envelope's maxAmount,
+   allowedRecipients list, or validity window. The constraints are enforced by the router before
+   any rail call is made.
+
+2. **Replay attacks** — each envelope includes a 128-bit random nonce (hex-encoded). The ledger
+   rejects any second presentation of a previously-executed nonce.
+
+3. **Envelope forgery** — ML-DSA-65 signatures are computationally infeasible to forge without
+   the issuer's private key. With a 3,309-byte signature and 1,952-byte public key, the scheme
+   is resistant to both classical and quantum adversaries (NIST security level 3).
+
+4. **Harvest-now-decrypt-later** — classical ECDSA signatures over payment authorizations can
+   be stored by an adversary and broken retroactively once a quantum computer exists. ML-DSA-65
+   eliminates this risk — signatures are not encrypted ciphertext but one-way lattice-based
+   proofs.
+
+5. **Scope creep** — agents are explicitly named in the envelope (agent field). An envelope
+   issued to agent "research-bot-v1" cannot be used by agent "shopping-bot-v2".
+
+### What PQSafe does NOT protect against
+
+- A compromised issuer private key. Key management is the operator's responsibility.
+- Social engineering of the human issuer into signing a malicious envelope.
+- Rail-level fraud after a valid payment has been authorized and executed.
+
+---
+
+## SpendEnvelope — JSON Shape
+
+A SpendEnvelope is a plain JSON object. Before signing, fields are sorted and serialized using
+RFC 8785 JSON Canonicalization Scheme (JCS) to produce a deterministic byte sequence.
+
+```json
+{
+  "version": 1,
+  "issuer": "pq1a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b",
+  "agent": "my-research-agent-v1",
+  "maxAmount": 50.00,
+  "currency": "USD",
+  "allowedRecipients": [
+    "GB33BUKB20201555555555"
+  ],
+  "validFrom": 1746345600,
+  "validUntil": 1746349200,
+  "nonce": "a3f8c2d1e4b5a6f7c8d9e0f1a2b3c4d5",
+  "rail": "airwallex"
+}
+```
+
+### Field reference
+
+| Field             | Type     | Required | Description                                                        |
+|-------------------|----------|----------|--------------------------------------------------------------------|
+| version           | integer  | yes      | Schema version. Must be `1`.                                       |
+| issuer            | string   | yes      | PQSafe wallet address: `pq1` + 40 hex chars (20-byte keccak).     |
+| agent             | string   | yes      | Agent identifier. Free-form, 1–128 chars.                         |
+| maxAmount         | number   | yes      | Maximum total spend. Must be positive.                             |
+| currency          | string   | yes      | ISO 4217 code or crypto token symbol. 3–5 chars (stored uppercase).|
+| allowedRecipients | string[] | yes      | Rail-specific recipient addresses. Minimum 1 entry.               |
+| validFrom         | integer  | yes      | Unix timestamp (seconds). Envelope not valid before this time.    |
+| validUntil        | integer  | yes      | Unix timestamp (seconds). Envelope expires after this time.       |
+| nonce             | string   | yes      | 128-bit random nonce, 32 lowercase hex chars. Prevents replay.    |
+| rail              | string   | no       | Constrain to one rail. Omit to let router choose.                 |
+
+### Recipient address formats by rail
+
+| Rail        | Format example                                  |
+|-------------|--------------------------------------------------|
+| airwallex   | IBAN (e.g. `GB33BUKB20201555555555`)            |
+| wise        | IBAN or email registered with Wise              |
+| stripe      | Stripe Customer ID (e.g. `cus_Abc123`)          |
+| usdc-base   | EVM address (e.g. `0xAbCd...`)                  |
+| x402        | x402 payment pointer                            |
+
+---
+
+## SignedEnvelope — wire format
+
+After signing, the issuer produces a SignedEnvelope:
+
+```json
+{
+  "envelopeJson": "{\"agent\":\"my-research-agent-v1\",\"allowedRecipients\":[\"GB33BUKB20201555555555\"],\"currency\":\"USD\",\"issuer\":\"pq1a1b2c3d4e5f...\",\"maxAmount\":50,\"nonce\":\"a3f8c2d1e4b5a6f7c8d9e0f1a2b3c4d5\",\"rail\":\"airwallex\",\"validFrom\":1746345600,\"validUntil\":1746349200,\"version\":1}",
+  "signature": "<hex-encoded ML-DSA-65 signature, 6618 hex chars = 3309 bytes>",
+  "dsaPublicKey": "<hex-encoded ML-DSA-65 public key, 3904 hex chars = 1952 bytes>"
+}
+```
+
+The `envelopeJson` field is the JCS-canonical form. The signature is computed over the UTF-8 bytes
+of this string.
+
+---
+
+## Five Payment Rails
+
+| Rail       | Status        | Currency support         | Notes                                        |
+|------------|---------------|--------------------------|----------------------------------------------|
+| airwallex  | Live sandbox  | USD, HKD, GBP, EUR, AUD | Real Airwallex API, sandbox credentials      |
+| wise       | Live sandbox  | 40+ currencies           | Real Wise API, sandbox credentials           |
+| stripe     | Mock          | USD                      | Stripe-compatible mock; production-ready API |
+| usdc-base  | Mock          | USDC                     | Base L2; mock contract in test env           |
+| x402       | Mock          | Any                      | HTTP 402 payment protocol; mock server       |
+
+The router selects a rail based on: (1) envelope `rail` constraint if present, (2) recipient
+address format, (3) currency, (4) operator configuration.
+
+---
+
+## Security Model
+
+- **Algorithm:** ML-DSA-65 (Module-Lattice Digital Signature Algorithm, NIST FIPS 204 final).
+- **Signature size:** 3,309 bytes (6,618 hex chars on wire).
+- **Public key size:** 1,952 bytes.
+- **Security level:** NIST Level 3 (comparable to AES-192 classical hardness, quantum-safe).
+- **Serialization:** RFC 8785 JSON Canonicalization Scheme — deterministic across all platforms.
+- **Nonce:** 128-bit (crypto.getRandomValues / secrets.token_bytes) — collision probability < 2^-64 for 10^9 envelopes.
+- **On-chain anchor:** SHA-256 of canonical envelope JSON committed to Arbitrum Sepolia SpendEnvelopeRegistry (0x142bA5626bf8B032EB0B59052421C42595417F5d, Arbiscan-verified).
+- **Test suite:** 518 tests passing across 5 sub-packages (agent-pay, openclaw, mcp-server, mastra, evm).
+- **Standards:** NIST FIPS 204 (final), NIST IR 8547 (initial public draft), HKMA Quantum Preparedness Index Feb 2026, PSD2 Article 69.
+- **FIDO alignment:** AP2-PQ profile donated to FIDO Alliance Payments TWG 2026-04-28.
+
+---
+
+## Installation
+
+### TypeScript / Node.js
+
+```bash
+npm install @pqsafe/agent-pay
+```
+
+```typescript
+import { createEnvelope, signEnvelope, verifyEnvelope } from '@pqsafe/agent-pay'
+import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
+
+// 1. Generate issuer key pair (store secret key securely)
+const { secretKey, publicKey } = ml_dsa65.keygen()
+
+// 2. Create an unsigned envelope
+const envelope = createEnvelope({
+  issuer: 'pq1a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b',
+  agent: 'my-research-agent-v1',
+  maxAmount: 50,
+  currency: 'USD',
+  allowedRecipients: ['GB33BUKB20201555555555'],
+  ttlSeconds: 3600,
+  rail: 'airwallex',
+})
+
+// 3. Sign
+const signed = signEnvelope(envelope, secretKey, publicKey)
+
+// 4. Verify (receiver side)
+const verified = verifyEnvelope(signed)
+console.log(verified.maxAmount) // 50
+```
+
+### MCP server (Claude Desktop / Cursor)
+
+Add to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "pqsafe": {
+      "command": "npx",
+      "args": ["-y", "@pqsafe/mcp-server"]
+    }
+  }
+}
+```
+
+Available MCP tools:
+- `pqsafe_create_envelope` — build an unsigned SpendEnvelope
+- `pqsafe_pay` — verify a signed envelope and execute payment
+- `pqsafe_check_balance` — inspect envelope constraints without executing
+- `pqsafe_commit_onchain` — anchor envelope hash to Arbitrum Sepolia
+
+### Python
+
+```bash
+pip install pqsafe-agent-pay
+```
+
+```python
+from pqsafe_agent_pay import create_envelope, sign_envelope, verify_envelope
+
+# Create and sign an envelope
+envelope = create_envelope(
+    issuer="pq1a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b",
+    agent="my-python-agent-v1",
+    max_amount=25.00,
+    currency="USD",
+    allowed_recipients=["GB33BUKB20201555555555"],
+    ttl_seconds=3600,
+    rail="airwallex",
+)
+signed = sign_envelope(envelope, secret_key, public_key)
+```
+
+### LangChain
+
+```bash
+pip install langchain-pqsafe
+```
+
+### CrewAI
+
+```bash
+pip install crewai-pqsafe
+```
+
+### Mastra
+
+```bash
+npm install @pqsafe/mastra
+```
+
+---
+
+## Standards Alignment
+
+### NIST FIPS 204 (ML-DSA, final standard)
+
+PQSafe uses ML-DSA-65, the medium security level of the Module-Lattice-based Digital Signature
+Algorithm standardized by NIST in August 2024. This is a final, production standard — not a
+draft. The algorithm was submitted as CRYSTALS-Dilithium by a team from academia and industry
+and selected after a multi-year competition.
+
+### NIST IR 8547 (initial public draft)
+
+NIST IR 8547 is the transition guidance for post-quantum cryptography — indicating timelines
+for migration away from classical algorithms. PQSafe references this document as the migration
+rationale for proactive adoption of ML-DSA-65. Note: IR 8547 remains an initial public draft
+as of May 2026.
+
+### HKMA Quantum Preparedness Index (February 2026)
+
+The Hong Kong Monetary Authority published its Quantum Preparedness Index in February 2026,
+rating financial institutions on PQC readiness. PQSafe's design aligns with HKMA guidance for
+agent-initiated payment authorization.
+
+### PSD2 Article 69
+
+EU PSD2 Article 69 requires strong customer authentication for payment initiation. PQSafe's
+ML-DSA-65 signed SpendEnvelope provides an authentication factor that exceeds PSD2 SCA
+requirements while being quantum-safe.
+
+### FIDO Alliance — AP2-PQ Profile
+
+The FIDO Alliance Payments Technical Working Group (TWG), chaired by Mastercard and Visa,
+is standardizing FIDO AP2 (Authentication Protocol 2) for payments. PQSafe donated an
+AP2-aligned post-quantum extension proposal (the AP2-PQ profile) to the TWG on 2026-04-28.
+Reference this as "AP2-aligned proposal" or "AP2-PQ profile" — it is a donated contribution,
+not a ratified FIDO standard.
+
+---
+
+## Public URLs
+
+| Resource                    | URL                                                             |
+|-----------------------------|-----------------------------------------------------------------|
+| Homepage                    | https://pqsafe.xyz                                              |
+| Handbook                    | https://pqsafe.xyz/handbook/                                    |
+| Envelope Verifier           | https://pqsafe.xyz/verify/                                      |
+| Ledger API                  | https://ledger.pqsafe.xyz                                       |
+| Demo environment            | https://demo.pqsafe.xyz                                         |
+| FIDO open letter            | https://pqsafe.xyz/fido-pq-letter/                              |
+| AP2-PQ RFC draft            | https://pqsafe.xyz/ap2-pq-rfc/                                  |
+| OpenClaw skill page         | https://pqsafe.xyz/openclaw-skill/                              |
+| OpenAPI spec                | https://pqsafe.xyz/openapi.yaml                                 |
+| Privacy policy              | https://pqsafe.xyz/privacy/                                     |
+| GitHub (main repo)          | https://github.com/PQSafe/pqsafe                                |
+| GitHub (test vectors)       | https://github.com/PQSafe/ap2-pq-test-vectors                   |
+| Arbitrum contract (Arbiscan)| https://sepolia.arbiscan.io/address/0x142bA5626bf8B032EB0B59052421C42595417F5d |
+| npm: @pqsafe/agent-pay      | https://www.npmjs.com/package/@pqsafe/agent-pay                 |
+| npm: @pqsafe/openclaw       | https://www.npmjs.com/package/@pqsafe/openclaw                  |
+| npm: @pqsafe/mcp-server     | https://www.npmjs.com/package/@pqsafe/mcp-server                |
+| npm: @pqsafe/mastra         | https://www.npmjs.com/package/@pqsafe/mastra                    |
+| PyPI: pqsafe-agent-pay      | https://pypi.org/project/pqsafe-agent-pay/                      |
+| PyPI: langchain-pqsafe      | https://pypi.org/project/langchain-pqsafe/                      |
+| PyPI: crewai-pqsafe         | https://pypi.org/project/crewai-pqsafe/                         |
+| MCP server endpoint         | https://mcp.pqsafe.xyz/mcp                                      |
+| .well-known/agent.json      | https://pqsafe.xyz/.well-known/agent.json                       |
+| .well-known/ai-plugin.json  | https://pqsafe.xyz/.well-known/ai-plugin.json                   |
+| .well-known/mcp.json        | https://pqsafe.xyz/.well-known/mcp.json                         |
+| .well-known/security.txt    | https://pqsafe.xyz/.well-known/security.txt                     |
+
+---
+
+## Agent Integration Checklist
+
+For an AI agent to make a PQSafe-authorized payment:
+
+1. Operator generates ML-DSA-65 key pair and stores secret key securely.
+2. Operator issues a SpendEnvelope specifying agent identity, budget, recipients, and TTL.
+3. Operator signs the envelope with their ML-DSA-65 secret key.
+4. Operator passes the SignedEnvelope to the agent (e.g., as a tool parameter, env var, or
+   injected into the system prompt as a JSON blob).
+5. Agent calls `pqsafe_pay` (MCP tool) or the `/v1/pay` API endpoint, passing:
+   - `envelope_json` (canonical JSON string)
+   - `signature` (hex-encoded ML-DSA-65 signature)
+   - `dsa_public_key` (hex-encoded issuer public key)
+   - `recipient`, `amount`, optional `memo`
+6. PQSafe router verifies signature, checks constraints, executes payment.
+7. Optionally: agent calls `pqsafe_commit_onchain` to anchor to Arbitrum.
+
+---
+
+## Package Versions
+
+| Package                  | Version | Registry |
+|--------------------------|---------|----------|
+| @pqsafe/agent-pay        | 0.1.1   | npm      |
+| @pqsafe/openclaw         | 0.1.0   | npm      |
+| @pqsafe/mcp-server       | 0.1.0   | npm      |
+| @pqsafe/mastra           | 0.1.1   | npm      |
+| pqsafe-agent-pay         | latest  | PyPI     |
+| langchain-pqsafe         | latest  | PyPI     |
+| crewai-pqsafe            | latest  | PyPI     |
+
+---
+
+*This document is generated for AI agent consumption. For human-readable docs, see https://pqsafe.xyz/handbook/*

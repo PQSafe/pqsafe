@@ -400,6 +400,56 @@
       .hero-headline { font-size: 2rem; }
     }
   </style>
+
+  <!-- Schema.org structured data — Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "PQSafe",
+    "legalName": "Asaptic (Hong Kong) Limited",
+    "url": "https://pqsafe.xyz",
+    "logo": "https://pqsafe.xyz/og/home.png",
+    "description": "PQSafe AgentPay — The signed permission slip for AI agents spending money",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "raymond@pqsafe.xyz",
+      "contactType": "technical support"
+    },
+    "sameAs": [
+      "https://github.com/PQSafe/pqsafe",
+      "https://www.npmjs.com/package/@pqsafe/agent-pay"
+    ]
+  }
+  </script>
+
+  <!-- Schema.org structured data — SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "@pqsafe/agent-pay",
+    "description": "Cryptographic spend authorization for AI agents. ML-DSA-65 signed (NIST FIPS 204), multi-rail (Airwallex / Wise / Stripe / USDC-Base / x402), open-source SDK + Verifier API. Contributing to FIDO Alliance Payments TWG.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform",
+    "url": "https://pqsafe.xyz",
+    "downloadUrl": "https://www.npmjs.com/package/@pqsafe/agent-pay",
+    "softwareVersion": "0.1.1",
+    "programmingLanguage": ["TypeScript", "Python"],
+    "license": "https://www.apache.org/licenses/LICENSE-2.0",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "PQSafe",
+      "legalName": "Asaptic (Hong Kong) Limited",
+      "url": "https://pqsafe.xyz"
+    }
+  }
+  </script>
 </head>
 
 <body class="min-h-screen">

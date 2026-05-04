@@ -1,0 +1,19 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "PQSafe AgentPay",
+  "name_for_model": "pqsafe_agentpay",
+  "description_for_human": "Post-quantum signed spend authorization for AI agents. Verify ML-DSA-65 signed SpendEnvelopes and look up committed envelopes in the ledger.",
+  "description_for_model": "Use this plugin to verify PQSafe ML-DSA-65 signed SpendEnvelopes and to query the PQSafe ledger for committed envelope records. A SpendEnvelope is a cryptographic payment permission slip issued by a human to an AI agent, signed under NIST FIPS 204 (ML-DSA-65). The verifier endpoint checks signature validity, schema conformance, and temporal validity. The ledger endpoint returns the commitment record for any envelope that has been anchored on-chain.",
+  "auth": {
+    "type": "service_http",
+    "authorization_type": "bearer",
+    "verification_tokens": {}
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://pqsafe.xyz/openapi.yaml"
+  },
+  "logo_url": "https://pqsafe.xyz/og/home.png",
+  "contact_email": "raymond@pqsafe.xyz",
+  "legal_info_url": "https://pqsafe.xyz/privacy/"
+}
