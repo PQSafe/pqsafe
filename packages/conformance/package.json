@@ -1,0 +1,55 @@
+{
+  "name": "@pqsafe/conformance",
+  "version": "0.1.0",
+  "description": "AP2-PQ profile conformance test suite — verify any ML-DSA-65 implementation against the canonical PQSafe test vectors",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "pqsafe-conformance": "./bin/pqsafe-conformance"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "pqsafe",
+    "ap2-pq",
+    "mldsa",
+    "ml-dsa-65",
+    "post-quantum",
+    "conformance",
+    "fips-204",
+    "test-vectors"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pqsafe/pqsafe"
+  },
+  "homepage": "https://pqsafe.xyz"
+}

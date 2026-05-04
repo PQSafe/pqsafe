@@ -1,0 +1,128 @@
+#!/usr/bin/env node
+/**
+ * pqsafe-conformance CLI
+ *
+ * Usage:
+ *   npx pqsafe-conformance --impl ./my-verifier.js [--json] [--fixtures-url <url>]
+ *
+ * ./my-verifier.js must export a default object implementing the Verifier interface:
+ *
+ *   export default {
+ *     async verify({ publicKey, message, signature }) {
+ *       // your ML-DSA-65 implementation
+ *       return { valid: true }
+ *     }
+ *   }
+ */
+
+import { pathToFileURL } from 'node:url'
+import { resolve } from 'node:path'
+import { runConformance, CANONICAL_FIXTURES_URL, formatTap, formatJson, printSummary } from '../dist/index.js'
+
+// ---------------------------------------------------------------------------
+// Argument parsing (no deps — keeps the harness lightweight)
+// ---------------------------------------------------------------------------
+
+const args = process.argv.slice(2)
+
+function flag(name) {
+  const i = args.indexOf(name)
+  if (i === -1) return null
+  return args[i + 1] ?? true
+}
+
+function hasFlag(name) {
+  return args.includes(name)
+}
+
+if (hasFlag('--help') || hasFlag('-h')) {
+  process.stdout.write(`
+pqsafe-conformance v0.1.0 — AP2-PQ profile conformance harness
+
+USAGE
+  npx pqsafe-conformance --impl <path> [options]
+
+OPTIONS
+  --impl <path>          Path to your Verifier implementation (required).
+                         The module must export a default Verifier object.
+  --fixtures-url <url>   Override the test-vector URL.
+                         Default: ${CANONICAL_FIXTURES_URL}
+  --json                 Output machine-readable JSON instead of TAP.
+  --help, -h             Show this help.
+
+VERIFIER INTERFACE (src/types.ts)
+  interface Verifier {
+    verify(input: {
+      publicKey: Uint8Array  // 1952 bytes — ML-DSA-65 FIPS 204 Level 3
+      message:   Uint8Array  // JCS-canonicalised mandate bytes
+      signature: Uint8Array  // 3309 bytes
+    }): Promise<{ valid: boolean; reason?: string }>
+  }
+
+EXAMPLE
+  npx pqsafe-conformance --impl ./my-verifier.js
+
+EXIT CODES
+  0 — all tests passed
+  1 — one or more tests failed
+  2 — fatal error (bad --impl, network failure, etc.)
+`)
+  process.exit(0)
+}
+
+const implPath = flag('--impl')
+if (!implPath || typeof implPath !== 'string') {
+  process.stderr.write('Error: --impl <path> is required.\nRun with --help for usage.\n')
+  process.exit(2)
+}
+
+const fixturesUrl = flag('--fixtures-url')
+const useJson = hasFlag('--json')
+
+// ---------------------------------------------------------------------------
+// Load the Verifier implementation
+// ---------------------------------------------------------------------------
+
+let verifier
+try {
+  const absPath = resolve(process.cwd(), implPath)
+  const fileUrl = pathToFileURL(absPath).href
+  const mod = await import(fileUrl)
+  verifier = mod.default
+  if (!verifier || typeof verifier.verify !== 'function') {
+    process.stderr.write(
+      `Error: ${implPath} does not export a default Verifier object with a .verify() method.\n`
+    )
+    process.exit(2)
+  }
+} catch (err) {
+  process.stderr.write(`Error loading --impl "${implPath}":\n  ${err.message}\n`)
+  process.exit(2)
+}
+
+// ---------------------------------------------------------------------------
+// Run conformance
+// ---------------------------------------------------------------------------
+
+let report
+try {
+  report = await runConformance(verifier, {
+    fixturesUrl: typeof fixturesUrl === 'string' ? fixturesUrl : undefined,
+  })
+} catch (err) {
+  process.stderr.write(`Fatal error running conformance:\n  ${err.message}\n`)
+  process.exit(2)
+}
+
+// ---------------------------------------------------------------------------
+// Output
+// ---------------------------------------------------------------------------
+
+if (useJson) {
+  process.stdout.write(formatJson(report) + '\n')
+} else {
+  process.stdout.write(formatTap(report) + '\n')
+  printSummary(report)
+}
+
+process.exit(report.failed === 0 ? 0 : 1)

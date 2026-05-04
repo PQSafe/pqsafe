@@ -4,7 +4,8 @@
   "workspaces": [
     "extension",
     "landing",
-    "agent-pay"
+    "agent-pay",
+    "packages/conformance"
   ],
   "scripts": {
     "docs:api": "typedoc --options typedoc.json"
