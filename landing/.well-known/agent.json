@@ -4,7 +4,7 @@
   "description": "Post-quantum signed spend authorization for AI agents. Issues ML-DSA-65 signed SpendEnvelopes (NIST FIPS 204) constraining agent identity, budget, allowed recipients, and validity window. Routes payments across Airwallex, Wise, Stripe, USDC-Base, and x402 rails.",
   "url": "https://pqsafe.xyz",
   "provider": {
-    "organization": "Asaptic (Hong Kong) Limited",
+    "organization": "PQSafe",
     "url": "https://pqsafe.xyz"
   },
   "version": "0.1.1",

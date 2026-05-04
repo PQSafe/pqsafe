@@ -22,7 +22,6 @@ enforces the constraints, and executes across one of five rails: Airwallex, Wise
 USDC-Base, or x402. An optional on-chain commitment step hashes the envelope to the Arbitrum
 Sepolia SpendEnvelope Registry for an immutable audit trail.
 
-Legal entity: Asaptic (Hong Kong) Limited (HKR No. 73202453). Brand: PQSafe.
 YC S26 applicant. Contact: raymond@pqsafe.xyz
 
 ## Core docs

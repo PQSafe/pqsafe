@@ -11,7 +11,6 @@ info:
     signature validity, schema conformance, and temporal validity. The ledger provides
     read-only access to committed envelope records.
 
-    **Legal entity:** Asaptic (Hong Kong) Limited (HKR No. 73202453)
     **Brand:** PQSafe
   contact:
     email: raymond@pqsafe.xyz

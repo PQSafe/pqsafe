@@ -1,7 +1,6 @@
 # PQSafe AgentPay — Full Technical Reference
 
 **Version:** 0.1.1
-**Legal entity:** Asaptic (Hong Kong) Limited (HKR No. 73202453)
 **Brand:** PQSafe
 **Contact:** raymond@pqsafe.xyz
 **Live at:** https://pqsafe.xyz

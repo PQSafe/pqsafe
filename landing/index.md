@@ -198,8 +198,6 @@ Every payment can be anchored on-chain by committing the SpendEnvelope hash to t
 
 ## Legal
 
-Legal entity: Asaptic (Hong Kong) Limited (BR 73202453, incorporated 2021-07-20). Brand: PQSafe.
-
 Status: technical preview. Cryptography is FIPS 204 compliant (ML-DSA-65). SDK + rails are sandbox-validated; first SaaS receiver pilot launches June 2026. Not yet for production payments at scale.
 
 Contact: [raymond@pqsafe.xyz](mailto:raymond@pqsafe.xyz)
