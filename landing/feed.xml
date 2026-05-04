@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PQSafe AgentPay</title>
+  <subtitle>Post-quantum signed SpendEnvelopes for AI agent payments — spec updates, SDK releases, and standards progress.</subtitle>
+  <link href="https://pqsafe.xyz/feed.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://pqsafe.xyz/" rel="alternate" type="text/html"/>
+  <id>https://pqsafe.xyz/feed.xml</id>
+  <updated>2026-05-05T00:00:00Z</updated>
+  <author>
+    <name>PQSafe</name>
+    <email>dev@pqsafe.xyz</email>
+  </author>
+  <rights>Copyright 2026 PQSafe — Apache-2.0</rights>
+  <!-- Feed entries will appear here as blog posts / changelog entries are published -->
+</feed>

@@ -31,3 +31,13 @@ User-agent: Amazonbot
 Allow: /
 
 Sitemap: https://pqsafe.xyz/sitemap.xml
+
+# Agent-native discovery
+# llmstxt.org standard — primary LLM index
+Manifest: https://pqsafe.xyz/llms.txt
+# Agent allowlist and API discovery
+Agents: https://pqsafe.xyz/agents.txt
+# OpenAPI 3.1 spec for api.pqsafe.xyz
+OpenAPI: https://pqsafe.xyz/.well-known/openapi.json
+# Atom feed
+Feed: https://pqsafe.xyz/feed.xml

@@ -1,0 +1,339 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PQSafe AgentPay API",
+    "version": "0.1.1",
+    "description": "Verify, revoke, and audit ML-DSA-65 signed SpendEnvelopes for AI agent payments.\n\nEvery SpendEnvelope is signed with ML-DSA-65 (NIST FIPS 204, signature size 3,309 bytes). The verifier checks signature validity, schema conformance, and temporal validity. Revocation is issuer-authenticated; audit entries form a hash-chained ledger.\n\n**Cryptography:** ML-DSA-65 · NIST FIPS 204 · RFC 8785 JCS canonicalisation\n**License:** Apache-2.0",
+    "contact": {
+      "email": "dev@pqsafe.xyz",
+      "url": "https://pqsafe.xyz"
+    },
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.pqsafe.xyz",
+      "description": "Production (canonical)"
+    },
+    {
+      "url": "https://pqsafe-api-production.raymond-thu87.workers.dev",
+      "description": "Direct Cloudflare Workers URL (pending NS migration)"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "healthCheck",
+        "summary": "Liveness check",
+        "description": "Public liveness check. No auth required. Suitable for uptime monitors.",
+        "tags": ["System"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["ok", "version", "ts"],
+                  "properties": {
+                    "ok": { "type": "boolean", "example": true },
+                    "version": { "type": "string", "example": "0.1.1" },
+                    "region": { "type": "string", "description": "Cloudflare PoP IATA code", "example": "HKG" },
+                    "environment": { "type": "string", "example": "production" },
+                    "ts": { "type": "string", "format": "date-time", "example": "2026-05-05T08:00:00.000Z" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/mandates/verify": {
+      "post": {
+        "operationId": "verifyMandate",
+        "summary": "Verify a SpendEnvelope ML-DSA-65 signature",
+        "description": "Verifies an ML-DSA-65 (NIST FIPS 204) signature over a SpendEnvelope. Checks:\n- Signature cryptographic validity\n- Schema conformance\n- Temporal validity (validFrom ≤ now ≤ validUntil)\n- Nonce replay prevention\n\nNo authentication required — this is a public verification endpoint.",
+        "tags": ["Verification"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["envelope", "signature"],
+                "properties": {
+                  "envelope": {
+                    "type": "string",
+                    "description": "Base64url-encoded canonical envelope JSON bytes (RFC 8785 JCS).",
+                    "pattern": "^[A-Za-z0-9_-]+=*$",
+                    "example": "eyJ2ZXJzaW9uIjoxLCJpc3N1ZXIiOiJwcTFhMWIyYyJ9"
+                  },
+                  "signature": {
+                    "type": "string",
+                    "description": "ML-DSA-65 signature, hex-encoded (6618 hex chars = 3309 bytes).",
+                    "pattern": "^[0-9a-fA-F]+$"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "description": "Parsed payload object for audit entry creation (optional).",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification result (valid or invalid — both return 200; check `valid` field)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "required": ["valid", "audit_id"],
+                      "properties": {
+                        "valid": { "type": "boolean", "enum": [true] },
+                        "audit_id": { "type": "string", "format": "uuid" }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": ["valid", "reason"],
+                      "properties": {
+                        "valid": { "type": "boolean", "enum": [false] },
+                        "reason": { "type": "string", "example": "SIGNATURE_INVALID" },
+                        "audit_id": { "type": "string", "format": "uuid" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request body",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/revoke": {
+      "post": {
+        "operationId": "revokeMandate",
+        "summary": "Revoke a mandate (issuer-authenticated)",
+        "description": "Revokes a SpendEnvelope mandate by its ID. Requires bearer token authentication (REVOKE_API_KEY).",
+        "tags": ["Revocation"],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["mandate_id"],
+                "properties": {
+                  "mandate_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "UUID of the mandate to revoke."
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "description": "Human-readable revocation reason (optional)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mandate revoked successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["revoked_at", "audit_id"],
+                  "properties": {
+                    "revoked_at": { "type": "string", "format": "date-time" },
+                    "audit_id": { "type": "string", "format": "uuid" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" }
+              }
+            }
+          },
+          "404": {
+            "description": "Mandate not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" }
+              }
+            }
+          },
+          "409": {
+            "description": "Mandate already revoked",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/revoke/{mandate_id}": {
+      "get": {
+        "operationId": "getRevokeStatus",
+        "summary": "Check revocation status of a mandate (public)",
+        "description": "Returns whether a given mandate has been revoked. No authentication required.",
+        "tags": ["Revocation"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "mandate_id",
+            "in": "path",
+            "required": true,
+            "description": "UUID of the mandate to look up.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Revocation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["revoked"],
+                  "properties": {
+                    "revoked": { "type": "boolean" },
+                    "revoked_at": { "type": "string", "format": "date-time", "description": "Present only if revoked=true" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mandate not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/audit/{audit_id}": {
+      "get": {
+        "operationId": "getAuditEntry",
+        "summary": "Retrieve an audit ledger entry (public)",
+        "description": "Returns a single audit entry from the hash-chained ledger. Each entry includes prev/next hash pointers for chain verification. No authentication required.",
+        "tags": ["Audit"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "description": "UUID of the audit entry.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Audit entry",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuditEntry" }
+              }
+            }
+          },
+          "404": {
+            "description": "Audit entry not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Bearer token (REVOKE_API_KEY). Required for POST /v1/revoke only. Contact dev@pqsafe.xyz to request a key."
+      }
+    },
+    "schemas": {
+      "ApiError": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": { "type": "string", "example": "INVALID_JSON" },
+              "message": { "type": "string", "example": "Request body must be valid JSON" },
+              "request_id": { "type": "string", "format": "uuid" },
+              "docs_url": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      },
+      "AuditEntry": {
+        "type": "object",
+        "required": ["id", "action", "actor", "created_at"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "mandate_id": { "type": "string", "format": "uuid" },
+          "action": { "type": "string", "example": "verify" },
+          "actor": { "type": "string", "example": "api:verify" },
+          "payload_hash": { "type": "string", "description": "SHA-256 hash of the request payload" },
+          "prev_hash": { "type": "string", "description": "Hash of the previous audit entry (chain link)" },
+          "next_id": { "type": "string", "format": "uuid", "description": "UUID of the next entry in the chain (if any)" },
+          "signature": { "type": "string", "description": "ML-DSA-65 hex signature over this entry" },
+          "result": { "type": "string", "enum": ["ok", "fail"] },
+          "result_detail": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "tags": [
+    { "name": "System", "description": "Health and liveness endpoints" },
+    { "name": "Verification", "description": "ML-DSA-65 SpendEnvelope signature verification" },
+    { "name": "Revocation", "description": "Mandate revocation and revocation status" },
+    { "name": "Audit", "description": "Hash-chained audit ledger" }
+  ],
+  "externalDocs": {
+    "description": "PQSafe AgentPay Handbook",
+    "url": "https://pqsafe.xyz/handbook/"
+  }
+}

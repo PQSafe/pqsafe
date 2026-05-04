@@ -11,7 +11,7 @@
   },
   "api": {
     "type": "openapi",
-    "url": "https://pqsafe.xyz/openapi.yaml"
+    "url": "https://pqsafe.xyz/.well-known/openapi.json"
   },
   "logo_url": "https://pqsafe.xyz/og/home.png",
   "contact_email": "raymond@pqsafe.xyz",

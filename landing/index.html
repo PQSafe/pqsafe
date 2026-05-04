@@ -464,6 +464,9 @@
         <a href="#integrations" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
           Integrations
         </a>
+        <a href="/claude-skill/" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
+          Claude
+        </a>
         <a href="/handbook" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
           Handbook
         </a>
@@ -534,9 +537,9 @@
           <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           518 SDK tests passing (221 TS · 143 Python · 141 Solidity · 13 plugin)
         </a>
-        <a href="https://github.com/PQSafe/ap2-pq-test-vectors" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold bg-emerald-900/20 border border-emerald-700/40 text-emerald-400 hover:bg-emerald-900/40 transition-colors">
+        <a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold bg-emerald-900/20 border border-emerald-700/40 text-emerald-400 hover:bg-emerald-900/40 transition-colors">
           <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-          5 AP2-PQ test vectors
+          6 AP2-PQ test vectors (5+1 negative TC1)
         </a>
         <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold bg-gray-800/60 border border-gray-700/50 text-gray-300 hover:bg-gray-700/60 transition-colors">
           <svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
@@ -642,7 +645,7 @@
   <section id="live" class="py-12 max-w-5xl mx-auto px-6 fade-in-up">
     <div class="text-center mb-8">
       <h2 class="text-2xl sm:text-3xl font-bold text-white">What's live right now</h2>
-      <p class="text-sm text-gray-400 mt-2">Click any link to verify. Last updated 2026-04-30.</p>
+      <p class="text-sm text-gray-400 mt-2">Click any link to verify. Last updated 2026-05-05.</p>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <a href="https://www.npmjs.com/package/@pqsafe/agent-pay" target="_blank" rel="noopener" class="block p-4 rounded-lg border border-gray-800 hover:border-emerald-500 transition bg-black/30">
@@ -694,6 +697,21 @@
         <div class="text-xs text-emerald-400 font-mono mb-1">Integrations · OpenClaw</div>
         <div class="text-white font-semibold">OpenClaw Payment Skill</div>
         <div class="text-xs text-gray-400 mt-1">pqsafe.pay.v1 — ML-DSA-65 spend envelopes for OpenClaw agents</div>
+      </a>
+      <a href="/claude-skill/" class="block p-4 rounded-lg border border-gray-800 hover:border-orange-500 transition bg-black/30">
+        <div class="text-xs text-orange-400 font-mono mb-1">Integrations · Claude Code</div>
+        <div class="text-white font-semibold">Claude Code Plugin</div>
+        <div class="text-xs text-gray-400 mt-1">/pqsafe-create, /pqsafe-verify, /pqsafe-revoke — plus payment-reviewer sub-agent</div>
+      </a>
+      <a href="https://api.pqsafe.xyz/healthz" target="_blank" rel="noopener" class="block p-4 rounded-lg border border-gray-800 hover:border-cyan-500 transition bg-black/30">
+        <div class="text-xs text-cyan-400 font-mono mb-1">API · api.pqsafe.xyz · LIVE</div>
+        <div class="text-white font-semibold">Verifier API Worker</div>
+        <div class="text-xs text-gray-400 mt-1">/healthz · /v1/mandates/verify · /v1/revoke · /v1/audit/:id — custom domain pending NS migration</div>
+      </a>
+      <a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json" target="_blank" rel="noopener" class="block p-4 rounded-lg border border-gray-800 hover:border-emerald-500 transition bg-black/30">
+        <div class="text-xs text-emerald-400 font-mono mb-1">Spec · Test Vectors</div>
+        <div class="text-white font-semibold">AP2-PQ Test Vectors v1</div>
+        <div class="text-xs text-gray-400 mt-1">6 vectors (5 positive + 1 negative TC1 exposing pqcrypto 0.4.0 defect)</div>
       </a>
       <a href="https://demo.pqsafe.xyz" target="_blank" rel="noopener" class="block p-4 rounded-lg border border-gray-800 hover:border-emerald-500 transition bg-black/30">
         <div class="text-xs text-emerald-400 font-mono mb-1">Live Demo</div>
@@ -1254,7 +1272,7 @@
     <div class="text-center mb-16 fade-in-up">
       <div class="section-label">Integrations</div>
       <h2 class="text-3xl sm:text-4xl font-bold text-white">Every major agent framework, <span class="gradient-text">covered</span></h2>
-      <p class="mt-4 text-gray-400 max-w-xl mx-auto">PQSafe plugs into OpenClaw, Mastra, LangChain, and CrewAI. One import adds ML-DSA-65 signed spend envelopes to any agent stack.</p>
+      <p class="mt-4 text-gray-400 max-w-xl mx-auto">PQSafe plugs into OpenClaw, Mastra, LangChain, CrewAI, and Claude Code. One import adds ML-DSA-65 signed spend envelopes to any agent stack — five distribution surfaces in total.</p>
     </div>
 
     <!-- Framework cards -->
@@ -1280,7 +1298,7 @@
             <div class="font-bold text-white text-base">OpenClaw</div>
             <div class="text-xs text-gray-500">Skill PR · May 2026</div>
           </div>
-          <span class="ml-auto text-xs px-2 py-0.5 rounded-full font-medium" style="background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.25);">Coming May 4</span>
+          <span class="ml-auto text-xs px-2 py-0.5 rounded-full font-medium" style="background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.25);">Live</span>
         </div>
         <p class="text-gray-400 text-sm leading-relaxed">
           Native OpenClaw skill that wraps <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">AgentPay.authorize()</code> — adds PQSafe spend gating to any OpenClaw agent in a single tool registration, no custom middleware needed.
@@ -1434,6 +1452,40 @@
         </a>
       </div>
 
+      <!-- Claude Code -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-4" style="border-color: rgba(249,115,22,0.15);">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#fb923c" stroke-width="2" viewBox="0 0 24 24">
+              <polyline points="4 17 10 11 4 5"/>
+              <line x1="12" y1="19" x2="20" y2="19"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">Claude Code</div>
+            <div class="text-xs text-gray-500">Slash commands + sub-agent</div>
+          </div>
+          <span class="ml-auto text-xs px-2 py-0.5 rounded-full font-medium" style="background: rgba(249,115,22,0.12); color: #fb923c; border: 1px solid rgba(249,115,22,0.25);">Shipped 2026-05-05</span>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Auto-loaded into any Claude Code session via the plugin directory. Three slash commands — <code class="text-orange-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">/pqsafe-create</code>, <code class="text-orange-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">/pqsafe-verify</code>, <code class="text-orange-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">/pqsafe-revoke</code> — plus a <code class="text-orange-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">payment-reviewer</code> sub-agent that audits payment tool calls before they execute.
+        </p>
+        <div class="bg-black/50 rounded-xl border border-gray-800 overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-orange-400">git clone &amp;&amp; ln -s plugins/claude-pqsafe ~/.claude/plugins/</div>
+        </div>
+        <a href="/claude-skill/"
+           class="flex items-center gap-2 text-sm text-orange-400 hover:text-orange-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View plugin spec
+        </a>
+      </div>
+
     </div>
 
     <!-- Package install grid -->
@@ -1468,14 +1520,14 @@
           <div class="p-3 font-mono text-xs text-emerald-400">npm i -g @pqsafe/mcp-server</div>
         </a>
 
-        <div class="block bg-black/40 rounded-xl border border-gray-800 overflow-hidden opacity-75">
+        <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/openclaw-pqsafe" target="_blank" rel="noopener"
+           class="block bg-black/40 rounded-xl border border-gray-800 hover:border-emerald-500 transition-colors overflow-hidden">
           <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
             <span class="text-xs text-emerald-400 font-mono font-medium">npm</span>
             <span class="text-xs text-gray-500 ml-auto">OpenClaw skill</span>
-            <span class="text-xs px-1.5 py-0.5 rounded font-medium" style="background: rgba(16,185,129,0.1); color: #10b981;">May 4</span>
           </div>
-          <div class="p-3 font-mono text-xs text-gray-500">npm i @pqsafe/openclaw</div>
-        </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">npm i @pqsafe/openclaw</div>
+        </a>
 
         <a href="https://pypi.org/project/pqsafe-agent-pay/" target="_blank" rel="noopener"
            class="block bg-black/40 rounded-xl border border-gray-800 hover:border-cyan-500 transition-colors overflow-hidden">
@@ -1502,6 +1554,15 @@
             <span class="text-xs text-gray-500 ml-auto">CrewAI plugin</span>
           </div>
           <div class="p-3 font-mono text-xs text-cyan-400">pip install crewai-pqsafe</div>
+        </a>
+
+        <a href="/claude-skill/"
+           class="block bg-black/40 rounded-xl border border-gray-800 hover:border-orange-500 transition-colors overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-orange-400 font-mono font-medium">git</span>
+            <span class="text-xs text-gray-500 ml-auto">Claude Code plugin</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-orange-400">ln -s plugins/claude-pqsafe ~/.claude/plugins/</div>
         </a>
 
       </div>
@@ -1915,6 +1976,10 @@
       <div class="mt-8 pt-6 border-t border-gray-900 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-gray-600">
         <a href="/handbook" class="hover:text-gray-400 transition-colors">Handbook</a>
         <span class="text-gray-800">&middot;</span>
+        <a href="/claude-skill/" class="hover:text-gray-400 transition-colors">Claude</a>
+        <span class="text-gray-800">&middot;</span>
+        <a href="/openclaw-skill/" class="hover:text-gray-400 transition-colors">OpenClaw</a>
+        <span class="text-gray-800">&middot;</span>
         <a href="https://demo.pqsafe.xyz" target="_blank" rel="noopener" class="hover:text-gray-400 transition-colors">Demo</a>
         <span class="text-gray-800">&middot;</span>
         <a href="https://ledger.pqsafe.xyz" target="_blank" rel="noopener" class="hover:text-gray-400 transition-colors">Ledger</a>
@@ -1935,7 +2000,7 @@
         <a href="https://github.com/paulmillr/noble-post-quantum" class="text-gray-600 hover:text-gray-400 transition-colors">@noble/post-quantum</a>.
         CRYSTALS-Dilithium and CRYSTALS-Kyber are NIST-standardized as FIPS 204 and FIPS 203 respectively.
         &nbsp;&middot;&nbsp;
-        <span class="text-gray-700">Last updated 2026-04-29</span>
+        <span class="text-gray-700">Last updated 2026-05-05</span>
       </div>
     </div>
   </footer>

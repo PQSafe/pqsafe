@@ -1,0 +1,70 @@
+# PQSafe AgentPay — Agent Discovery File
+# Directs AI agents the way robots.txt directs crawlers
+# https://pqsafe.xyz/agents.txt
+
+User-agent: *
+Allow: /
+
+# ── Discovery ──────────────────────────────────────────────────────────────────
+
+# Primary LLM-optimised index (llmstxt.org standard)
+Manifest: /llms.txt
+
+# Full long-form context for LLMs wanting complete documentation
+FullContext: /llms-full.txt
+
+# Machine-readable API definition (OpenAPI 3.1)
+API: /.well-known/openapi.json
+APIYaml: /openapi.yaml
+
+# MCP server discovery — install with: npx -y @pqsafe/mcp-server
+MCP: /.well-known/mcp.json
+
+# OpenAI plugin manifest (legacy format, widely crawled)
+Plugin: /.well-known/ai-plugin.json
+
+# Extended agent capability declaration
+AgentManifest: /.well-known/agent.json
+
+# AP2-PQ conformance test vectors (ML-DSA-65, NIST FIPS 204)
+Spec: /spec/ap2-pq-test-vectors-v1.json
+
+# Sitemap
+Sitemap: https://pqsafe.xyz/sitemap.xml
+
+# ── Key endpoints ───────────────────────────────────────────────────────────────
+
+# Public SpendEnvelope verifier (no auth required)
+Verifier: https://api.pqsafe.xyz/v1/mandates/verify
+
+# Mandate revocation status lookup (no auth required)
+RevokeStatus: https://api.pqsafe.xyz/v1/revoke/{mandate_id}
+
+# Audit trail lookup (no auth required)
+Audit: https://api.pqsafe.xyz/v1/audit/{audit_id}
+
+# Health check
+Health: https://api.pqsafe.xyz/healthz
+
+# ── SDK packages ────────────────────────────────────────────────────────────────
+
+# npm (TypeScript / Node.js / Edge)
+NPM-CoreSDK: https://www.npmjs.com/package/@pqsafe/agent-pay
+NPM-MCPServer: https://www.npmjs.com/package/@pqsafe/mcp-server
+NPM-OpenClaw: https://www.npmjs.com/package/@pqsafe/openclaw
+NPM-Mastra: https://www.npmjs.com/package/@pqsafe/mastra
+
+# PyPI (Python)
+PyPI-CoreSDK: https://pypi.org/project/pqsafe-agent-pay/
+PyPI-LangChain: https://pypi.org/project/langchain-pqsafe/
+PyPI-CrewAI: https://pypi.org/project/crewai-pqsafe/
+
+# ── Contact ──────────────────────────────────────────────────────────────────────
+
+Contact: dev@pqsafe.xyz
+Security: security@pqsafe.xyz
+
+# ── License ──────────────────────────────────────────────────────────────────────
+
+License: Apache-2.0
+LicenseURL: https://www.apache.org/licenses/LICENSE-2.0
