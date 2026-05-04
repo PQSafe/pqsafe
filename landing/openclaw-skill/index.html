@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PQSafe OpenClaw Skill — PQ-signed payments for AI agents</title>
-  <meta name="description" content="ML-DSA-65 signed SpendEnvelopes for OpenClaw agents. Multi-rail (Airwallex / Wise / Stripe / USDC-Base / x402). Apache-2.0.">
+  <meta name="description" content="ClawHavoc shipped 341–1,400+ malicious skills to ClawHub in April 2026. pqsafe-pay is the cryptographic guardrail: ML-DSA-65 signed SpendEnvelopes, FIDO AP2-PQ aligned. Apache-2.0.">
   <link rel="canonical" href="https://pqsafe.xyz/openclaw-skill/">
 
   <!-- Open Graph -->
   <meta property="og:title" content="PQSafe OpenClaw Payment Skill — Post-quantum signed spend envelopes for AI agents">
-  <meta property="og:description" content="ML-DSA-65 signed SpendEnvelopes for OpenClaw agents. Multi-rail (Airwallex / Wise / Stripe / USDC-Base / x402). Apache-2.0.">
+  <meta property="og:description" content="ClawHavoc shipped 341–1,400+ malicious skills to ClawHub in April 2026. pqsafe-pay is the cryptographic guardrail: ML-DSA-65 signed SpendEnvelopes, FIDO AP2-PQ aligned. Apache-2.0.">
   <meta property="og:image" content="https://pqsafe.xyz/og/openclaw-skill.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -21,7 +21,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@PQSafeAgentPay">
   <meta name="twitter:title" content="PQSafe OpenClaw Payment Skill — Post-quantum signed spend envelopes for AI agents">
-  <meta name="twitter:description" content="ML-DSA-65 signed SpendEnvelopes for OpenClaw agents. Multi-rail (Airwallex / Wise / Stripe / USDC-Base / x402). Apache-2.0.">
+  <meta name="twitter:description" content="ClawHavoc shipped 341–1,400+ malicious skills to ClawHub in April 2026. pqsafe-pay is the cryptographic guardrail: ML-DSA-65 signed SpendEnvelopes, FIDO AP2-PQ aligned. Apache-2.0.">
   <meta name="twitter:image" content="https://pqsafe.xyz/og/openclaw-skill.png">
 
   <!-- Robots -->
@@ -397,7 +397,7 @@
   "name": "PQSafe OpenClaw Payment Skill",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Any",
-  "description": "ML-DSA-65 signed SpendEnvelopes for OpenClaw agents. Multi-rail payment execution with post-quantum cryptographic signatures.",
+  "description": "Cryptographic guardrail for OpenClaw agents: ML-DSA-65 signed SpendEnvelopes with recipient allowlists, 7-year audit trail, and FIDO AP2-PQ alignment. Defense against ClawHavoc-style supply-chain attacks.",
   "url": "https://pqsafe.xyz/openclaw-skill/",
   "license": "https://www.apache.org/licenses/LICENSE-2.0",
   "publisher": { "@type": "Organization", "name": "PQSafe AgentPay", "url": "https://pqsafe.xyz" }
@@ -418,16 +418,24 @@
   <!-- ===== Body ===== -->
   <main class="doc-body">
 
-    <p><strong>SpendEnvelopes</strong> are cryptographically bounded spend authorizations that cap what an agent may spend, on which rail, within a specific time window — signed with ML-DSA-65 (NIST FIPS 204) so that authorizations committed to an audit ledger today remain unforgeable as cryptographic capabilities advance. The <code>pqsafe.pay.v1</code> skill brings them to <a href="https://docs.openclaw.ai" rel="noopener" style="color:var(--color-accent);text-decoration:none;">OpenClaw</a> — one of GitHub's top-15 open-source projects with over 365K stars and 50,000+ tools in its ClawHub registry (MIT-licensed) — letting any developer issue, verify, and revoke tamper-evident spend authorizations without changing an agent's existing workflow logic. Agents authorizing real payments need spend caps that are replay-resistant and structured to survive the quantum transition; this skill provides that infrastructure.</p>
+    <p>In April 2026, the <a href="https://betterclaw.io/blog/openclaw-security-2026" rel="noopener" style="color:var(--color-accent);text-decoration:none;"><strong>ClawHavoc</strong> supply-chain attack</a> shipped 341–1,400+ malicious skills to <a href="https://clawhub.ai" rel="noopener" style="color:var(--color-accent);text-decoration:none;">ClawHub</a> — disguised as Gmail, Notion, Slack, and GitHub integrations — deploying AMOS and Vidar infostealers. 138 CVEs were disclosed. Seven were critical, including a CVSS 9.9 token-rotation→RCE chain.</p>
+
+    <p>On April 28, 2026, the <a href="https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/" rel="noopener" style="color:var(--color-accent);text-decoration:none;">FIDO Alliance formed the Agentic Authentication TWG</a>, with Google's AP2 and Mastercard's Verifiable Intent as foundational contributions — chaired by CVS Health, Google, and OpenAI. Payment authorization for AI agents became a formal standards problem the same month it became an active attack surface.</p>
+
+    <p><code>pqsafe-pay</code> is the cryptographic guardrail for the <a href="https://docs.openclaw.ai" rel="noopener" style="color:var(--color-accent);text-decoration:none;">OpenClaw</a> ecosystem — one of GitHub's top-15 open-source projects, with 368K+ stars and 50,000+ tools in its ClawHub registry. <strong>SpendEnvelopes</strong> are cryptographically bounded spend authorizations: signed with ML-DSA-65 (NIST FIPS 204), carrying recipient allowlists and a 7-year audit trail, aligned with the <strong>FIDO AP2-PQ profile</strong>. Every payment-related tool call passes through <code>before_tool_call</code> verification — even when the agent is hallucinating, the mandate boundary holds. The <code>pqsafe.pay.v1</code> skill brings this infrastructure to any OpenClaw-compatible agent without changing existing workflow logic.</p>
 
     <!-- ===== Why now ===== -->
     <h2>Why now</h2>
 
-    <p>NIST IR 8547 (initial public draft) proposes deprecation of 112-bit classical algorithms — including ECDSA P-256 — by 2030, with full disallowance by 2035. Payment authorization records committed to immutable audit ledgers in 2026 may still be within mandatory retention windows when cryptographically-relevant quantum computers arrive. That is not a theoretical future problem; it is a present design decision.</p>
+    <p><strong>Supply-chain reality, April 2026.</strong> The <a href="https://betterclaw.io/blog/openclaw-security-2026" rel="noopener" style="color:var(--color-accent);text-decoration:none;">ClawHavoc attack</a> proved that a compromised skill can run inside an agent with the agent's own credentials. 341–1,400+ malicious skills reached production ClawHub before detection; several targeted payment-adjacent integrations. A cryptographic spend mandate that the agent cannot bypass — verified at every <code>before_tool_call</code> hook invocation — is the correct architectural response: the agent cannot exceed its authorized envelope even if the skill itself is adversarial.</p>
 
-    <p>The retention windows are specific. PSD2 Article 69 mandates payment authorization record retention for 5 years; HKMA Cap. 615 extends that to 7 years for Hong Kong-regulated institutions. Combined with the 2030 deprecation curve, any classically-signed authorization record created today could be within its legally mandated retention window when classical signature security becomes exploitable — creating retrospective signature forgery risk on long-lived financial records. OpenClaw agents that authorize payments today are creating exactly the category of record this concern targets.</p>
+    <p><strong>Standards convergence, April 28 2026.</strong> The <a href="https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/" rel="noopener" style="color:var(--color-accent);text-decoration:none;">FIDO Alliance Agentic Authentication TWG</a> launched with Google's AP2 and Mastercard's Verifiable Intent as foundational contributions. <code>pqsafe-pay</code> aligns with the FIDO AP2-PQ profile: signed mandates with post-quantum algorithms, structured intent fields, and verifiable delegation chains — the same primitives AP2 specifies for agentic payment authorization.</p>
 
-    <p>The regulatory signal has sharpened. HKMA's Quantum Preparedness Index (verified announcement, February 3, 2026) signals that post-quantum readiness has moved from research posture to regulatory expectation. Sumsub's 2025 Fraud Report documents 180% year-over-year growth in AI-assisted multi-step fraud — exactly the attack vector that mandate credentials must defend against. ML-DSA-65 signed SpendEnvelopes address both vectors: the long-lived record problem and the real-time authorization integrity problem.</p>
+    <p><strong>Cryptographic deprecation timeline.</strong> NIST IR 8547 (initial public draft) proposes deprecation of 112-bit classical algorithms — including ECDSA P-256 — by 2030, with full disallowance by 2035. Payment authorization records committed to immutable audit ledgers in 2026 may still be within mandatory retention windows when cryptographically-relevant quantum computers arrive. That is not a theoretical future problem; it is a present design decision.</p>
+
+    <p><strong>Retention windows.</strong> PSD2 Article 69 mandates payment authorization record retention for 5 years; HKMA Cap. 615 extends that to 7 years for Hong Kong-regulated institutions. Combined with the 2030 deprecation curve, any classically-signed authorization record created today could be within its legally mandated retention window when classical signature security becomes exploitable — creating retrospective signature forgery risk on long-lived financial records. OpenClaw agents that authorize payments today are creating exactly the category of record this concern targets.</p>
+
+    <p><strong>Regulatory signal.</strong> HKMA's Quantum Preparedness Index (verified announcement, February 3, 2026) signals that post-quantum readiness has moved from research posture to regulatory expectation. Sumsub's 2025 Fraud Report documents 180% year-over-year growth in AI-assisted multi-step fraud — exactly the attack vector that mandate credentials must defend against. ML-DSA-65 signed SpendEnvelopes address both vectors: the long-lived record problem and the real-time authorization integrity problem.</p>
 
     <!-- ===== What the skill exposes ===== -->
     <h2>What the skill exposes</h2>
@@ -623,6 +631,8 @@ const envelope = await claw.invoke("pqsafe.pay.v1/create_envelope", {
   <section class="references" aria-label="References">
     <h2>References</h2>
     <ul>
+      <li>ClawHavoc supply-chain attack (April 2026) &mdash; 341–1,400+ malicious skills shipped to ClawHub, 138 CVEs including CVSS 9.9: <a href="https://betterclaw.io/blog/openclaw-security-2026" rel="noopener">betterclaw.io/blog/openclaw-security-2026</a></li>
+      <li>FIDO Alliance Agentic Authentication TWG &mdash; launched April 28, 2026; AP2 (Google) + Verifiable Intent (Mastercard) as foundational contributions: <a href="https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/" rel="noopener">fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/</a></li>
       <li>NIST FIPS 204 &mdash; Module-Lattice-Based Digital Signature Standard (ML-DSA): <a href="https://csrc.nist.gov/pubs/fips/204/final" rel="noopener">csrc.nist.gov/pubs/fips/204/final</a></li>
       <li>NIST IR 8547 (initial public draft) &mdash; Transition to Post-Quantum Cryptography Standards: <a href="https://csrc.nist.gov/pubs/ir/8547/ipd" rel="noopener">csrc.nist.gov/pubs/ir/8547/ipd</a></li>
       <li>PSD2 Article 69 &mdash; Directive (EU) 2015/2366, payment authorization record retention obligation</li>
