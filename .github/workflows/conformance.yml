@@ -1,0 +1,96 @@
+# AP2-PQ Conformance — PQSafe monorepo dogfood
+#
+# Runs the canonical conformance suite against @pqsafe/cli's built-in ML-DSA-65
+# verifier on every push and PR. A passing run is a credibility signal: PQSafe
+# itself passes the conformance suite it publishes to the ecosystem.
+#
+# Requirements: @pqsafe/conformance must be published to npm (available 2026-05-05/06).
+# Until published, this workflow will fail at the install step — that is expected.
+#
+# Spec: https://pqsafe.xyz/spec/ap2-pq-v1/
+# License: Apache-2.0
+
+name: AP2-PQ Conformance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly Monday 00:00 UTC
+
+jobs:
+  conformance:
+    name: ML-DSA-65 + AP2-PQ Test Vectors (dogfood)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Build @pqsafe/cli so its verifier adapter is available at dist/
+      - name: Install CLI dependencies
+        working-directory: packages/cli
+        run: npm install
+
+      - name: Build CLI
+        working-directory: packages/cli
+        run: npm run build
+
+      # Install the conformance harness from npm.
+      # Once published, pin: @pqsafe/conformance@0.1.0
+      - name: Install @pqsafe/conformance
+        run: npm install --no-save @pqsafe/conformance
+
+      # ── Primary TAP run ───────────────────────────────────────────────────
+      # packages/cli/conformance-adapter.mjs wraps the CLI's verify() into the
+      # Verifier interface expected by pqsafe-conformance.
+      - name: Run AP2-PQ conformance suite
+        run: |
+          npx pqsafe-conformance \
+            --impl ./packages/cli/conformance-adapter.mjs \
+            --fixtures-url https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json
+
+      # ── JSON report ───────────────────────────────────────────────────────
+      - name: Generate JSON conformance report
+        if: always()
+        run: |
+          npx pqsafe-conformance \
+            --impl ./packages/cli/conformance-adapter.mjs \
+            --fixtures-url https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json \
+            --json > conformance-report.json || true
+
+      - name: Upload conformance report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: conformance-report
+          path: conformance-report.json
+          retention-days: 90
+
+      # ── Step summary ──────────────────────────────────────────────────────
+      - name: Write step summary
+        if: always()
+        run: |
+          echo "## AP2-PQ Conformance Results (dogfood)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f conformance-report.json ]; then
+            PASSED=$(jq -r '.passed' conformance-report.json)
+            TOTAL=$(jq -r '.total' conformance-report.json)
+            echo "**Vectors passed: ${PASSED}/${TOTAL}**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            FAILURES=$(jq -r '.failed[] | "- ❌ \(.id) — \(.reason)"' conformance-report.json 2>/dev/null)
+            if [ -n "$FAILURES" ]; then
+              echo "### Failures" >> $GITHUB_STEP_SUMMARY
+              echo "$FAILURES" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ PQSafe passes its own AP2-PQ conformance suite." >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "_Spec: [AP2-PQ v1](https://pqsafe.xyz/spec/ap2-pq-v1/) · Vectors: [ap2-pq-test-vectors-v1.json](https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json)_" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ conformance-report.json not found — harness may have crashed." >> $GITHUB_STEP_SUMMARY
+          fi

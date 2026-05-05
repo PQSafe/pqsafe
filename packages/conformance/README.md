@@ -98,46 +98,88 @@ interface Verifier {
 
 ---
 
-## GitHub Actions — drop this into your repo
+## CI integration
 
-Copy this workflow file to certify your implementation on every PR:
+> **Available once `@pqsafe/conformance` is published to npm (2026-05-05/06).**
+> Until then the `npm install` step below will fail — that is expected.
+
+### Drop-in workflow (one curl command)
+
+```bash
+mkdir -p .github/workflows
+curl -sSL https://raw.githubusercontent.com/PQSafe/pqsafe/main/packages/conformance/.github/workflow-templates/conformance.yml \
+  > .github/workflows/ap2-pq-conformance.yml
+```
+
+Then edit the single line with `--impl ./path/to/your/verifier.js` to point at your implementation.
+
+### What the workflow does
+
+- Runs on every `push` to `main`, every `pull_request`, and weekly (Monday 00:00 UTC — to catch upstream spec drift)
+- Downloads the 6 canonical test vectors from `https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json`
+- Runs your verifier against all vectors in TAP mode (fails the step on any vector failure)
+- Produces a machine-readable `conformance-report.json` artifact (uploaded even on failure)
+- Writes a human-readable summary to the GitHub Actions step summary tab
+
+### CI badge
+
+Once your workflow is passing, add the GitHub Actions badge to your README:
+
+```markdown
+[![AP2-PQ Conformance](https://github.com/<owner>/<repo>/workflows/AP2-PQ%20Conformance/badge.svg)](https://github.com/<owner>/<repo>/actions/workflows/ap2-pq-conformance.yml)
+```
+
+You can also link the static PQSafe conformance badge — a passing badge tells reviewers your implementation matches the canonical AP2-PQ test vectors:
+
+```markdown
+[![AP2-PQ Conformant](https://pqsafe.xyz/badges/ap2-pq-conformant.svg)](https://pqsafe.xyz/spec/ap2-pq-v1/)
+```
+
+### Inline workflow (if you prefer not to curl)
 
 ```yaml
-# .github/workflows/pqsafe-conformance.yml
+# .github/workflows/ap2-pq-conformance.yml
+# Implements the Verifier interface: export default { async verify({ publicKey, message, signature }) { ... } }
 name: AP2-PQ Conformance
 
 on:
   pull_request:
   push:
     branches: [main]
+  schedule:
+    - cron: '0 0 * * 1'
 
 jobs:
   conformance:
-    name: AP2-PQ conformance (ML-DSA-65)
+    name: ML-DSA-65 + AP2-PQ Test Vectors
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run AP2-PQ conformance harness
-        run: npx pqsafe-conformance --impl ./src/my-verifier.js
-
-      # Optional: save JSON report as an artifact
-      - name: Save JSON report
+          node-version: '20'
+      - name: Install @pqsafe/conformance
+        run: npm install --no-save @pqsafe/conformance
+      - name: Run conformance suite
+        run: npx pqsafe-conformance --impl ./path/to/your/verifier.js
+      - name: Generate JSON report
         if: always()
-        run: npx pqsafe-conformance --impl ./src/my-verifier.js --json > conformance-report.json
-
+        run: npx pqsafe-conformance --impl ./path/to/your/verifier.js --json > conformance-report.json || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: conformance-report
           path: conformance-report.json
+      - name: Write step summary
+        if: always()
+        run: |
+          echo "## AP2-PQ Conformance Results" >> $GITHUB_STEP_SUMMARY
+          if [ -f conformance-report.json ]; then
+            PASSED=$(jq -r '.passed' conformance-report.json)
+            TOTAL=$(jq -r '.total' conformance-report.json)
+            echo "**Vectors passed: ${PASSED}/${TOTAL}**" >> $GITHUB_STEP_SUMMARY
+            jq -r '.failed[] | "- ❌ \(.id) — \(.reason)"' conformance-report.json >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "✅ All vectors passed." >> $GITHUB_STEP_SUMMARY
+          fi
 ```
 
 ---

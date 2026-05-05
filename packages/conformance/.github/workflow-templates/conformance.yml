@@ -1,0 +1,108 @@
+# AP2-PQ Conformance — drop-in workflow for rail integrators
+#
+# Copy this file to .github/workflows/ap2-pq-conformance.yml in your repo,
+# then edit the --impl path to point at your ML-DSA-65 verifier module.
+#
+# Your verifier must export a default object satisfying the Verifier interface:
+#
+#   export default {
+#     async verify({ publicKey, message, signature }) {
+#       // publicKey  — Uint8Array, 1952 bytes (ML-DSA-65 FIPS 204 Level 3)
+#       // message    — Uint8Array, JCS-canonicalised mandate payload
+#       // signature  — Uint8Array, 3309 bytes
+#       return { valid: boolean, reason?: string }
+#     }
+#   }
+#
+# The harness runs 6 canonical test vectors from pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json,
+# including the critical negative vector that guards against the pqcrypto 0.4.0 silent-accept
+# exposure. Exit code 0 = all pass; 1 = one or more failed; 2 = fatal error.
+#
+# Requirements: @pqsafe/conformance must be published to npm (available 2026-05-05/06).
+# Spec reference: https://pqsafe.xyz/spec/ap2-pq-v1/
+# License: Apache-2.0
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: AP2-PQ Conformance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly Monday 00:00 UTC — catches upstream spec drift
+
+jobs:
+  conformance:
+    name: ML-DSA-65 + AP2-PQ Test Vectors
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Install the conformance harness without polluting your package.json.
+      # Pin a specific version once you've validated it (e.g. @pqsafe/conformance@0.1.0).
+      - name: Install @pqsafe/conformance
+        run: npm install --no-save @pqsafe/conformance
+
+      # ── TAP run (primary — fails the step on any vector failure) ─────────
+      - name: Run AP2-PQ conformance suite
+        run: |
+          npx pqsafe-conformance \
+            --impl ./path/to/your/verifier.js \
+            --fixtures-url https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json
+
+      # ── JSON report (always runs — captured even on failure) ─────────────
+      - name: Generate JSON conformance report
+        if: always()
+        run: |
+          npx pqsafe-conformance \
+            --impl ./path/to/your/verifier.js \
+            --fixtures-url https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json \
+            --json > conformance-report.json || true
+
+      - name: Upload conformance report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: conformance-report
+          path: conformance-report.json
+          retention-days: 90
+
+      # ── GitHub Actions step summary ───────────────────────────────────────
+      - name: Write step summary
+        if: always()
+        run: |
+          echo "## AP2-PQ Conformance Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f conformance-report.json ]; then
+            PASSED=$(jq -r '.passed' conformance-report.json)
+            TOTAL=$(jq -r '.total' conformance-report.json)
+            echo "**Vectors passed: ${PASSED}/${TOTAL}**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            # List any failures
+            FAILURES=$(jq -r '.failed[] | "- ❌ \(.id) — \(.reason)"' conformance-report.json 2>/dev/null)
+            if [ -n "$FAILURES" ]; then
+              echo "### Failures" >> $GITHUB_STEP_SUMMARY
+              echo "$FAILURES" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ All vectors passed — implementation is AP2-PQ conformant." >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "_Spec: [AP2-PQ v1](https://pqsafe.xyz/spec/ap2-pq-v1/) · Vectors: [ap2-pq-test-vectors-v1.json](https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json)_" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ conformance-report.json not found — harness may have crashed." >> $GITHUB_STEP_SUMMARY
+          fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CI badge — add to your repo README once you are passing:
+#
+#   [![AP2-PQ Conformance](https://github.com/<owner>/<repo>/workflows/AP2-PQ%20Conformance/badge.svg)](https://github.com/<owner>/<repo>/actions/workflows/ap2-pq-conformance.yml)
+#
+#   [![AP2-PQ Conformant](https://pqsafe.xyz/badges/ap2-pq-conformant.svg)](https://pqsafe.xyz/spec/ap2-pq-v1/)
+#
+# Apache-2.0 · Published by PQSafe (https://pqsafe.xyz)

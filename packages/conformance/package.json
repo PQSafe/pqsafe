@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "type": "module",
   "bin": {
-    "pqsafe-conformance": "./bin/pqsafe-conformance"
+    "pqsafe-conformance": "bin/pqsafe-conformance"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -49,7 +49,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/pqsafe/pqsafe"
+    "url": "git+https://github.com/pqsafe/pqsafe.git"
   },
-  "homepage": "https://pqsafe.xyz"
+  "homepage": "https://pqsafe.xyz",
+  "publishConfig": {
+    "access": "public"
+  }
 }
