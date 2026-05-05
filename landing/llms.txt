@@ -64,6 +64,11 @@ YC S26 applicant. Contact: raymond@pqsafe.xyz
 - [GitHub — PQSafe/ap2-pq-test-vectors](https://github.com/PQSafe/ap2-pq-test-vectors): ML-DSA-65 test vectors for AP2-PQ interoperability testing.
 - [Arbitrum Sepolia contract](https://sepolia.arbiscan.io/address/0x142bA5626bf8B032EB0B59052421C42595417F5d): SpendEnvelopeRegistry.sol — verified on Arbiscan.
 
+## Distribution stats
+
+- [Distribution telemetry](https://pqsafe.xyz/stats/): Live npm + PyPI download counters. Auto-updated daily. Intentionally raw pre-launch numbers.
+- [Stats JSON](https://pqsafe.xyz/stats/v1/index.json): Machine-readable download data — npm (4 published packages), PyPI (3 packages), GitHub stars/forks/issues.
+
 ## Optional
 
 - [Privacy policy](https://pqsafe.xyz/privacy/): Data handling and retention policy.

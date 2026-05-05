@@ -178,4 +178,19 @@
     <priority>0.5</priority>
   </url>
 
+  <!-- Distribution telemetry — auto-updated daily -->
+  <url>
+    <loc>https://pqsafe.xyz/stats/</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://pqsafe.xyz/stats/v1/index.json</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>

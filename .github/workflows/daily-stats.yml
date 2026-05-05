@@ -1,0 +1,44 @@
+name: Daily Distribution Stats
+
+on:
+  schedule:
+    # Runs every day at 00:00 UTC
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    # Allow manual trigger from the Actions tab
+
+permissions:
+  contents: write   # needed to commit updated JSON back to repo
+
+jobs:
+  update-stats:
+    name: Fetch and commit download stats
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch distribution stats
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/daily-stats.js
+
+      - name: Commit updated stats JSON
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add landing/stats/v1/index.json
+          # Only commit if there are actual changes
+          if git diff --cached --quiet; then
+            echo "No changes to stats JSON — skipping commit."
+          else
+            TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            git commit -m "stats: auto-update distribution counters ${TIMESTAMP}"
+            git push
+          fi

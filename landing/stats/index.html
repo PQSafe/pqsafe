@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distribution Stats — PQSafe AgentPay</title>
+  <meta name="description" content="Live distribution download stats for PQSafe AgentPay packages on npm and PyPI. Auto-updated daily. Pre-launch raw numbers, published whether up or down.">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Distribution Stats — PQSafe AgentPay">
+  <meta property="og:description" content="npm + PyPI download counters for PQSafe packages. Auto-updated daily. Intentionally raw pre-launch traction.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pqsafe.xyz/stats/">
+
+  <!-- JSON-LD Dataset -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "PQSafe AgentPay Distribution Stats",
+    "description": "Daily download counters for PQSafe npm and PyPI packages, plus GitHub repository stats.",
+    "url": "https://pqsafe.xyz/stats/",
+    "license": "https://www.apache.org/licenses/LICENSE-2.0",
+    "creator": {
+      "@type": "Organization",
+      "name": "PQSafe",
+      "url": "https://pqsafe.xyz"
+    },
+    "distribution": [
+      {
+        "@type": "DataDownload",
+        "encodingFormat": "application/json",
+        "contentUrl": "https://pqsafe.xyz/stats/v1/index.json"
+      }
+    ],
+    "temporalCoverage": "2026/..",
+    "updateFrequency": "P1D"
+  }
+  </script>
+
+  <!-- Favicon (matches site) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2310b981'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='bold' font-size='14' fill='white'>PQ</text></svg>">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #0f0f1a;
+      --bg-card2: #12121f;
+      --emerald: #10b981;
+      --cyan: #06b6d4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: #e2e8f0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid rgba(16,185,129,0.15);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+    .stat-pill {
+      display: inline-block;
+      background: rgba(16,185,129,0.1);
+      color: #34d399;
+      border: 1px solid rgba(16,185,129,0.25);
+      border-radius: 0.375rem;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-weight: 600;
+    }
+    .stat-pill.cyan {
+      background: rgba(6,182,212,0.1);
+      color: #22d3ee;
+      border-color: rgba(6,182,212,0.25);
+    }
+    .badge-unpublished {
+      display: inline-block;
+      background: rgba(148,163,184,0.08);
+      color: #64748b;
+      border: 1px solid rgba(148,163,184,0.15);
+      border-radius: 0.25rem;
+      padding: 0.1rem 0.45rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    th.num { text-align: right; }
+    td {
+      padding: 0.65rem 0.75rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: middle;
+    }
+    td.num {
+      text-align: right;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.82rem;
+      color: #94a3b8;
+    }
+    td.num.highlight { color: #34d399; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.025); }
+    .pkg-name {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+    }
+    .pkg-name a {
+      color: #34d399;
+      text-decoration: none;
+    }
+    .pkg-name a:hover { text-decoration: underline; }
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 0.75rem;
+    }
+    #loading { color: #64748b; font-size: 0.875rem; }
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 0.25rem;
+      height: 1em;
+      display: inline-block;
+      width: 3rem;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    footer a { color: #475569; text-decoration: none; }
+    footer a:hover { color: #94a3b8; }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav style="border-bottom: 1px solid rgba(255,255,255,0.06); padding: 1rem 2rem; display: flex; align-items: center; gap: 1.5rem;">
+  <a href="/" style="display:flex;align-items:center;gap:0.5rem;text-decoration:none;">
+    <svg width="28" height="28" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="6" fill="#10b981"/>
+      <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-weight="bold" font-size="14" fill="white">PQ</text>
+    </svg>
+    <span style="font-weight:700;font-size:0.95rem;color:#e2e8f0;">PQSafe</span>
+  </a>
+  <span style="color:#334155;font-size:0.85rem;">/ Stats</span>
+  <div style="flex:1;"></div>
+  <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener"
+     style="font-size:0.82rem;color:#64748b;text-decoration:none;display:flex;align-items:center;gap:0.35rem;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    PQSafe/pqsafe
+  </a>
+</nav>
+
+<!-- Hero -->
+<div style="max-width:900px;margin:0 auto;padding:3rem 2rem 0;">
+  <div style="margin-bottom:0.5rem;">
+    <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#10b981;">Live Distribution Stats</span>
+  </div>
+  <h1 style="font-size:clamp(1.6rem,4vw,2.5rem);font-weight:800;line-height:1.2;margin-bottom:1rem;">
+    <span class="gradient-text">npm · PyPI · GitHub</span><br>
+    <span style="color:#e2e8f0;">Download Counters</span>
+  </h1>
+  <p style="color:#94a3b8;font-size:0.975rem;max-width:640px;line-height:1.7;">
+    These numbers are intentionally raw — pre-launch traction across all PQSafe distribution surfaces.
+    We publish them whether they go up or down. Updated daily via GitHub Actions.
+  </p>
+  <p style="margin-top:0.75rem;font-size:0.82rem;color:#475569;">
+    Last updated: <span id="updated-ts" style="color:#64748b;font-family:monospace;">—</span>
+    &nbsp;·&nbsp;
+    <a href="/stats/v1/index.json" style="color:#10b981;text-decoration:none;">Raw JSON ↗</a>
+  </p>
+</div>
+
+<!-- Main content -->
+<div style="max-width:900px;margin:0 auto;padding:2.5rem 2rem 5rem;" id="content">
+
+  <!-- Totals strip -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2.5rem;" id="totals-grid">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem;">Combined — last month</div>
+      <div style="font-size:2rem;font-weight:800;" class="gradient-text" id="total-month"><span class="skeleton"></span></div>
+      <div style="font-size:0.75rem;color:#475569;margin-top:0.2rem;">downloads</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem;">Combined — last week</div>
+      <div style="font-size:2rem;font-weight:800;color:#22d3ee;" id="total-week"><span class="skeleton"></span></div>
+      <div style="font-size:0.75rem;color:#475569;margin-top:0.2rem;">downloads</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem;">npm — last month</div>
+      <div style="font-size:2rem;font-weight:800;color:#34d399;" id="npm-month"><span class="skeleton"></span></div>
+      <div style="font-size:0.75rem;color:#475569;margin-top:0.2rem;">downloads</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem;">PyPI — last month</div>
+      <div style="font-size:2rem;font-weight:800;color:#34d399;" id="pypi-month"><span class="skeleton"></span></div>
+      <div style="font-size:0.75rem;color:#475569;margin-top:0.2rem;">downloads</div>
+    </div>
+  </div>
+
+  <!-- npm table -->
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="section-label" style="display:flex;align-items:center;gap:0.5rem;">
+      <svg width="12" height="12" viewBox="0 0 18 18" fill="#cb3837"><rect width="18" height="18" rx="2"/><rect x="4" y="4" width="10" height="10" fill="white"/><rect x="7" y="4" width="7" height="10" fill="#cb3837"/><rect x="10" y="4" width="4" height="7" fill="white"/></svg>
+      npm packages (TypeScript / Node.js)
+    </div>
+    <table id="npm-table">
+      <thead>
+        <tr>
+          <th>Package</th>
+          <th>Version</th>
+          <th class="num">Last day</th>
+          <th class="num">Last week</th>
+          <th class="num">Last month</th>
+        </tr>
+      </thead>
+      <tbody id="npm-body">
+        <tr><td colspan="5" style="color:#475569;padding:1.5rem 0.75rem;"><span class="skeleton" style="width:60%;"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PyPI table -->
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="section-label" style="display:flex;align-items:center;gap:0.5rem;">
+      <svg width="14" height="14" viewBox="0 0 256 255" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="pyA" x1="12.959%" y1="12.039%" x2="79.639%" y2="78.201%"><stop offset="0%" stop-color="#387EB8"/><stop offset="100%" stop-color="#366994"/></linearGradient><linearGradient id="pyB" x1="19.128%" y1="20.579%" x2="90.742%" y2="88.429%"><stop offset="0%" stop-color="#FFE052"/><stop offset="100%" stop-color="#FFC331"/></linearGradient></defs><path d="M126.916.072c-64.832 0-60.784 28.115-60.784 28.115l.072 29.128h61.868v8.745H41.631S.145 61.355.145 126.77c0 65.413 36.205 63.096 36.205 63.096h21.631v-30.355s-1.165-36.205 35.632-36.205h61.362s34.475.557 34.475-33.319V33.97S194.67.072 126.916.072zm-34.187 19.749c6.136 0 11.115 4.979 11.115 11.115 0 6.133-4.979 11.115-11.115 11.115-6.133 0-11.115-4.982-11.115-11.115 0-6.136 4.982-11.115 11.115-11.115z" fill="url(#pyA)"/><path d="M128.757 254.126c64.832 0 60.784-28.115 60.784-28.115l-.072-29.127H127.6v-8.745h86.441s41.486 4.705 41.486-60.712c0-65.416-36.205-63.096-36.205-63.096h-21.631v30.355s1.168 36.205-35.632 36.205h-61.362s-34.475-.557-34.475 33.319v56.013s-5.235 33.898 62.535 33.898zm34.188-19.749c-6.136 0-11.115-4.979-11.115-11.115 0-6.133 4.979-11.115 11.115-11.115 6.133 0 11.115 4.982 11.115 11.115 0 6.139-4.982 11.115-11.115 11.115z" fill="url(#pyB)"/></svg>
+      PyPI packages (Python)
+    </div>
+    <table id="pypi-table">
+      <thead>
+        <tr>
+          <th>Package</th>
+          <th class="num">Last day</th>
+          <th class="num">Last week</th>
+          <th class="num">Last month</th>
+        </tr>
+      </thead>
+      <tbody id="pypi-body">
+        <tr><td colspan="4" style="color:#475569;padding:1.5rem 0.75rem;"><span class="skeleton" style="width:60%;"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GitHub -->
+  <div class="card" style="margin-bottom:2rem;">
+    <div class="section-label">GitHub — PQSafe/pqsafe</div>
+    <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:center;">
+      <div>
+        <div style="font-size:0.72rem;color:#475569;margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em;">Stars</div>
+        <div style="font-size:1.6rem;font-weight:700;color:#fbbf24;" id="gh-stars"><span class="skeleton"></span></div>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;color:#475569;margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em;">Forks</div>
+        <div style="font-size:1.6rem;font-weight:700;color:#94a3b8;" id="gh-forks"><span class="skeleton"></span></div>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;color:#475569;margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em;">Open issues</div>
+        <div style="font-size:1.6rem;font-weight:700;color:#94a3b8;" id="gh-issues"><span class="skeleton"></span></div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener"
+           style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:#10b981;text-decoration:none;">
+          View repository ↗
+        </a>
+        <div style="font-size:0.75rem;color:#334155;margin-top:0.35rem;">Claude Code plugin: GitHub-only (no npm yet)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context note -->
+  <div style="border: 1px solid rgba(16,185,129,0.12);border-radius:0.5rem;padding:1.25rem 1.5rem;background:rgba(16,185,129,0.03);">
+    <div style="font-size:0.8rem;font-weight:700;color:#10b981;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;">About these numbers</div>
+    <ul style="font-size:0.82rem;color:#64748b;line-height:1.8;list-style:none;padding:0;">
+      <li>• These are raw download counts from npm and PyPI registries — not filtered for bot or CI traffic.</li>
+      <li>• The Claude Code plugin is distributed via GitHub (not npm) — its usage is in the GitHub traffic above.</li>
+      <li>• Packages marked <span class="badge-unpublished">not yet published</span> are roadmap items. They appear at zero until released.</li>
+      <li>• Data source: <a href="/stats/v1/index.json" style="color:#10b981;">pqsafe.xyz/stats/v1/index.json</a> · Updated daily via GitHub Actions.</li>
+      <li>• Contact: <a href="mailto:raymond@pqsafe.xyz" style="color:#10b981;">raymond@pqsafe.xyz</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer style="border-top:1px solid rgba(255,255,255,0.06);padding:2rem;text-align:center;color:#334155;font-size:0.78rem;">
+  <div style="max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:center;gap:1.5rem;">
+    <a href="/">PQSafe AgentPay</a>
+    <a href="/handbook/">Handbook</a>
+    <a href="/verify/">Verifier</a>
+    <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">GitHub</a>
+    <a href="/privacy/">Privacy</a>
+    <span style="color:#1e293b;">Apache-2.0 © PQSafe</span>
+  </div>
+</footer>
+
+<script>
+(async () => {
+  function fmt(n) {
+    if (n == null || n === 0) return '0';
+    if (n >= 1000) return (n/1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    return String(n);
+  }
+  function numCell(n, highlight) {
+    const cl = 'num' + (highlight && n > 0 ? ' highlight' : '');
+    return `<td class="${cl}">${n > 0 ? fmt(n) : '<span style="color:#1e293b">—</span>'}</td>`;
+  }
+
+  let data;
+  try {
+    const res = await fetch('/stats/v1/index.json');
+    data = await res.json();
+  } catch(e) {
+    document.getElementById('content').innerHTML =
+      '<p style="color:#ef4444;padding:2rem 0;">Failed to load stats. Please try again later.</p>';
+    return;
+  }
+
+  // Timestamp
+  const ts = new Date(data.updated);
+  document.getElementById('updated-ts').textContent = ts.toLocaleString('en-GB', {
+    year:'numeric', month:'short', day:'numeric',
+    hour:'2-digit', minute:'2-digit', timeZoneName:'short'
+  });
+
+  // Totals
+  const t = data.totals;
+  document.getElementById('total-month').textContent = fmt(t.combined_last_month);
+  document.getElementById('total-week').textContent  = fmt(t.combined_last_week);
+  document.getElementById('npm-month').textContent   = fmt(t.npm_total_last_month);
+  document.getElementById('pypi-month').textContent  = fmt(t.pypi_total_last_month);
+
+  // npm table
+  const npmBody = document.getElementById('npm-body');
+  npmBody.innerHTML = '';
+  for (const [name, info] of Object.entries(data.npm)) {
+    const published = info.published;
+    const npmUrl = `https://www.npmjs.com/package/${encodeURIComponent(name)}`;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="pkg-name">
+        ${published
+          ? `<a href="${npmUrl}" target="_blank" rel="noopener">${name}</a>`
+          : `<span style="color:#475569">${name}</span>`}
+        ${published ? '' : ' <span class="badge-unpublished">not yet published</span>'}
+      </td>
+      <td style="font-family:monospace;font-size:0.78rem;color:${published?'#64748b':'#334155'};">${info.version ? 'v'+info.version : '—'}</td>
+      ${numCell(info.last_day,  published)}
+      ${numCell(info.last_week, published)}
+      ${numCell(info.last_month,published)}
+    `;
+    npmBody.appendChild(row);
+  }
+
+  // PyPI table
+  const pypiBody = document.getElementById('pypi-body');
+  pypiBody.innerHTML = '';
+  for (const [name, info] of Object.entries(data.pypi)) {
+    const published = info.published;
+    const pypiUrl = `https://pypi.org/project/${name}/`;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="pkg-name">
+        ${published
+          ? `<a href="${pypiUrl}" target="_blank" rel="noopener">${name}</a>`
+          : `<span style="color:#475569">${name}</span>`}
+        ${published ? '' : ' <span class="badge-unpublished">not yet published</span>'}
+      </td>
+      ${numCell(info.last_day,  published)}
+      ${numCell(info.last_week, published)}
+      ${numCell(info.last_month,published)}
+    `;
+    pypiBody.appendChild(row);
+  }
+
+  // GitHub
+  const gh = data.github;
+  document.getElementById('gh-stars').textContent  = gh.error ? '—' : fmt(gh.stars);
+  document.getElementById('gh-forks').textContent  = gh.error ? '—' : fmt(gh.forks);
+  document.getElementById('gh-issues').textContent = gh.error ? '—' : fmt(gh.open_issues);
+})();
+</script>
+
+</body>
+</html>
