@@ -56,6 +56,7 @@ YC S26 applicant. Contact: raymond@pqsafe.xyz
 ## OpenClaw skill
 
 - [OpenClaw Skill page](https://pqsafe.xyz/openclaw-skill/): PQSafe listed in OpenClaw — 367K stars, 50K+ tools, 180K devs. Skill allows any OpenClaw-compatible agent to call PQSafe payment tools.
+- [OpenClaw Skill page (Simplified Chinese)](https://pqsafe.xyz/zh-CN/openclaw-skill/): Full Simplified Chinese landing page for the PQSafe OpenClaw skill — same technical content as the English version, localized for CN-commercial market entry.
 
 ## Source & verification
 

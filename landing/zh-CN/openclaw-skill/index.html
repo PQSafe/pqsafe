@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PQSafe Pay — OpenClaw 后量子支付安全层</title>
+  <meta name="description" content="PQSafe 为 OpenClaw AI 代理提供 ML-DSA-65 签名授权层，防御 ClawHavoc 级供应链攻击，满足金融监管合规要求。Apache-2.0 开源。" />
+  <link rel="canonical" href="https://pqsafe.xyz/zh-CN/openclaw-skill/" />
+  <link rel="alternate" hreflang="en" href="https://pqsafe.xyz/openclaw-skill/" />
+  <link rel="alternate" hreflang="zh-CN" href="https://pqsafe.xyz/zh-CN/openclaw-skill/" />
+  <meta property="og:title" content="PQSafe Pay — OpenClaw 后量子支付安全层" />
+  <meta property="og:description" content="首批通过 FIDO AP2-PQ profile 标准的 AI 代理支付授权中间件。ML-DSA-65 签名，3,309 字节，验证 &lt; 5 ms。" />
+  <meta property="og:image" content="https://pqsafe.xyz/og/openclaw-skill.png" />
+  <meta property="og:url" content="https://pqsafe.xyz/zh-CN/openclaw-skill/" />
+  <meta property="og:type" content="website" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand: #0f172a;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --surface: #f8fafc;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --muted: #64748b;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --radius: 8px;
+      --max-w: 900px;
+    }
+    body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; color: var(--text); background: #fff; line-height: 1.7; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: "SF Mono", "Fira Code", monospace; font-size: 0.9em; background: var(--surface); padding: 2px 6px; border-radius: 4px; }
+    pre { background: var(--code-bg); color: var(--code-text); padding: 1.5rem; border-radius: var(--radius); overflow-x: auto; font-size: 0.88em; line-height: 1.6; }
+    pre code { background: none; padding: 0; color: inherit; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+    th, td { padding: 0.65rem 1rem; border: 1px solid var(--border); text-align: left; }
+    th { background: var(--surface); font-weight: 600; }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 600; letter-spacing: 0.03em; }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-blue  { background: #dbeafe; color: #1e40af; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+    .badge-gray  { background: #f1f5f9; color: #475569; }
+
+    /* ── Nav ── */
+    nav { background: var(--brand); padding: 0.9rem 0; position: sticky; top: 0; z-index: 100; }
+    nav .inner { display: flex; align-items: center; justify-content: space-between; max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+    nav .logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+    nav .logo span { color: var(--accent-light); }
+    nav .links { display: flex; gap: 1.5rem; align-items: center; }
+    nav .links a { color: #94a3b8; font-size: 0.9rem; }
+    nav .links a:hover { color: #fff; text-decoration: none; }
+    .lang-toggle { display: inline-block; padding: 2px 10px; border: 1px solid #475569; border-radius: 12px; font-size: 0.8rem; color: #94a3b8; transition: color 0.15s, border-color 0.15s; }
+    .lang-toggle:hover { color: #fff; border-color: #94a3b8; text-decoration: none; }
+
+    /* ── Hero ── */
+    .hero { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #0f172a 100%); color: #fff; padding: 5rem 0 4rem; text-align: center; }
+    .hero .alert-banner { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 20px; padding: 0.4rem 1.2rem; font-size: 0.85rem; color: #fca5a5; margin-bottom: 2rem; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.15; margin-bottom: 1.2rem; }
+    .hero h1 em { color: var(--accent-light); font-style: normal; }
+    .hero p.sub { font-size: 1.15rem; color: #94a3b8; max-width: 640px; margin: 0 auto 2rem; }
+    .hero .cta-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 0.75rem 1.75rem; border-radius: var(--radius); font-weight: 600; font-size: 1rem; cursor: pointer; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid #475569; color: #e2e8f0; }
+    .hero .stats { display: flex; gap: 2.5rem; justify-content: center; margin-top: 3rem; flex-wrap: wrap; }
+    .hero .stat { text-align: center; }
+    .hero .stat .num { font-size: 1.8rem; font-weight: 800; color: var(--accent-light); }
+    .hero .stat .label { font-size: 0.8rem; color: #64748b; margin-top: 0.2rem; }
+
+    /* ── Sections ── */
+    section { padding: 4rem 0; }
+    section:nth-child(even) { background: var(--surface); }
+    h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+    h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; margin-top: 1.5rem; }
+    .lead { color: var(--muted); font-size: 1.05rem; margin-bottom: 2rem; }
+    .section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.5rem; }
+
+    /* ── Cards ── */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem; margin-top: 2rem; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+    section:nth-child(even) .card { background: var(--surface); border-color: #cbd5e1; }
+    .card .icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .card p { font-size: 0.9rem; color: var(--muted); }
+
+    /* ── Why Now ── */
+    .timeline { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+    .timeline-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .timeline-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 6px; }
+    .timeline-content strong { display: block; font-weight: 600; }
+    .timeline-content span { font-size: 0.9rem; color: var(--muted); }
+
+    /* ── Rail Table ── */
+    .rail-table td:nth-child(2) { text-align: center; }
+    .live { color: var(--success); font-weight: 600; }
+    .planned { color: var(--warning); font-weight: 600; }
+
+    /* ── Footer ── */
+    footer { background: var(--brand); color: #64748b; text-align: center; padding: 2.5rem 1.5rem; font-size: 0.9rem; }
+    footer a { color: #94a3b8; }
+    footer .footer-links { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 1rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <div class="inner">
+    <div class="logo">PQ<span>Safe</span></div>
+    <div class="links">
+      <a href="#why-now">背景</a>
+      <a href="#operations">功能</a>
+      <a href="#quickstart">快速开始</a>
+      <a href="#security">安全模型</a>
+      <a href="https://clawhub.ai/skills/pqsafe-pay">ClawHub</a>
+      <a href="/openclaw-skill/" class="lang-toggle">EN</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="container">
+    <div class="alert-banner">
+      ⚠ ClawHavoc — 1,400+ 恶意技能，138 个 CVE，2026 年 4 月已披露
+    </div>
+    <h1>AI 代理支付<br /><em>后量子授权层</em></h1>
+    <p class="sub">
+      当 OpenClaw 代理执行资金操作时，PQSafe 在每笔支付前验证密码学签名凭证。
+      ML-DSA-65 签名，符合 FIDO AP2-PQ profile，满足金融监管科技 2030 蓝图合规要求。
+    </p>
+    <div class="cta-group">
+      <a href="#quickstart" class="btn btn-primary">5 分钟接入</a>
+      <a href="https://clawhub.ai/skills/pqsafe-pay" class="btn btn-outline">ClawHub 技能市场</a>
+      <a href="https://npmjs.com/package/@pqsafe/openclaw" class="btn btn-outline">npm 安装</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">3,309</div><div class="label">ML-DSA-65 签名字节</div></div>
+      <div class="stat"><div class="num">&lt; 5 ms</div><div class="label">验证延迟</div></div>
+      <div class="stat"><div class="num">7 年</div><div class="label">审计日志保留期</div></div>
+      <div class="stat"><div class="num">5</div><div class="label">支持的支付通道</div></div>
+      <div class="stat"><div class="num">Apache-2.0</div><div class="label">开源许可证</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Why Now ── -->
+<section id="why-now">
+  <div class="container">
+    <div class="section-label">为何现在</div>
+    <h2>合规窗口正在缩短</h2>
+    <p class="lead">
+      三条监管与威胁情报线索在 2026 年上半年同步收紧，企业商业部署 OpenClaw 的授权安全问题已从技术选项变为合规必选项。
+    </p>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <strong>2026 年 4 月 — ClawHavoc 供应链攻击公开披露</strong>
+          <span>研究人员在 OpenClaw 技能生态中发现 1,400+ 恶意技能，138 个 CVE，多个技能可无声重定向支付工具调用至攻击者账户。无签名验证层的部署已被证明在生产环境中存在实际风险。</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <strong>2026 年 4 月 28 日 — FIDO AP2-PQ Profile 发布</strong>
+          <span>FIDO 联盟代理认证技术工作组正式发布 AP2-PQ profile，确立自主代理场景下后量子硬件绑定授权验证的标准化路径。该 profile 将授权层（谁批准了这笔交易）与支付通道层（钱如何转移）明确分离。PQSafe 是首批对齐该 profile 的商用实现之一。</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <strong>金融监管科技 2030 蓝图 — 强认证要求逐步落地</strong>
+          <span>主流监管框架（含 PSD2 强客户认证、NIST IR 8547 后量子过渡指引）均要求金融场景的高价值交易具备抗量子签名能力。AI 代理发起的支付在监管视角属于高风险自动化行为，需要满足等同于或高于人工操作的授权标准。</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <strong>NIST FIPS 204 — ML-DSA-65 正式标准化</strong>
+          <span>美国国家标准技术研究院正式发布 FIPS 204，将 ML-DSA（基于 Dilithium 格密码）确立为联邦政府采购标准。ML-DSA-65 对应 NIST 3 级安全（等效 AES-192）。PQSafe 使用 ML-DSA-65，签名体积 3,309 字节。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Operations ── -->
+<section id="operations">
+  <div class="container">
+    <div class="section-label">技能功能</div>
+    <h2>三项核心操作</h2>
+    <p class="lead">PQSafe 技能通过 OpenClaw 标准接口暴露三项操作，覆盖授权凭证的完整生命周期。</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">🔐</div>
+        <h4>verify_mandate</h4>
+        <p>在支付执行前验证 SpendEnvelope 的 ML-DSA-65 签名，检查金额上限、收款人白名单、有效期与防重放随机数。验证通过后写入审计日志并放行支付调用；任意检查失败则阻断并返回结构化拒绝原因。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📋</div>
+        <h4>issue_mandate</h4>
+        <p>为指定支付场景签发新的 SpendEnvelope。签发方持有 ML-DSA-65 私钥，可设定收款人白名单、单笔上限、周期累计上限与到期时间。凭证签发后可安全分发给 AI 代理，代理无需访问私钥。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🚫</div>
+        <h4>revoke_mandate</h4>
+        <p>立即吊销指定指纹的 SpendEnvelope。吊销操作幂等，支持批量吊销。吊销原因写入审计日志，后续所有针对该指纹的 verify_mandate 调用将立即返回拒绝。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SpendEnvelope ── -->
+<section>
+  <div class="container">
+    <div class="section-label">数据结构</div>
+    <h2>SpendEnvelope</h2>
+    <p class="lead">每笔授权凭证包含六个约束字段，ML-DSA-65 签名覆盖全部字段，篡改任意字段均会导致签名验证失败。</p>
+    <pre><code>interface SpendEnvelope {
+  version: 1;
+  issuer: string;           // 签发方 DID 或密钥 ID
+  payee_allowlist: string[]; // 允许的收款账户列表
+  amount_cap: number;        // 单笔最大金额（最小货币单位）
+  currency: string;          // ISO 4217（如 "HKD" / "USD" / "CNY"）
+  period_cap?: number;       // 周期累计上限（可选）
+  period?: "day" | "week" | "month"; // 周期定义
+  expires_at: string;        // ISO 8601 到期时间
+  nonce: string;             // 防重放随机数（UUID v4）
+  issued_at: string;         // 签发时间
+  // ML-DSA-65 签名，3,309 字节，Base64 编码
+  // 覆盖上述所有字段，篡改任意字段签名立即失效
+  signature: string;
+}</code></pre>
+  </div>
+</section>
+
+<!-- ── Quick Start ── -->
+<section id="quickstart">
+  <div class="container">
+    <div class="section-label">快速开始</div>
+    <h2>5 分钟接入 OpenClaw</h2>
+    <p class="lead">安装 npm 包，注册 before_tool_call 钩子，所有支付工具调用自动受保护。</p>
+
+    <h3>第一步：安装</h3>
+    <pre><code>npm install @pqsafe/openclaw</code></pre>
+
+    <h3>第二步：初始化并注册钩子</h3>
+    <pre><code>import { PQSafeOpenClaw } from "@pqsafe/openclaw";
+
+// 初始化：传入 ML-DSA-65 签发方公钥（用于验证）
+const pqsafe = new PQSafeOpenClaw({
+  issuerPublicKey: process.env.PQSAFE_PUBLIC_KEY!, // Base64 编码的 ML-DSA-65 公钥
+  auditRetentionDays: 2555, // 7 年审计保留（对应企业内控要求）
+});
+
+// 在 OpenClaw 运行时注册 before_tool_call 钩子
+// 所有以 "payment." 开头的工具调用在执行前自动经过验证
+runtime.use(
+  pqsafe.beforeToolCall({
+    toolFilter: (toolName) => toolName.startsWith("payment."),
+    onFailure: "block", // 验证失败立即阻断（也可设为 "log" 仅记录）
+  })
+);</code></pre>
+
+    <h3>第三步：签发授权凭证</h3>
+    <pre><code>// 在后端（持有私钥的受信任环境）签发凭证
+const { envelope } = await pqsafe.issueMandate({
+  payee_allowlist: ["supplier-001@example.com", "acct_1Abc..."],
+  amount_cap: 50000,      // 单笔最大 500.00 HKD（以分为单位）
+  currency: "HKD",
+  period_cap: 500000,     // 月累计上限 5,000.00 HKD
+  period: "month",
+  expires_at: "2026-06-30T23:59:59Z",
+  issuer_key_id: "key-2026-q2",
+});
+
+// 将 envelope 传递给 AI 代理，代理在调用支付工具时附带此凭证
+// 代理无需接触私钥</code></pre>
+
+    <h3>验证失败响应示例</h3>
+    <pre><code>// 验证失败时收到的结构化拒绝响应
+{
+  "ok": false,
+  "reason": "amount_cap_exceeded",    // 可机器解析的错误类型
+  "detail": "requested 60000, cap is 50000 HKD",
+  "audit_id": "aud_01HX..."           // 可追溯的审计日志 ID
+}</code></pre>
+  </div>
+</section>
+
+<!-- ── Rails ── -->
+<section id="rails">
+  <div class="container">
+    <div class="section-label">支付通道</div>
+    <h2>支持的支付通道</h2>
+    <p class="lead">PQSafe 是授权层，不绑定特定支付通道。以下通道已通过集成测试。</p>
+    <table class="rail-table">
+      <thead>
+        <tr>
+          <th>通道</th>
+          <th>状态</th>
+          <th>适用场景</th>
+          <th>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Airwallex</td>
+          <td><span class="live">生产就绪</span></td>
+          <td>跨境汇款、多货币企业账户</td>
+          <td>亚太覆盖强</td>
+        </tr>
+        <tr>
+          <td>Wise</td>
+          <td><span class="live">生产就绪</span></td>
+          <td>个人及 SMB 国际转账</td>
+          <td>低成本跨境</td>
+        </tr>
+        <tr>
+          <td>Stripe</td>
+          <td><span class="badge badge-blue">模拟就绪</span></td>
+          <td>信用卡收单、订阅管理</td>
+          <td>生产集成路线图中</td>
+        </tr>
+        <tr>
+          <td>USDC (Base)</td>
+          <td><span class="badge badge-blue">模拟就绪</span></td>
+          <td>链上稳定币结算</td>
+          <td>x402 协议兼容</td>
+        </tr>
+        <tr>
+          <td>x402</td>
+          <td><span class="badge badge-blue">模拟就绪</span></td>
+          <td>HTTP 原生微支付</td>
+          <td>Cloudflare / Coinbase 标准</td>
+        </tr>
+        <tr>
+          <td>微信支付</td>
+          <td><span class="planned">规划中</span></td>
+          <td>国内商业场景</td>
+          <td>企业商业版路线图</td>
+        </tr>
+        <tr>
+          <td>支付宝</td>
+          <td><span class="planned">规划中</span></td>
+          <td>国内商业场景 / 出海商家</td>
+          <td>企业商业版路线图</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:1rem; font-size:0.9rem; color:var(--muted);">
+      注：支付宝与微信支付为授权通道合作规划，PQSafe 提供授权安全层，支付通道提供资金转移能力，二者可并行使用。
+    </p>
+  </div>
+</section>
+
+<!-- ── Security Model ── -->
+<section id="security">
+  <div class="container">
+    <div class="section-label">安全模型</div>
+    <h2>深度防御架构</h2>
+    <p class="lead">PQSafe 在 OpenClaw 运行时与支付通道之间插入一个独立的密码学验证层，不修改现有支付逻辑。</p>
+    <pre><code>┌─────────────────────────────────────────────────────────┐
+│                   OpenClaw 运行时                        │
+│                                                         │
+│  用户提示 ──► LLM ──► tool_call({ payment-send })       │
+│                                  │                      │
+│                        before_tool_call 钩子             │
+│                                  │                      │
+│                    ┌─────────────▼─────────────┐        │
+│                    │   SpendEnvelope 验证器      │        │
+│                    │  1. ML-DSA-65 签名有效？    │        │
+│                    │  2. 凭证未过期？            │        │
+│                    │  3. 收款人在白名单？        │        │
+│                    │  4. 金额 ≤ 上限？           │        │
+│                    │  5. 随机数未被重放？        │        │
+│                    └──────┬──────────┬──────────┘        │
+│                          通过        拒绝                │
+│                            │            │                │
+│              Airwallex / Wise /      阻断 + 审计日志     │
+│              Stripe / USDC           （7 年保留）        │
+└─────────────────────────────────────────────────────────┘</code></pre>
+
+    <h3>ML-DSA-65 参数</h3>
+    <table>
+      <thead><tr><th>参数</th><th>值</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>标准</td><td>NIST FIPS 204</td><td>联邦政府采购标准，正式生效</td></tr>
+        <tr><td>安全级别</td><td>NIST 3 级</td><td>等效 AES-192 安全强度</td></tr>
+        <tr><td>公钥大小</td><td>1,952 字节</td><td>可嵌入技能清单</td></tr>
+        <tr><td>签名大小</td><td><strong>3,309 字节</strong></td><td>适合 JSON payload 传输</td></tr>
+        <tr><td>验证耗时</td><td>&lt; 5 ms</td><td>Node.js 18+，不影响代理响应速度</td></tr>
+        <tr><td>量子安全</td><td>是</td><td>格密码学，抵抗 Shor 算法</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── Get the Skill ── -->
+<section>
+  <div class="container">
+    <div class="section-label">获取技能</div>
+    <h2>五个发行渠道</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">📦</div>
+        <h4>npm</h4>
+        <pre style="margin-top:0.5rem;"><code>npm install @pqsafe/openclaw</code></pre>
+        <p style="margin-top:0.5rem;"><a href="https://npmjs.com/package/@pqsafe/openclaw">npmjs.com/package/@pqsafe/openclaw</a></p>
+      </div>
+      <div class="card">
+        <div class="icon">🛒</div>
+        <h4>ClawHub 技能市场</h4>
+        <p><a href="https://clawhub.ai/skills/pqsafe-pay">clawhub.ai/skills/pqsafe-pay</a></p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;">一键安装，适合非技术团队快速接入</p>
+      </div>
+      <div class="card">
+        <div class="icon">🐙</div>
+        <h4>GitHub</h4>
+        <p><a href="https://github.com/pqsafe-inc/openclaw-pqsafe">github.com/pqsafe-inc/openclaw-pqsafe</a></p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;">Apache-2.0，可 fork 自托管</p>
+      </div>
+      <div class="card">
+        <div class="icon">☁️</div>
+        <h4>托管 API</h4>
+        <p>无需自托管，直接调用 PQSafe 托管验证 API：</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;"><code>pqsafe-api-production.raymond-thu87.workers.dev</code></p>
+      </div>
+      <div class="card">
+        <div class="icon">📖</div>
+        <h4>文档（英文）</h4>
+        <p><a href="https://pqsafe.xyz/openclaw-skill/">pqsafe.xyz/openclaw-skill</a></p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;">完整 API 参考 + 集成指南</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── References ── -->
+<section>
+  <div class="container">
+    <div class="section-label">参考资料</div>
+    <h2>标准与研究来源</h2>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+      <li>📄 <a href="https://csrc.nist.gov/pubs/fips/204/final" target="_blank" rel="noopener">NIST FIPS 204</a> — Module-Lattice-Based Digital Signature Standard（ML-DSA）</li>
+      <li>📄 NIST IR 8547 — Transition to Post-Quantum Cryptography Standards（初始公开草案）</li>
+      <li>📄 FIDO Alliance AP2-PQ Profile — Agentic Authentication Technical Working Group，2026 年 4 月 28 日</li>
+      <li>📄 PSD2 强客户认证（SCA）指令 — 欧洲银行管理局</li>
+      <li>📄 ClawHavoc 安全报告 — 1,400+ 恶意技能，138 个 CVE，2026 年 4 月</li>
+      <li>📄 Sumsub — 代理交易监控白皮书</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-links">
+    <a href="https://pqsafe.xyz">pqsafe.xyz</a>
+    <a href="https://pqsafe.xyz/openclaw-skill/">技术文档（EN）</a>
+    <a href="https://clawhub.ai/skills/pqsafe-pay">ClawHub</a>
+    <a href="https://npmjs.com/package/@pqsafe/openclaw">npm</a>
+    <a href="mailto:dev@pqsafe.xyz">dev@pqsafe.xyz</a>
+  </div>
+  <p>© 2026 PQSafe Inc. Apache-2.0 开源许可证。</p>
+</footer>
+
+</body>
+</html>
