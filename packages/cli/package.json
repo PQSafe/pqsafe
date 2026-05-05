@@ -1,0 +1,61 @@
+{
+  "name": "@pqsafe/cli",
+  "version": "0.1.0",
+  "description": "PQSafe issuer authoring CLI — issue, verify, revoke, and audit ML-DSA-65 signed SpendEnvelopes",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "pqsafe": "bin/pqsafe"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@noble/hashes": "^1.4.0",
+    "@noble/post-quantum": "^0.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "pqsafe",
+    "ap2-pq",
+    "mldsa",
+    "ml-dsa-65",
+    "post-quantum",
+    "spend-envelope",
+    "cli",
+    "fips-204"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pqsafe/pqsafe.git"
+  },
+  "homepage": "https://pqsafe.xyz",
+  "publishConfig": {
+    "access": "public"
+  }
+}
