@@ -148,6 +148,14 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- AP2-PQ canonical spec page — citation moat, highest-priority spec URL -->
+  <url>
+    <loc>https://pqsafe.xyz/spec/ap2-pq-v1/</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
   <!-- AP2-PQ conformance test vectors — machine-readable spec -->
   <url>
     <loc>https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json</loc>

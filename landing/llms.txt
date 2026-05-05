@@ -34,6 +34,8 @@ YC S26 applicant. Contact: raymond@pqsafe.xyz
 
 ## Standards & policy
 
+- [AP2-PQ Profile v1 — canonical spec](https://pqsafe.xyz/spec/ap2-pq-v1/): Canonical specification page for the AP2-PQ profile. Defines PQ-SignedSpendEnvelope wire format (JSON Schema Draft 2020-12), ML-DSA-65 signing protocol (JCS → SHA-256 fingerprint → ML-DSA-65), 7-check verification procedure, and conformance test vectors. Status: Informational. FIDO Agentic Auth TWG submission pending. Any rail integrator claiming AP2-PQ compatibility must cite this URL.
+- [AP2-PQ conformance test vectors](https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json): Machine-readable JSON — 5 positive + 1 negative (TC-N1 exposes pqcrypto 0.4.0 silent-accept bug). Normative source for interoperability testing.
 - [FIDO Alliance open letter](https://pqsafe.xyz/fido-pq-letter/): Open letter to the FIDO Alliance Payments TWG (chaired by Mastercard + Visa) proposing the AP2-PQ profile — post-quantum extension to FIDO AP2 for agent-initiated payments.
 - [AP2-PQ RFC draft](https://pqsafe.xyz/ap2-pq-rfc/): Public RFC-style proposal for AP2-aligned post-quantum payment authorization. Donated to FIDO Alliance 2026-04-28.
 - Standards: NIST FIPS 204 (final), NIST IR 8547 (initial public draft), HKMA Quantum Preparedness Index Feb 2026, PSD2 Article 69.

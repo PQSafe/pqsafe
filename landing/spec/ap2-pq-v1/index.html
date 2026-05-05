@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AP2-PQ Profile v1: Post-Quantum Extension to AP2 for Agentic Payment Authorization — PQSafe</title>
+  <meta name="description" content="Canonical specification of the AP2-PQ profile v1. Defines PQ-SignedSpendEnvelope wire format, ML-DSA-65 signing/verification protocol, and conformance test vectors. Status: Informational. FIDO Agentic Auth TWG submission pending.">
+  <link rel="canonical" href="https://pqsafe.xyz/spec/ap2-pq-v1/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="AP2-PQ Profile v1 — Post-Quantum Extension to AP2 for Agentic Payment Authorization">
+  <meta property="og:description" content="Canonical specification: PQ-SignedSpendEnvelope wire format, ML-DSA-65 signing, 7-check verification, conformance test vectors. Published by PQSafe Inc. Apache-2.0.">
+  <meta property="og:url" content="https://pqsafe.xyz/spec/ap2-pq-v1/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="PQSafe AgentPay">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@PQSafeAgentPay">
+  <meta name="twitter:title" content="AP2-PQ Profile v1 — Post-Quantum Extension to AP2">
+  <meta name="twitter:description" content="Canonical wire format + signing protocol for post-quantum AP2 spend envelopes. ML-DSA-65 · NIST FIPS 204 · RFC 8785 JCS. Apache-2.0.">
+
+  <meta name="robots" content="index, follow">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "name": "AP2-PQ Profile v1: Post-Quantum Extension to AP2 for Agentic Payment Authorization",
+    "headline": "AP2-PQ Profile v1: Post-Quantum Extension to AP2 for Agentic Payment Authorization",
+    "description": "Canonical specification defining the PQ-SignedSpendEnvelope wire format, ML-DSA-65 signing and verification protocol, and conformance test vectors for post-quantum AP2 spend envelopes.",
+    "author": {
+      "@type": "Organization",
+      "name": "PQSafe Inc.",
+      "url": "https://pqsafe.xyz",
+      "email": "dev@pqsafe.xyz"
+    },
+    "datePublished": "2026-05-05",
+    "dateModified": "2026-05-05",
+    "license": "https://www.apache.org/licenses/LICENSE-2.0",
+    "url": "https://pqsafe.xyz/spec/ap2-pq-v1/",
+    "keywords": ["AP2", "post-quantum", "ML-DSA-65", "FIPS 204", "spend envelope", "agent payments", "FIDO"],
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "PQSafe AgentPay",
+      "url": "https://pqsafe.xyz"
+    }
+  }
+  </script>
+
+  <style>
+    /* Reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Tokens — shared with pqsafe.xyz site */
+    :root {
+      --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-subtle: #888;
+      --color-border: #d1d5db;
+      --color-bg: #fff;
+      --color-bg-subtle: #f9fafb;
+      --color-accent: #1d4ed8;
+      --color-accent-hover: #1e40af;
+      --color-warning-bg: #fffbeb;
+      --color-warning-border: #d97706;
+      --max-width: 760px;
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2.5rem;
+      --spacing-2xl: 4rem;
+    }
+
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--color-text);
+      background: var(--color-bg);
+      line-height: 1.7;
+      padding: 0 var(--spacing-md);
+    }
+
+    .page-wrap {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--spacing-2xl) 0;
+    }
+
+    /* Document header — IETF-flavoured */
+    .doc-header {
+      border-bottom: 2px solid var(--color-text);
+      padding-bottom: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .doc-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-xs) var(--spacing-md);
+      font-size: 0.8125rem;
+      color: var(--color-muted);
+      margin-bottom: var(--spacing-md);
+      font-family: var(--font-mono);
+    }
+
+    .doc-meta-grid .label { font-weight: 600; color: var(--color-text); }
+
+    .doc-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: var(--spacing-sm);
+      letter-spacing: -0.01em;
+    }
+
+    .doc-draft-id {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--color-subtle);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      padding: 0.15em 0.5em;
+      color: var(--color-muted);
+    }
+
+    /* TOC */
+    .toc {
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      padding: var(--spacing-md) var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .toc h2 {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-subtle);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .toc ol {
+      padding-left: 1.25rem;
+      margin: 0;
+    }
+
+    .toc li {
+      font-size: 0.875rem;
+      padding: 0.2rem 0;
+    }
+
+    .toc li a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .toc li a:hover { text-decoration: underline; }
+
+    /* Body sections */
+    .doc-section {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .doc-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+      padding-top: var(--spacing-md);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .doc-section h3 {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-sm);
+      color: var(--color-text);
+    }
+
+    .doc-section h4 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-top: var(--spacing-md);
+      margin-bottom: var(--spacing-xs);
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .doc-section p {
+      margin-bottom: var(--spacing-md);
+      font-size: 1rem;
+    }
+
+    .doc-section ul, .doc-section ol {
+      padding-left: 1.5rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .doc-section li {
+      font-size: 1rem;
+      padding: 0.2rem 0;
+    }
+
+    /* RFC 2119 keywords */
+    .rfc-kw {
+      font-weight: 700;
+      font-variant: small-caps;
+    }
+
+    /* Definition list — terminology */
+    .term-list {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .term-list dt {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-top: var(--spacing-md);
+    }
+
+    .term-list dd {
+      margin-left: 1.5rem;
+      font-size: 0.9375rem;
+      color: var(--color-muted);
+      padding: 0.25rem 0;
+    }
+
+    /* Protocol diagram */
+    .protocol-diagram {
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      padding: var(--spacing-md) var(--spacing-lg);
+      margin: var(--spacing-md) 0 var(--spacing-lg);
+      overflow-x: auto;
+    }
+
+    .protocol-diagram pre {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin: 0;
+      color: var(--color-text);
+    }
+
+    /* Code blocks */
+    .code-block {
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      padding: var(--spacing-md) var(--spacing-lg);
+      margin: var(--spacing-md) 0 var(--spacing-lg);
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      margin: 0;
+    }
+
+    .code-block code {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      background: none;
+      border: none;
+      padding: 0;
+      border-radius: 0;
+      color: var(--color-text);
+      white-space: pre;
+    }
+
+    /* Inline code */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      padding: 0.1em 0.35em;
+      border-radius: 2px;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-subtle);
+      border-bottom: 2px solid var(--color-border);
+      padding: 0.5rem 0.75rem 0.5rem 0;
+    }
+
+    .data-table td {
+      padding: 0.5rem 0.75rem 0.5rem 0;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Notice box */
+    .notice {
+      background: var(--color-warning-bg);
+      border-left: 3px solid var(--color-warning-border);
+      padding: var(--spacing-sm) var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+      font-size: 0.875rem;
+      color: var(--color-text);
+    }
+
+    /* Verification step list */
+    .step-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: var(--spacing-md);
+      counter-reset: step-counter;
+    }
+
+    .step-list li {
+      counter-increment: step-counter;
+      padding: 0.5rem 0 0.5rem 2.5rem;
+      border-bottom: 1px solid var(--color-border);
+      position: relative;
+      font-size: 0.9375rem;
+    }
+
+    .step-list li:last-child {
+      border-bottom: none;
+    }
+
+    .step-list li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      width: 1.75rem;
+      height: 1.75rem;
+      background: var(--color-text);
+      color: white;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+    }
+
+    /* Migration phase table */
+    .phase-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .phase-table th {
+      background: var(--color-bg-subtle);
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-subtle);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 0.75rem;
+    }
+
+    .phase-table td {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+
+    /* References */
+    .ref-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .ref-list li {
+      font-size: 0.9rem;
+      padding: 0.4rem 0 0.4rem 3.5rem;
+      border-bottom: 1px solid var(--color-border);
+      position: relative;
+    }
+
+    .ref-list li:last-child { border-bottom: none; }
+
+    .ref-tag {
+      position: absolute;
+      left: 0;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--color-muted);
+    }
+
+    /* Footer */
+    .doc-footer {
+      border-top: 2px solid var(--color-text);
+      padding-top: var(--spacing-lg);
+      margin-top: var(--spacing-2xl);
+      font-size: 0.8125rem;
+      color: var(--color-muted);
+    }
+
+    .doc-footer a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .doc-footer a:hover { text-decoration: underline; }
+
+    /* Links */
+    a { color: var(--color-accent); }
+    a:hover { color: var(--color-accent-hover); }
+
+    /* Test vector highlight */
+    .vec-card {
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      padding: var(--spacing-md) var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .vec-card-title {
+      font-weight: 700;
+      font-size: 0.875rem;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .vec-card-pass {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: #d1fae5;
+      color: #065f46;
+      border-radius: 2px;
+      padding: 0.1em 0.4em;
+      margin-left: 0.5rem;
+    }
+
+    .vec-card-fail {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: #fee2e2;
+      color: #991b1b;
+      border-radius: 2px;
+      padding: 0.1em 0.4em;
+      margin-left: 0.5rem;
+    }
+
+    .vec-card p {
+      font-size: 0.875rem;
+      color: var(--color-muted);
+      margin: 0;
+    }
+
+    @media (max-width: 600px) {
+      .doc-meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- Document Header -->
+  <header class="doc-header">
+    <div class="doc-meta-grid">
+      <div><span class="label">Organization:</span> PQSafe Inc.</div>
+      <div><span class="label">Status:</span> <span class="status-badge">Informational</span></div>
+      <div><span class="label">Published:</span> 2026-05-05</div>
+      <div><span class="label">License:</span> Apache-2.0</div>
+      <div><span class="label">Submission:</span> FIDO Agentic Auth TWG (pending)</div>
+      <div><span class="label">Contact:</span> dev@pqsafe.xyz</div>
+    </div>
+
+    <h1 class="doc-title">AP2-PQ Profile v1: Post-Quantum Extension to AP2 for Agentic Payment Authorization</h1>
+    <p class="doc-draft-id">draft-chau-ap2-pq-spend-envelope-00 &nbsp;·&nbsp; <a href="https://pqsafe.xyz/spec/ap2-pq-v1/">https://pqsafe.xyz/spec/ap2-pq-v1/</a></p>
+
+    <p style="font-size:0.9375rem; color: var(--color-muted);">
+      This document is the first published implementation profile of AP2 for post-quantum digital signatures.
+      It specifies the <code>PQ-SignedSpendEnvelope</code> wire format, the ML-DSA-65 signing and verification
+      protocol, and NIST ACVP-aligned conformance test vectors for autonomous AI agent payment authorization.
+      It is not a claim of ownership over the AP2 specification itself; AP2 is housed within the FIDO Alliance.
+    </p>
+  </header>
+
+  <!-- Abstract -->
+  <section class="doc-section" id="abstract">
+    <h2>Abstract</h2>
+    <p>
+      The Agent Protocol v2 (AP2) currently mandates ECDSA P-256 for SpendEnvelope signing. Shor's algorithm
+      renders ECDSA vulnerable to a cryptographically relevant quantum computer (CRQC). This document specifies
+      the <strong>AP2-PQ profile</strong>: an extension that registers ML-DSA-65 (NIST FIPS 204, Category 3) as
+      the required post-quantum signature algorithm for AP2 spend envelopes.
+    </p>
+    <p>
+      The profile defines: the <code>PQ-SignedSpendEnvelope</code> JSON wire format and JSON Schema (Draft 2020-12);
+      JCS canonicalization per RFC 8785; the SHA-256 fingerprint construction; ML-DSA-65 signing and
+      7-check verification procedures; a three-phase ECDSA-to-PQ migration path; and six NIST ACVP-aligned
+      conformance test vectors (five positive, one negative). Implementations following this specification
+      achieve at least 128 bits of post-quantum security for all AP2 agent-to-agent payment authorization flows.
+    </p>
+    <p>
+      This specification has been submitted to the FIDO Alliance Agentic Authentication TWG (formed 2026-04-28)
+      for consideration as an Informational extension to the AP2 protocol.
+    </p>
+  </section>
+
+  <!-- Table of Contents -->
+  <nav class="toc" aria-label="Table of contents">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#status-of-this-memo">Status of this Memo</a></li>
+      <li><a href="#conventions">Conventions</a></li>
+      <li><a href="#terminology">Terminology</a></li>
+      <li><a href="#protocol-overview">Protocol Overview</a></li>
+      <li><a href="#wire-format">Wire Format — JSON Schema</a></li>
+      <li><a href="#signing-protocol">Signing Protocol</a></li>
+      <li><a href="#verification-protocol">Verification Protocol (7 Checks)</a></li>
+      <li><a href="#test-vectors">Conformance Test Vectors</a></li>
+      <li><a href="#security-considerations">Security Considerations</a></li>
+      <li><a href="#iana-considerations">IANA Considerations</a></li>
+      <li><a href="#normative-references">Normative References</a></li>
+      <li><a href="#informative-references">Informative References</a></li>
+      <li><a href="#authors-addresses">Authors' Addresses</a></li>
+      <li><a href="#copyright">Copyright</a></li>
+    </ol>
+  </nav>
+
+  <!-- §1 Status of this Memo -->
+  <section class="doc-section" id="status-of-this-memo">
+    <h2>1. Status of this Memo</h2>
+    <p>
+      This document is an Informational specification published by PQSafe Inc. It is not an IETF Standard,
+      nor is it a FIDO Alliance Recommendation at this time. It has been submitted to the FIDO Alliance
+      Agentic Authentication Technical Working Group for consideration.
+    </p>
+    <p>
+      Implementers are advised that this document is a working specification and may be updated. Any party
+      implementing the AP2-PQ profile <span class="rfc-kw">should</span> reference this URL
+      (<code>https://pqsafe.xyz/spec/ap2-pq-v1/</code>) to ensure they are using the canonical version.
+    </p>
+    <div class="notice">
+      The machine-readable conformance test vectors are published separately at
+      <a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json">https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json</a>.
+      Implementations <span class="rfc-kw">must</span> test against the live JSON file, which is the normative
+      source for all six vectors.
+    </div>
+  </section>
+
+  <!-- §2 Conventions -->
+  <section class="doc-section" id="conventions">
+    <h2>2. Conventions</h2>
+    <p>
+      The key words <span class="rfc-kw">must</span>, <span class="rfc-kw">must not</span>,
+      <span class="rfc-kw">required</span>, <span class="rfc-kw">shall</span>,
+      <span class="rfc-kw">shall not</span>, <span class="rfc-kw">should</span>,
+      <span class="rfc-kw">should not</span>, <span class="rfc-kw">recommended</span>,
+      <span class="rfc-kw">not recommended</span>, <span class="rfc-kw">may</span>, and
+      <span class="rfc-kw">optional</span> in this document are to be interpreted as described in
+      BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals.
+    </p>
+    <p>
+      All byte sequences in this document are encoded as lowercase hexadecimal unless otherwise noted.
+      Integer byte lengths are exact. Base64url refers to the URL-safe encoding of RFC 4648 §5 without padding.
+    </p>
+  </section>
+
+  <!-- §3 Terminology -->
+  <section class="doc-section" id="terminology">
+    <h2>3. Terminology</h2>
+    <dl class="term-list">
+      <dt>AP2</dt>
+      <dd>Agent Protocol v2. The FIDO Alliance standard for autonomous AI agent payment authorization, originally contributed by Google in April 2026. Uses JCS-canonicalized SpendEnvelopes with cryptographic signatures.</dd>
+
+      <dt>AP2-PQ profile</dt>
+      <dd>This specification. The extension to AP2 that adds ML-DSA-65 as the mandatory post-quantum signature algorithm for SpendEnvelopes.</dd>
+
+      <dt>Mandate</dt>
+      <dd>An authorization token issued by a human (the Issuer) to an AI agent, granting permission to execute payments within defined bounds. Encoded as a PQ-SignedSpendEnvelope under this profile.</dd>
+
+      <dt>SpendEnvelope</dt>
+      <dd>The AP2 top-level JSON object representing a payment instruction and its authorization constraints. Contains the agent identity, amount, currency, allowed recipients, validity window, nonce, and signature.</dd>
+
+      <dt>PQ-SignedSpendEnvelope</dt>
+      <dd>A SpendEnvelope in which the <code>signature</code> object uses the <code>ap2-mldsa65</code> algorithm identifier as defined in this document, with an ML-DSA-65 signature over the AP2 Fingerprint.</dd>
+
+      <dt>Issuer</dt>
+      <dd>The human or system that creates and signs a SpendEnvelope using their ML-DSA-65 secret key, granting a bounded payment mandate to an Agent.</dd>
+
+      <dt>Agent</dt>
+      <dd>The autonomous AI system that carries the signed SpendEnvelope and presents it to a Verifier when initiating a payment on the Issuer's behalf.</dd>
+
+      <dt>Verifier</dt>
+      <dd>The payment rail gateway or authorization service that receives the SpendEnvelope, performs ML-DSA-65 signature verification, enforces the 7 policy checks, and executes or rejects the payment.</dd>
+
+      <dt>AP2 Fingerprint</dt>
+      <dd>The 32-byte SHA-256 digest of the JCS-canonical form of the SpendEnvelope with the <code>signature</code> member absent. This is the exact byte sequence that ML-DSA-65 signs and verifies.</dd>
+
+      <dt>Audit Trail</dt>
+      <dd>An append-only, hash-chained log of verified SpendEnvelope events. Each entry references the fingerprint and execution outcome of a preceding entry to form an immutable chain.</dd>
+
+      <dt>Nonce</dt>
+      <dd>A 32-byte cryptographically random value, encoded as 64 lowercase hex characters, included in every SpendEnvelope. Used for replay protection: Verifiers <span class="rfc-kw">must</span> reject envelopes with a previously seen nonce.</dd>
+
+      <dt>ML-DSA-65</dt>
+      <dd>The Module-Lattice-Based Digital Signature Algorithm at NIST Category 3, specified in NIST FIPS 204. Formerly CRYSTALS-Dilithium3. Public key: 1,952 bytes. Signature: 3,309 bytes. OID: 2.16.840.1.101.3.4.3.18.</dd>
+
+      <dt>CRQC</dt>
+      <dd>Cryptographically Relevant Quantum Computer. A quantum machine with sufficient qubit count and fault-correction overhead to execute Shor's algorithm against deployed 256-bit elliptic curve keys within a practical timeframe.</dd>
+
+      <dt>JCS</dt>
+      <dd>JSON Canonicalization Scheme. RFC 8785. Deterministic UTF-8 serialization of JSON objects via recursive Unicode code-point key sorting and ECMAScript number formatting.</dd>
+    </dl>
+  </section>
+
+  <!-- §4 Protocol Overview -->
+  <section class="doc-section" id="protocol-overview">
+    <h2>4. Protocol Overview</h2>
+    <p>
+      The AP2-PQ profile introduces a post-quantum cryptographic layer to the AP2 spend envelope lifecycle.
+      The Issuer signs the envelope offline using their ML-DSA-65 key pair. The Agent carries the signed
+      envelope and presents it at the payment rail gateway (Verifier). The Verifier performs signature
+      verification and policy enforcement before executing the payment.
+    </p>
+
+    <div class="protocol-diagram">
+<pre>
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                     AP2-PQ PROTOCOL FLOW                           │
+  └─────────────────────────────────────────────────────────────────────┘
+
+   ┌──────────┐     ┌──────────────────────────────────────────────────┐
+   │          │     │  SpendEnvelope                                   │
+   │  ISSUER  │────▶│  { issuer, agent, max_amount, currency,         │
+   │ (Human)  │sign │    allowed_recipients, valid_from, valid_until,  │
+   │          │     │    nonce, rail,                                  │
+   └──────────┘     │    signature: { alg: "ap2-mldsa65",             │
+        │           │                 value: &lt;ML-DSA-65 sig, 3309B&gt;,  │
+        │           │                 dsaPublicKey: &lt;pk, 1952B&gt; }     │
+        │           └─────────────────────────────────────────────────┘
+        │                              │
+        │           ┌──────────────────▼─────────────────────────────┐
+        │           │               AGENT                            │
+        │           │  Carries signed envelope; presents to Verifier │
+        │           └──────────────────┬─────────────────────────────┘
+        │                              │
+        │           ┌──────────────────▼─────────────────────────────┐
+        │           │            VERIFIER                            │
+        │           │  before_tool_call hook                         │
+        │           │                                                │
+        │           │  1. Recompute fingerprint (JCS → SHA-256)      │
+        │           │  2. ml_dsa65.verify(sig, fingerprint, pubkey)  │
+        │           │  3–7. Policy checks (see §7)                   │
+        │           └──────────────────┬─────────────────────────────┘
+        │                              │
+        │           ┌──────────────────▼─────────────────────────────┐
+        │           │               RAIL                             │
+        │           │  Airwallex · Wise · Stripe · USDC-Base · x402  │
+        │           └────────────────────────────────────────────────┘
+</pre>
+    </div>
+
+    <h3>4.1 Why ML-DSA-65</h3>
+    <p>
+      ML-DSA-65 (NIST Category 3) is selected as the mandatory algorithm for the following reasons:
+    </p>
+    <ul>
+      <li><strong>Post-quantum security:</strong> Security rests on the hardness of Module-LWE and Module-SIS lattice problems; no efficient quantum algorithm is known for these.</li>
+      <li><strong>NIST finalized standard:</strong> FIPS 204 was published July 2024 — this is a finalized federal standard, not a candidate.</li>
+      <li><strong>Operational balance:</strong> Signature size (3,309 bytes / 6,618 hex chars) and public key size (1,952 bytes / 3,904 hex chars) are practical for payment envelope payloads typically well under 32 KB.</li>
+      <li><strong>Non-malleable:</strong> FIPS 204 verification validates the full internal polynomial structure; no low-S normalization class of issues exists.</li>
+      <li><strong>Ecosystem coverage:</strong> TypeScript (@noble/post-quantum), Python (pqcrypto, pyca/cryptography), Go (CIRCL), Rust (ml-dsa crate).</li>
+    </ul>
+
+    <h3>4.2 Key Sizes — Quick Reference</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Raw bytes</th>
+          <th>Hex chars</th>
+          <th>Base64url chars</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>ML-DSA-65 public key (<code>dsaPublicKey</code>)</td><td>1,952</td><td>3,904</td><td>~2,603</td></tr>
+        <tr><td>ML-DSA-65 secret key</td><td>4,032</td><td>8,064</td><td>~5,376</td></tr>
+        <tr><td>ML-DSA-65 signature (<code>value</code>)</td><td>3,309</td><td>6,618</td><td>~4,412</td></tr>
+        <tr><td>ECDSA P-256 public key (legacy)</td><td>64</td><td>128</td><td>~86</td></tr>
+        <tr><td>ECDSA P-256 signature (legacy)</td><td>64</td><td>128</td><td>~86</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- §5 Wire Format -->
+  <section class="doc-section" id="wire-format">
+    <h2>5. Wire Format — JSON Schema (Draft 2020-12)</h2>
+    <p>
+      A <code>PQ-SignedSpendEnvelope</code> is a JSON object. The following JSON Schema (Draft 2020-12) is
+      the normative definition. Conformant implementations <span class="rfc-kw">must</span> produce and accept
+      objects that validate against this schema.
+    </p>
+    <p>
+      Note on encoding: in this profile, <code>signature.value</code> and <code>dsaPublicKey</code> are encoded
+      as lowercase hex strings (base16, RFC 4648), not Base64url. This matches the live test vectors at
+      <a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json">ap2-pq-test-vectors-v1.json</a>.
+      The signing procedure in §6 uses hex encoding throughout.
+    </p>
+
+    <div class="code-block">
+<pre><code>{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pqsafe.xyz/schemas/pq-signed-spend-envelope-v1.json",
+  "title": "PQ-SignedSpendEnvelope",
+  "description": "AP2 SpendEnvelope with ML-DSA-65 post-quantum signature (AP2-PQ Profile v1)",
+  "type": "object",
+  "required": [
+    "issuer", "agent", "max_amount", "currency",
+    "allowed_recipients", "valid_from", "valid_until",
+    "nonce", "rail", "signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "issuer": {
+      "type": "string",
+      "pattern": "^pq1[0-9a-f]{64}$",
+      "description": "Issuer identity string. Format: 'pq1' prefix + 64 lowercase hex chars
+                      (Keccak-256 of the raw ML-DSA-65 public key)."
+    },
+    "agent": {
+      "type": "string",
+      "description": "Agent identity string. Identifies the authorized agent."
+    },
+    "max_amount": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Maximum authorized transaction amount."
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 three-letter currency code (e.g., 'USD', 'HKD')."
+    },
+    "allowed_recipients": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Allowlist of permitted payment recipient identifiers.
+                      The actual recipient MUST match one entry exactly."
+    },
+    "valid_from": {
+      "type": "integer",
+      "description": "Unix epoch timestamp (seconds) from which the envelope is valid."
+    },
+    "valid_until": {
+      "type": "integer",
+      "description": "Unix epoch timestamp (seconds) at which the envelope expires.
+                      Verifiers MUST reject envelopes where now > valid_until."
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "32 bytes of cryptographically random data, hex-encoded (64 lowercase
+                      hex chars). MUST be unique per envelope. Used for replay protection."
+    },
+    "rail": {
+      "type": "string",
+      "enum": ["airwallex", "wise", "stripe", "usdc-base", "x402"],
+      "description": "Payment rail identifier. Only the specified rail may execute this envelope."
+    },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "value", "dsaPublicKey"],
+      "additionalProperties": false,
+      "properties": {
+        "alg": {
+          "type": "string",
+          "const": "ML-DSA-65",
+          "description": "Algorithm identifier. MUST be 'ML-DSA-65' for this profile."
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{6618}$",
+          "description": "ML-DSA-65 signature over the AP2 Fingerprint, hex-encoded.
+                          Raw length: exactly 3,309 bytes / 6,618 hex chars."
+        },
+        "dsaPublicKey": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{3904}$",
+          "description": "ML-DSA-65 public key, hex-encoded.
+                          Raw length: exactly 1,952 bytes / 3,904 hex chars."
+        }
+      }
+    }
+  }
+}</code></pre>
+    </div>
+
+    <h3>5.1 Field Notes</h3>
+    <ul>
+      <li><strong>issuer</strong>: The <code>pq1</code> prefix distinguishes AP2-PQ issuer IDs from other identity formats. The 64 hex chars are the Keccak-256 hash of the raw 1,952-byte ML-DSA-65 public key.</li>
+      <li><strong>max_amount</strong>: A JSON number (not a string). Verifiers <span class="rfc-kw">must</span> reject payment attempts where the requested amount exceeds <code>max_amount</code>.</li>
+      <li><strong>nonce</strong>: 64 hex chars = 32 bytes. Generated fresh for every envelope using a CSPRNG. Verifiers maintain a nonce seen-set; replay <span class="rfc-kw">must</span> be rejected.</li>
+      <li><strong>signature.value</strong>: Exactly 6,618 hex chars. Pattern enforcement at the schema level catches truncated or padded signatures before verification is attempted.</li>
+      <li><strong>signature.dsaPublicKey</strong>: Exactly 3,904 hex chars. Transmitted inline so Verifiers without a key registry can verify self-contained envelopes.</li>
+    </ul>
+  </section>
+
+  <!-- §6 Signing Protocol -->
+  <section class="doc-section" id="signing-protocol">
+    <h2>6. Signing Protocol</h2>
+    <p>
+      The normative signing procedure for a <code>PQ-SignedSpendEnvelope</code> is:
+    </p>
+    <ol class="step-list">
+      <li>
+        <strong>Construct the envelope.</strong> Build the JSON object with all required fields populated
+        except the <code>signature</code> member. All string values <span class="rfc-kw">must</span> be
+        valid UTF-8.
+      </li>
+      <li>
+        <strong>JCS canonicalize (RFC 8785).</strong> Serialize the envelope using the JSON Canonicalization
+        Scheme. JCS recursively sorts all JSON object keys in ascending Unicode code point order and uses
+        ECMAScript <code>Number::toString</code> for numeric values. The result is a deterministic UTF-8
+        byte sequence. The <code>signature</code> key <span class="rfc-kw">must</span> be absent from the
+        canonical form.
+      </li>
+      <li>
+        <strong>Compute the AP2 Fingerprint.</strong>
+        <div class="code-block"><pre><code>fingerprint = SHA-256( JCS( envelope_without_signature ) )
+              // 32 bytes</code></pre></div>
+        This is the exact byte sequence that ML-DSA-65 signs.
+      </li>
+      <li>
+        <strong>Sign with ML-DSA-65.</strong>
+        <div class="code-block"><pre><code>sigma = ML-DSA-65.Sign(secretKey, fingerprint, ctx="")
+        // Output: 3,309 bytes raw</code></pre></div>
+        The context string (<code>ctx</code>) <span class="rfc-kw">must</span> be the empty string.
+        Implementations <span class="rfc-kw">should</span> use the hedged variant (random <code>rnd</code>
+        from a CSPRNG) for defense against fault attacks. The deterministic variant
+        (<code>rnd = 0x00 × 32</code>) is also conformant.
+      </li>
+      <li>
+        <strong>Hex-encode the signature.</strong>
+        <div class="code-block"><pre><code>signature_hex = hex(sigma)    // 6,618 lowercase hex chars
+pubkey_hex    = hex(publicKey) // 3,904 lowercase hex chars</code></pre></div>
+      </li>
+      <li>
+        <strong>Attach the signature object.</strong>
+        <div class="code-block"><pre><code>"signature": {
+  "alg":         "ML-DSA-65",
+  "value":       "&lt;6618 lowercase hex chars&gt;",
+  "dsaPublicKey":"&lt;3904 lowercase hex chars&gt;"
+}</code></pre></div>
+      </li>
+    </ol>
+
+    <div class="notice">
+      <strong>Implementation note:</strong> Use a fully conformant JCS library. Ad-hoc key sorting or
+      custom serialization <span class="rfc-kw">must not</span> be used — subtle deviations from RFC 8785
+      produce different byte sequences and cause verification failures.
+      Reference implementations: <code>json-canonicalize</code> (npm, RFC 8785 compliant),
+      <code>jcs</code> (PyPI), <code>github.com/cyberphone/json-canonicalization</code> (Go).
+    </div>
+  </section>
+
+  <!-- §7 Verification Protocol -->
+  <section class="doc-section" id="verification-protocol">
+    <h2>7. Verification Protocol (7 Checks)</h2>
+    <p>
+      Verifiers <span class="rfc-kw">must</span> perform all seven checks in the order listed before
+      executing any payment. A failure on any check <span class="rfc-kw">must</span> cause the envelope
+      to be rejected. Verifiers <span class="rfc-kw">must not</span> apply spend policy or business logic
+      to an unverified envelope.
+    </p>
+    <ol class="step-list">
+      <li>
+        <strong>Signature valid.</strong> Recompute the AP2 Fingerprint from the received envelope (with
+        <code>signature</code> removed), then call:
+        <div class="code-block"><pre><code>result = ml_dsa65.verify(
+  sig       = hex_decode(envelope.signature.value),
+  message   = fingerprint,  // 32-byte SHA-256
+  publicKey = hex_decode(envelope.signature.dsaPublicKey)
+)
+// result must be true</code></pre></div>
+        If <code>result</code> is false or an exception is raised, reject with
+        <code>AP2ERR_SIGNATURE_INVALID</code>.
+      </li>
+      <li>
+        <strong>Not expired.</strong> Check <code>now &lt; envelope.valid_until</code>.
+        Reject with <code>AP2ERR_EXPIRED</code> if the envelope has passed its expiry timestamp.
+      </li>
+      <li>
+        <strong>Not yet valid.</strong> Check <code>now &ge; envelope.valid_from</code>.
+        Reject with <code>AP2ERR_NOT_YET_VALID</code> if the envelope is presented before its validity window opens.
+      </li>
+      <li>
+        <strong>Recipient in allowlist.</strong> The payment's intended recipient
+        <span class="rfc-kw">must</span> appear exactly in <code>envelope.allowed_recipients</code>.
+        Reject with <code>AP2ERR_RECIPIENT_NOT_ALLOWED</code> otherwise.
+      </li>
+      <li>
+        <strong>Amount within mandate.</strong> The requested payment amount
+        <span class="rfc-kw">must not</span> exceed <code>envelope.max_amount</code>.
+        Reject with <code>AP2ERR_AMOUNT_EXCEEDED</code> otherwise.
+      </li>
+      <li>
+        <strong>Nonce not replayed.</strong> Check the <code>nonce</code> field against a persistent
+        seen-set scoped to the issuer. Reject with <code>AP2ERR_NONCE_REPLAY</code> if the nonce has
+        been seen before. On successful verification, add the nonce to the seen-set with TTL set to
+        <code>valid_until</code>.
+      </li>
+      <li>
+        <strong>Key ID valid.</strong> Optionally, verify that <code>dsaPublicKey</code> is registered
+        in the issuer's key registry and has not been revoked. If a registry is configured, reject
+        with <code>AP2ERR_KEY_NOT_REGISTERED</code> or <code>AP2ERR_KEY_REVOKED</code> on failure.
+        In self-contained mode (no registry), skip this check but log a warning.
+      </li>
+    </ol>
+
+    <h3>7.1 Error Codes Summary</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>Code</th><th>Check</th><th>HTTP status suggestion</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>AP2ERR_SIGNATURE_INVALID</code></td><td>Check 1</td><td>401</td></tr>
+        <tr><td><code>AP2ERR_EXPIRED</code></td><td>Check 2</td><td>403</td></tr>
+        <tr><td><code>AP2ERR_NOT_YET_VALID</code></td><td>Check 3</td><td>403</td></tr>
+        <tr><td><code>AP2ERR_RECIPIENT_NOT_ALLOWED</code></td><td>Check 4</td><td>403</td></tr>
+        <tr><td><code>AP2ERR_AMOUNT_EXCEEDED</code></td><td>Check 5</td><td>403</td></tr>
+        <tr><td><code>AP2ERR_NONCE_REPLAY</code></td><td>Check 6</td><td>409</td></tr>
+        <tr><td><code>AP2ERR_KEY_NOT_REGISTERED</code></td><td>Check 7</td><td>401</td></tr>
+        <tr><td><code>AP2ERR_KEY_REVOKED</code></td><td>Check 7</td><td>401</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- §8 Test Vectors -->
+  <section class="doc-section" id="test-vectors">
+    <h2>8. Conformance Test Vectors</h2>
+    <p>
+      The live, machine-readable test vector file is published at:
+    </p>
+    <p style="text-align:center; margin: var(--spacing-md) 0 var(--spacing-lg);">
+      <a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json" style="font-size:1rem; font-weight:600;">
+        https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json
+      </a>
+    </p>
+    <p>
+      The JSON file is the normative source. Implementations <span class="rfc-kw">must</span> verify
+      against the live file, not only the summaries below. The file contains six vectors across two
+      test suites (<code>sign_verify</code> and <code>negative</code>).
+    </p>
+
+    <h3>8.1 Positive Test Cases (TC-1 through TC-5)</h3>
+    <p>
+      Five positive vectors each provide a complete <code>PQ-SignedSpendEnvelope</code> with
+      known issuer key material and expected verification result <code>true</code>. A conformant
+      implementation <span class="rfc-kw">must</span>:
+    </p>
+    <ol>
+      <li>Recompute the AP2 Fingerprint (JCS → SHA-256) from the envelope fields excluding <code>signature</code>.</li>
+      <li>Hex-decode <code>signature.value</code> (6,618 hex chars → 3,309 bytes).</li>
+      <li>Hex-decode <code>signature.dsaPublicKey</code> (3,904 hex chars → 1,952 bytes).</li>
+      <li>Call <code>ml_dsa65.verify(sig, fingerprint, pubkey)</code> and assert <code>true</code>.</li>
+    </ol>
+
+    <div class="vec-card">
+      <p class="vec-card-title">TC-1 — Baseline positive <span class="vec-card-pass">PASS</span></p>
+      <p>Standard envelope: USD 100, Airwallex rail, 24-hour validity window. Tests the complete sign→fingerprint→verify pipeline.</p>
+    </div>
+    <div class="vec-card">
+      <p class="vec-card-title">TC-2 — Different amount + currency <span class="vec-card-pass">PASS</span></p>
+      <p>HKD 500 envelope on the Wise rail. Verifies currency field handling in JCS canonicalization.</p>
+    </div>
+    <div class="vec-card">
+      <p class="vec-card-title">TC-3 — Multiple allowed recipients <span class="vec-card-pass">PASS</span></p>
+      <p>Allowlist with three recipient identifiers. Verifies array serialization ordering in JCS canonical form.</p>
+    </div>
+    <div class="vec-card">
+      <p class="vec-card-title">TC-4 — Stripe rail <span class="vec-card-pass">PASS</span></p>
+      <p>EUR 250 on Stripe. Validates rail enum handling and cross-currency correctness.</p>
+    </div>
+    <div class="vec-card">
+      <p class="vec-card-title">TC-5 — x402 rail <span class="vec-card-pass">PASS</span></p>
+      <p>USDC 50 on x402 HTTP-native micropayment rail. Tests non-fiat currency envelope signing.</p>
+    </div>
+
+    <h3>8.2 Negative Test Case (TC-N1)</h3>
+    <div class="vec-card">
+      <p class="vec-card-title">TC-N1 — Modified signature byte <span class="vec-card-fail">MUST REJECT</span></p>
+      <p>
+        A valid envelope with one byte of <code>signature.value</code> flipped (XOR 0x01 at byte index 100).
+        A conformant implementation <span class="rfc-kw">must</span> return <code>false</code> from
+        <code>ml_dsa65.verify()</code>. This vector exposes a <strong>critical defect</strong> in
+        <code>pqcrypto</code> v0.4.0, which silently returned <code>true</code> for structurally invalid
+        ML-DSA-65 signatures due to incomplete polynomial coefficient validation.
+        Implementations using <code>pqcrypto</code> <span class="rfc-kw">must</span> upgrade to v0.4.1+
+        before claiming AP2-PQ conformance.
+      </p>
+    </div>
+
+    <div class="notice">
+      <strong>TC-N1 CVE context:</strong> The <code>pqcrypto</code> 0.4.0 silent-accept bug was discovered
+      during development of this test suite. The bug causes certain structurally malformed ML-DSA-65
+      signatures to pass verification. Any implementation that passes TC-N1 is vulnerable to signature
+      forgery attacks. See the test vector file for the exact tampered signature bytes.
+    </div>
+  </section>
+
+  <!-- §9 Security Considerations -->
+  <section class="doc-section" id="security-considerations">
+    <h2>9. Security Considerations</h2>
+
+    <h3>9.1 Replay Protection (Nonce + Revocation)</h3>
+    <p>
+      Each SpendEnvelope contains a 64-hex-char nonce (32 bytes of CSPRNG output). Verifiers
+      <span class="rfc-kw">must</span> maintain a persistent seen-set of nonces, keyed by issuer identity,
+      with entries retained until <code>valid_until</code>. An envelope submitted a second time with the same
+      nonce <span class="rfc-kw">must</span> be rejected with <code>AP2ERR_NONCE_REPLAY</code>, even if all
+      other checks pass. Nonce storage <span class="rfc-kw">should</span> be durable across Verifier restarts.
+    </p>
+    <p>
+      Key revocation complements nonce protection for longer-term replay scenarios. Issuers
+      <span class="rfc-kw">should</span> provide a revocation endpoint or publish a revocation list.
+      Verifiers <span class="rfc-kw">should</span> check revocation status on each verification request
+      rather than caching revocation state for more than 60 seconds.
+    </p>
+
+    <h3>9.2 Expiry Enforcement</h3>
+    <p>
+      Verifiers <span class="rfc-kw">must</span> reject envelopes where the current time exceeds
+      <code>valid_until</code>. Clock skew between Issuer and Verifier <span class="rfc-kw">should</span>
+      be addressed by issuing envelopes with a short validity window (e.g., 5–60 minutes for
+      single-transaction use, up to 24 hours for multi-transaction mandates) rather than by applying
+      a tolerance window at the Verifier.
+    </p>
+
+    <h3>9.3 Audit Log Integrity (Hash Chain)</h3>
+    <p>
+      Verifiers <span class="rfc-kw">should</span> maintain an append-only audit log of verified
+      SpendEnvelope events. Each log entry <span class="rfc-kw">should</span> include the AP2 Fingerprint
+      of the envelope and the SHA-256 hash of the previous entry, forming a hash chain that
+      makes retroactive modification detectable. For higher assurance, the chain head
+      <span class="rfc-kw">may</span> be anchored to an external immutable store (e.g., a public
+      blockchain commitment).
+    </p>
+
+    <h3>9.4 Key Rotation</h3>
+    <p>
+      ML-DSA-65 key pairs <span class="rfc-kw">should</span> be rotated at least annually for long-lived
+      agent identities. During rotation:
+    </p>
+    <ul>
+      <li>The new public key <span class="rfc-kw">must</span> be registered before the old key is deprovisioned.</li>
+      <li>Both keys <span class="rfc-kw">should</span> be accepted by Verifiers during a rotation window of no more than 72 hours.</li>
+      <li>Secret keys (4,032 bytes) <span class="rfc-kw">must</span> be stored in a secrets management system (HSM, cloud KMS, or encrypted key store). Secret keys <span class="rfc-kw">must not</span> be stored in application code, version control, environment variables, or logs.</li>
+      <li>Agents detecting possible key compromise <span class="rfc-kw">must</span> revoke immediately.</li>
+    </ul>
+
+    <h3>9.5 Post-Quantum Migration Timeline</h3>
+    <table class="phase-table">
+      <thead>
+        <tr><th>Phase</th><th>Start date</th><th>Sender requirement</th><th>Receiver requirement</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Phase 1: Dual-Sign Optional</td><td>2025-01</td><td>MAY dual-sign (ECDSA + ML-DSA-65)</td><td>SHOULD accept PQ</td></tr>
+        <tr><td>Phase 2: Dual-Sign Mandatory</td><td>2026-01</td><td>MUST include ML-DSA-65 signature</td><td>MUST accept PQ</td></tr>
+        <tr><td>Phase 3: PQ-Only</td><td>2027-01</td><td>MUST use ML-DSA-65 only</td><td>MAY reject ECDSA-only</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Operators <span class="rfc-kw">should</span> treat 2030 as a hard deadline for completing migration
+      to post-quantum signing across all production AP2 deployments — the lower bound of credible CRQC
+      estimates from published intelligence and academic assessments.
+    </p>
+
+    <h3>9.6 Side-Channel Resistance</h3>
+    <p>
+      Implementations <span class="rfc-kw">must</span> use a constant-time ML-DSA-65 library. Timing
+      variations in signing or verification can leak secret key material. Recommended libraries with
+      constant-time properties: <code>@noble/post-quantum</code> v0.2.x+ (TypeScript), Cloudflare CIRCL
+      <code>mldsa65</code> (Go), RustCrypto <code>ml-dsa</code> crate (Rust), pyca/cryptography
+      ML-DSA via OpenSSL (Python — verify constant-time guarantee for the target platform).
+    </p>
+
+    <h3>9.7 Key Reuse</h3>
+    <p>
+      AP2 agents <span class="rfc-kw">must not</span> reuse their ML-DSA-65 key pair for any purpose
+      other than AP2 SpendEnvelope signing as defined in this document. The same key pair
+      <span class="rfc-kw">must not</span> be used for encryption, key encapsulation, TLS certificates,
+      JWT issuance, or document signing without explicit cross-protocol security analysis.
+    </p>
+
+    <h3>9.8 DoS via Large Payloads</h3>
+    <p>
+      ML-DSA-65 signatures (3,309 bytes) and public keys (1,952 bytes) are substantially larger than
+      ECDSA P-256 equivalents (~64 bytes each). Verifiers <span class="rfc-kw">must</span> enforce
+      input length limits. The <span class="rfc-kw">recommended</span> maximum is 8,192 bytes per HTTP
+      header field. Rate limiting on the authorization endpoint is <span class="rfc-kw">recommended</span>;
+      ML-DSA-65 verification takes approximately 0.3 ms on modern hardware and unthrottled requests
+      can exhaust CPU.
+    </p>
+
+    <h3>9.9 Harvest-Now-Decrypt-Later</h3>
+    <p>
+      Adversaries at the nation-state level are documented to be capturing signed traffic today with
+      intent to forge signatures once a CRQC is available. AP2 SpendEnvelope records may remain
+      legally and financially significant for years; the signature algorithm <span class="rfc-kw">must</span>
+      therefore remain unforgeable over that same timescale. Adopting ML-DSA-65 now — before CRQCs exist
+      — is the correct engineering response.
+    </p>
+  </section>
+
+  <!-- §10 IANA Considerations -->
+  <section class="doc-section" id="iana-considerations">
+    <h2>10. IANA Considerations</h2>
+    <p>
+      This document has no IANA considerations. It is an Informational specification published by
+      PQSafe Inc. The algorithm identifier <code>ML-DSA-65</code> used in the
+      <code>signature.alg</code> field is defined by this document for use within the AP2-PQ profile.
+      No new HTTP header fields are introduced; the <code>x-ap2-alg</code>, <code>x-ap2-signature</code>,
+      and <code>x-ap2-pubkey</code> HTTP headers referenced in this profile are existing AP2 headers.
+    </p>
+  </section>
+
+  <!-- §11 Normative References -->
+  <section class="doc-section" id="normative-references">
+    <h2>11. Normative References</h2>
+    <ul class="ref-list">
+      <li>
+        <span class="ref-tag">[FIPS204]</span>
+        National Institute of Standards and Technology. "Module-Lattice-Based Digital Signature Standard."
+        NIST FIPS Publication 204, July 2024.
+        <a href="https://doi.org/10.6028/NIST.FIPS.204">https://doi.org/10.6028/NIST.FIPS.204</a>
+      </li>
+      <li>
+        <span class="ref-tag">[RFC8785]</span>
+        Rundgren, A., Jordan, B., and S. Erdtman. "JSON Canonicalization Scheme (JCS)."
+        RFC 8785, June 2020.
+        <a href="https://www.rfc-editor.org/rfc/rfc8785">https://www.rfc-editor.org/rfc/rfc8785</a>
+      </li>
+      <li>
+        <span class="ref-tag">[RFC2119]</span>
+        Bradner, S. "Key words for use in RFCs to Indicate Requirement Levels."
+        BCP 14, RFC 2119, March 1997.
+        <a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>
+      </li>
+      <li>
+        <span class="ref-tag">[RFC8174]</span>
+        Leiba, B. "Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words."
+        BCP 14, RFC 8174, May 2017.
+        <a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>
+      </li>
+      <li>
+        <span class="ref-tag">[RFC4648]</span>
+        Josefsson, S. "The Base16, Base32, and Base64 Data Encodings."
+        RFC 4648, October 2006.
+        <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
+      </li>
+      <li>
+        <span class="ref-tag">[AP2-SPEC]</span>
+        Google. "Agent Payments Protocol (AP2) Specification."
+        github.com/google-agentic-commerce/AP2 (contributed to FIDO Alliance 2026-04-28).
+        AP2 is under active development within the FIDO Alliance Agentic Authentication TWG.
+      </li>
+    </ul>
+  </section>
+
+  <!-- §12 Informative References -->
+  <section class="doc-section" id="informative-references">
+    <h2>12. Informative References</h2>
+    <ul class="ref-list">
+      <li>
+        <span class="ref-tag">[CSA2025]</span>
+        Huang, Ken and Huang, Jerry. "Secure Use of the Agent Payments Protocol (AP2): A Framework for
+        Trustworthy AI-Driven Transactions." Cloud Security Alliance, 2025-10-06.
+        <a href="https://cloudsecurityalliance.org/blog/2025/10/06/secure-use-of-the-agent-payments-protocol-ap2-a-framework-for-trustworthy-ai-driven-transactions">cloudsecurityalliance.org</a>
+        <br>
+        <em>Verbatim quote:</em> "For quantum resistance, replace ECDSA with Dilithium in future library updates."
+      </li>
+      <li>
+        <span class="ref-tag">[NIST-IR-8547]</span>
+        National Institute of Standards and Technology. "Initial Public Draft: Migration to Post-Quantum
+        Cryptography Standards." NIST IR 8547 (initial public draft).
+        <a href="https://doi.org/10.6028/NIST.IR.8547.ipd">https://doi.org/10.6028/NIST.IR.8547.ipd</a>
+      </li>
+      <li>
+        <span class="ref-tag">[FIDO-TWG]</span>
+        FIDO Alliance. "FIDO Alliance to Develop Standards for Trusted AI Agent Interactions."
+        Press release, 2026-04-28.
+        <a href="https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/">fidoalliance.org</a>
+      </li>
+      <li>
+        <span class="ref-tag">[NOBLE-PQ]</span>
+        Miller, P. "@noble/post-quantum: Post-quantum cryptography for JavaScript." v0.2.x.
+        <a href="https://github.com/paulmillr/noble-post-quantum">github.com/paulmillr/noble-post-quantum</a>
+      </li>
+      <li>
+        <span class="ref-tag">[CIRCL]</span>
+        Cloudflare. "CIRCL: Cloudflare Interoperable Reusable Cryptographic Library."
+        <a href="https://github.com/cloudflare/circl">github.com/cloudflare/circl</a>
+      </li>
+      <li>
+        <span class="ref-tag">[AP2PQ-VECTORS]</span>
+        PQSafe Inc. "AP2-PQ Conformance Test Vectors v1." Published 2026-05.
+        <a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json">https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json</a>
+      </li>
+      <li>
+        <span class="ref-tag">[SHOR94]</span>
+        Shor, P. "Algorithms for Quantum Computation: Discrete Logarithms and Factoring."
+        Proceedings of the 35th Annual Symposium on Foundations of Computer Science, pp. 124–134, 1994.
+      </li>
+      <li>
+        <span class="ref-tag">[CLAWHAVOC]</span>
+        PQSafe Inc. "ClawHavoc CSA: Post-quantum payment guardrails for OpenClaw agent skill registries."
+        <a href="https://clawhub.ai">clawhub.ai</a>. April 2026. (PQSafe pqsafe-pay skill referenced
+        in ClawHavoc incident analysis as cryptographic guardrail defense.)
+      </li>
+    </ul>
+  </section>
+
+  <!-- §13 Authors' Addresses -->
+  <section class="doc-section" id="authors-addresses">
+    <h2>13. Authors' Addresses</h2>
+    <p>
+      PQSafe Inc.<br>
+      Hong Kong, China<br>
+      Email: <a href="mailto:dev@pqsafe.xyz">dev@pqsafe.xyz</a><br>
+      URI: <a href="https://pqsafe.xyz">https://pqsafe.xyz</a>
+    </p>
+    <p>
+      Raymond Chau Yik-Chun<br>
+      PQSafe Inc.<br>
+      Email: <a href="mailto:raymond@pqsafe.xyz">raymond@pqsafe.xyz</a>
+    </p>
+  </section>
+
+  <!-- §14 Copyright -->
+  <section class="doc-section" id="copyright">
+    <h2>14. Copyright</h2>
+    <p>
+      Copyright 2026 PQSafe Inc. Licensed under the
+      <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
+      You may reproduce this specification provided attribution is maintained and the canonical URL
+      (<code>https://pqsafe.xyz/spec/ap2-pq-v1/</code>) is cited.
+    </p>
+    <p>
+      This document does not claim ownership of the AP2 protocol, which is a FIDO Alliance specification
+      originally contributed by Google. "AP2-PQ profile" refers solely to PQSafe's extension proposal
+      for post-quantum signatures within the AP2 framework.
+    </p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="doc-footer">
+    <p>
+      <strong>AP2-PQ Profile v1</strong> &nbsp;·&nbsp;
+      Published 2026-05-05 &nbsp;·&nbsp;
+      <a href="https://pqsafe.xyz">pqsafe.xyz</a> &nbsp;·&nbsp;
+      <a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json">Test Vectors JSON</a> &nbsp;·&nbsp;
+      <a href="https://pqsafe.xyz/ap2-pq-rfc/">AP2-PQ RFC Draft</a> &nbsp;·&nbsp;
+      <a href="https://pqsafe.xyz/handbook/">Developer Handbook</a>
+    </p>
+    <p style="margin-top:0.5rem; color: var(--color-subtle);">
+      Apache-2.0 &nbsp;·&nbsp; Citation: <em>PQSafe Inc., "AP2-PQ Profile v1,"
+      https://pqsafe.xyz/spec/ap2-pq-v1/, 2026-05-05.</em>
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
