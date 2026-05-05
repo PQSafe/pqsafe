@@ -79,6 +79,12 @@ YC S26 applicant. Contact: raymond@pqsafe.xyz
 - Security contact: security@pqsafe.xyz
 - Sensitive reports: https://github.com/PQSafe/pqsafe/security/advisories/new (encrypted, private channel)
 
+## Updates
+
+- [Blog index](https://pqsafe.xyz/blog/): Chronological list of production deployments, SDK releases, and standards progress.
+- [Real ML-DSA-65 verifier deployed at api.pqsafe.xyz (2026-05-05)](https://pqsafe.xyz/blog/2026-05-05-real-ml-dsa-verifier-deployed/): The /v1/mandates/verify stub is gone. Real mldsa65.verify() from @noble/post-quantum in production. 3,309-byte signature validation. Six conformance test vectors published. Run: npx @pqsafe/conformance --endpoint https://api.pqsafe.xyz/v1/mandates/verify
+- [Atom feed](https://pqsafe.xyz/feed.xml): Subscribe to all future posts.
+
 ## Optional
 
 - [Privacy policy](https://pqsafe.xyz/privacy/): Data handling and retention policy.

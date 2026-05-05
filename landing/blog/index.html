@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — PQSafe</title>
+  <meta name="description" content="Updates from PQSafe: production deployments, SDK releases, spec progress, and standards work on post-quantum agent payment infrastructure.">
+  <link rel="canonical" href="https://pqsafe.xyz/blog/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Blog — PQSafe">
+  <meta property="og:description" content="Updates from PQSafe: production deployments, SDK releases, spec progress, and standards work on post-quantum agent payment infrastructure.">
+  <meta property="og:image" content="https://pqsafe.xyz/og/home.png">
+  <meta property="og:url" content="https://pqsafe.xyz/blog/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PQSafe AgentPay">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Blog — PQSafe">
+  <meta name="twitter:description" content="Updates from PQSafe: production deployments, SDK releases, and standards progress.">
+  <meta name="twitter:image" content="https://pqsafe.xyz/og/home.png">
+
+  <!-- Robots -->
+  <meta name="robots" content="index, follow">
+
+  <!-- JSON-LD Blog -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "PQSafe Blog",
+    "description": "Updates from PQSafe: production deployments, SDK releases, spec progress, and standards work on post-quantum agent payment infrastructure.",
+    "url": "https://pqsafe.xyz/blog/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "PQSafe",
+      "url": "https://pqsafe.xyz"
+    }
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2310b981'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='bold' font-size='14' fill='white'>PQ</text></svg>">
+  <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="PQSafe Blog">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-subtle: #888;
+      --color-border: #d1d5db;
+      --color-bg: #fff;
+      --color-bg-subtle: #f9fafb;
+      --color-accent: #059669;
+      --color-accent-hover: #047857;
+      --max-width: 720px;
+    }
+
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--color-text);
+      background: var(--color-bg);
+      line-height: 1.7;
+      padding: 0 1rem;
+    }
+
+    .page-wrap {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 3rem 0 5rem;
+    }
+
+    /* Site nav */
+    .site-nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.25rem 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.875rem;
+    }
+    .site-nav-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      color: var(--color-text);
+      text-decoration: none;
+    }
+    .pq-badge {
+      background: #10b981;
+      color: #fff;
+      font-weight: 900;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.45rem;
+      border-radius: 0.3rem;
+      font-family: var(--font-mono);
+    }
+    .site-nav-links {
+      display: flex;
+      gap: 1.25rem;
+      list-style: none;
+    }
+    .site-nav-links a {
+      color: var(--color-muted);
+      text-decoration: none;
+    }
+    .site-nav-links a:hover { color: var(--color-text); }
+    .site-nav-links a.active { color: var(--color-text); font-weight: 600; }
+
+    /* Page header */
+    .page-header {
+      border-bottom: 2px solid var(--color-text);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      color: var(--color-muted);
+      font-size: 0.9375rem;
+    }
+
+    .feed-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8125rem;
+      color: var(--color-subtle);
+      text-decoration: none;
+      margin-top: 0.75rem;
+    }
+    .feed-link:hover { color: var(--color-accent); }
+
+    /* Post list */
+    .post-list {
+      list-style: none;
+    }
+
+    .post-card {
+      display: block;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--color-border);
+      text-decoration: none;
+      color: var(--color-text);
+      transition: padding-left 0.15s ease;
+    }
+    .post-card:hover {
+      padding-left: 0.5rem;
+    }
+    .post-card:first-child { padding-top: 0; }
+
+    .post-date {
+      font-size: 0.8125rem;
+      color: var(--color-subtle);
+      font-family: var(--font-mono);
+      margin-bottom: 0.35rem;
+    }
+
+    .post-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--color-text);
+      margin-bottom: 0.45rem;
+    }
+    .post-card:hover .post-title {
+      color: var(--color-accent);
+    }
+
+    .post-summary {
+      font-size: 0.9rem;
+      color: var(--color-muted);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .post-tag {
+      display: inline-block;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      border-radius: 2rem;
+      padding: 0.1rem 0.55rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border);
+      font-size: 0.8125rem;
+      color: var(--color-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      align-items: center;
+    }
+    .page-footer a { color: var(--color-accent); text-decoration: none; }
+    .page-footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <nav class="site-nav">
+      <a href="/" class="site-nav-logo">
+        <span class="pq-badge">PQ</span>
+        PQSafe
+      </a>
+      <ul class="site-nav-links">
+        <li><a href="/blog/" class="active">Blog</a></li>
+        <li><a href="/handbook/">Handbook</a></li>
+        <li><a href="/verify/">Verify</a></li>
+        <li><a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+
+    <header class="page-header">
+      <h1>Blog</h1>
+      <p>Production deployments, SDK releases, spec progress, and standards work.</p>
+      <a href="/feed.xml" class="feed-link">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20 4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/>
+        </svg>
+        Atom feed
+      </a>
+    </header>
+
+    <ul class="post-list">
+
+      <li>
+        <a href="/blog/2026-05-05-real-ml-dsa-verifier-deployed/" class="post-card">
+          <div class="post-date">2026-05-05</div>
+          <div class="post-title">Real ML-DSA-65 verifier deployed at api.pqsafe.xyz</div>
+          <p class="post-summary">
+            For six weeks, <code>/v1/mandates/verify</code> accepted any signature payload.
+            Today the stub is gone — replaced by a real <code>mldsa65.verify()</code> call.
+            3,309-byte signature validation, SHA-256(JCS) fingerprint protocol, and six published
+            conformance test vectors.
+          </p>
+          <div class="post-tags">
+            <span class="post-tag">ML-DSA-65</span>
+            <span class="post-tag">FIPS 204</span>
+            <span class="post-tag">production</span>
+            <span class="post-tag">conformance</span>
+          </div>
+        </a>
+      </li>
+
+    </ul>
+
+    <footer class="page-footer">
+      <span><a href="/feed.xml">Atom feed</a></span>
+      <span>&middot;</span>
+      <span><a href="/">pqsafe.xyz</a></span>
+      <span>&middot;</span>
+      <span>License: <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener">Apache-2.0</a></span>
+    </footer>
+
+  </div>
+
+</body>
+</html>

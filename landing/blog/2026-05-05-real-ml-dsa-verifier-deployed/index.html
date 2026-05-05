@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real ML-DSA-65 Verifier Deployed in Production — PQSafe</title>
+  <meta name="description" content="For six weeks, our /v1/mandates/verify endpoint accepted any signature. Today it accepts only real ML-DSA-65 signatures (NIST FIPS 204). Here is what changed, why it matters, and how to test it.">
+  <link rel="canonical" href="https://pqsafe.xyz/blog/2026-05-05-real-ml-dsa-verifier-deployed/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Real ML-DSA-65 Verifier Deployed in Production — PQSafe">
+  <meta property="og:description" content="For six weeks, our /v1/mandates/verify endpoint accepted any signature. Today it accepts only real ML-DSA-65 signatures (NIST FIPS 204). Stub removed. Conformance test vectors published.">
+  <meta property="og:image" content="https://pqsafe.xyz/og/openclaw-skill.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://pqsafe.xyz/blog/2026-05-05-real-ml-dsa-verifier-deployed/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="PQSafe AgentPay">
+  <meta property="article:published_time" content="2026-05-05T00:00:00Z">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PQSafeAgentPay">
+  <meta name="twitter:title" content="Real ML-DSA-65 Verifier Deployed in Production — PQSafe">
+  <meta name="twitter:description" content="Stub removed. Real @noble/post-quantum verify in production. 3,309-byte ML-DSA-65 signature validation. 6 conformance test vectors published.">
+  <meta name="twitter:image" content="https://pqsafe.xyz/og/openclaw-skill.png">
+
+  <!-- Robots -->
+  <meta name="robots" content="index, follow">
+
+  <!-- JSON-LD BlogPosting -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Real ML-DSA-65 Verifier Deployed in Production",
+    "description": "For six weeks, our /v1/mandates/verify endpoint accepted any signature. Today it accepts only real ML-DSA-65 signatures (NIST FIPS 204). Stub removed. Conformance test vectors published.",
+    "datePublished": "2026-05-05T00:00:00Z",
+    "dateModified": "2026-05-05T00:00:00Z",
+    "author": {
+      "@type": "Organization",
+      "name": "PQSafe",
+      "url": "https://pqsafe.xyz"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PQSafe",
+      "url": "https://pqsafe.xyz",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://pqsafe.xyz/og/home.png"
+      }
+    },
+    "url": "https://pqsafe.xyz/blog/2026-05-05-real-ml-dsa-verifier-deployed/",
+    "mainEntityOfPage": "https://pqsafe.xyz/blog/2026-05-05-real-ml-dsa-verifier-deployed/",
+    "image": "https://pqsafe.xyz/og/openclaw-skill.png",
+    "articleBody": "For six weeks, our /v1/mandates/verify endpoint returned 200 OK for any signature payload. The stub existed so we could ship the envelope schema, the SDK, and the rail integrations in parallel. Today that stub is gone. The endpoint now calls @noble/post-quantum mldsa65.verify() on every request. If the ML-DSA-65 signature does not verify against the public key and the JCS-canonicalised envelope body, the API returns 400. No exceptions.",
+    "keywords": "ML-DSA-65, NIST FIPS 204, post-quantum cryptography, verifier, API, agent payments, AP2-PQ, conformance test vectors",
+    "isPartOf": {
+      "@type": "Blog",
+      "name": "PQSafe Blog",
+      "url": "https://pqsafe.xyz/blog/"
+    }
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2310b981'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='bold' font-size='14' fill='white'>PQ</text></svg>">
+  <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="PQSafe Blog">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-subtle: #888;
+      --color-border: #d1d5db;
+      --color-bg: #fff;
+      --color-bg-subtle: #f9fafb;
+      --color-accent: #059669;
+      --color-accent-hover: #047857;
+      --max-width: 720px;
+    }
+
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--color-text);
+      background: var(--color-bg);
+      line-height: 1.75;
+      padding: 0 1rem;
+    }
+
+    .page-wrap {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 3rem 0 5rem;
+    }
+
+    /* Site nav */
+    .site-nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.25rem 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.875rem;
+    }
+    .site-nav-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      color: var(--color-text);
+      text-decoration: none;
+    }
+    .pq-badge {
+      background: #10b981;
+      color: #fff;
+      font-weight: 900;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.45rem;
+      border-radius: 0.3rem;
+      font-family: var(--font-mono);
+    }
+    .site-nav-links {
+      display: flex;
+      gap: 1.25rem;
+      list-style: none;
+    }
+    .site-nav-links a {
+      color: var(--color-muted);
+      text-decoration: none;
+    }
+    .site-nav-links a:hover { color: var(--color-text); }
+
+    /* Article header */
+    .article-header {
+      border-bottom: 2px solid var(--color-text);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.8125rem;
+      color: var(--color-subtle);
+      margin-bottom: 1rem;
+    }
+    .breadcrumb a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .article-title {
+      font-size: clamp(1.6rem, 4vw, 2.25rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .article-meta {
+      font-size: 0.8125rem;
+      color: var(--color-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      align-items: center;
+    }
+    .article-meta .tag {
+      display: inline-block;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      border-radius: 2rem;
+      padding: 0.15rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* Body */
+    .article-body h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 2.5rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .article-body p {
+      margin-bottom: 1.1rem;
+      color: #1a1a1a;
+    }
+
+    .article-body a {
+      color: var(--color-accent);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+    }
+    .article-body a:hover { color: var(--color-accent-hover); }
+
+    .article-body ul {
+      margin: 0.75rem 0 1.1rem 1.5rem;
+    }
+    .article-body li {
+      margin-bottom: 0.4rem;
+    }
+
+    /* Code */
+    .article-body code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: 0.25rem;
+      padding: 0.1em 0.35em;
+    }
+
+    .code-block {
+      background: #0d0d0d;
+      color: #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      font-family: var(--font-mono);
+      font-size: 0.8375rem;
+      line-height: 1.6;
+      border: 1px solid #1e1e1e;
+    }
+    .code-block .comment { color: #64748b; }
+    .code-block .keyword { color: #22d3ee; }
+    .code-block .string { color: #34d399; }
+    .code-block .fn { color: #a78bfa; }
+    .code-block .label { color: #94a3b8; font-size: 0.75rem; font-style: italic; }
+
+    /* Callout / highlight box */
+    .callout {
+      border-left: 3px solid var(--color-accent);
+      background: #f0fdf4;
+      padding: 1rem 1.25rem;
+      border-radius: 0 0.375rem 0.375rem 0;
+      margin: 1.25rem 0;
+    }
+    .callout p { margin-bottom: 0; }
+
+    .callout-warning {
+      border-left-color: #f59e0b;
+      background: #fffbeb;
+    }
+
+    /* Spec table */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      margin: 1rem 0 1.25rem;
+    }
+    .spec-table th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-muted);
+    }
+    .spec-table td {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--color-border);
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+    .spec-table tr:nth-child(even) td { background: #fafafa; }
+
+    /* References */
+    .references {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border);
+      font-size: 0.8125rem;
+      color: var(--color-muted);
+    }
+    .references h2 {
+      font-size: 0.875rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      border-bottom: none;
+      margin-top: 0;
+      padding-bottom: 0;
+      color: var(--color-text);
+    }
+    .references ol {
+      padding-left: 1.5rem;
+    }
+    .references li {
+      margin-bottom: 0.4rem;
+    }
+    .references a { color: var(--color-accent); text-decoration: underline; }
+
+    /* Footer */
+    .article-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border);
+      font-size: 0.8125rem;
+      color: var(--color-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+      align-items: center;
+    }
+    .article-footer a { color: var(--color-accent); text-decoration: none; }
+    .article-footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+
+<body>
+
+  <!-- Site nav -->
+  <header>
+    <nav class="site-nav">
+      <a href="/" class="site-nav-logo">
+        <span class="pq-badge">PQ</span>
+        PQSafe
+      </a>
+      <ul class="site-nav-links">
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/handbook/">Handbook</a></li>
+        <li><a href="/verify/">Verify</a></li>
+        <li><a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+
+    <article>
+      <header class="article-header">
+        <p class="breadcrumb">
+          <a href="/blog/">Blog</a> &rsaquo; 2026-05-05
+        </p>
+        <h1 class="article-title">Real ML-DSA-65 verifier deployed at api.pqsafe.xyz</h1>
+        <div class="article-meta">
+          <span>2026-05-05</span>
+          <span>&middot;</span>
+          <span>PQSafe</span>
+          <span>&middot;</span>
+          <span class="tag">ML-DSA-65</span>
+          <span class="tag">FIPS 204</span>
+          <span class="tag">production</span>
+        </div>
+      </header>
+
+      <div class="article-body">
+
+        <h2>The stub is gone</h2>
+
+        <p>
+          For six weeks, our <code>/v1/mandates/verify</code> endpoint returned <code>200 OK</code>
+          for any signature payload. The stub existed so we could ship the envelope schema, the SDK,
+          and the rail integrations in parallel — a reasonable staging decision, but one that left a
+          critical gap: the verifier accepted malformed signatures, empty strings, and outright garbage
+          equally well.
+        </p>
+
+        <p>
+          Today that stub is gone. The endpoint now calls
+          <code>mldsa65.verify()</code> from <a href="https://github.com/paulmillr/noble-post-quantum" target="_blank" rel="noopener">@noble/post-quantum</a>
+          on every request. If the ML-DSA-65 signature does not verify against the public key and the
+          JCS-canonicalised envelope body, the API returns <code>400</code>. No exceptions.
+        </p>
+
+        <h2>What changed</h2>
+
+        <p>
+          Three concrete things landed in production today:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Signature verification.</strong> Every POST to <code>/v1/mandates/verify</code>
+            now calls <code>mldsa65.verify(publicKey, signature, message)</code> where
+            <code>message</code> is the SHA-256 fingerprint of the JCS-canonicalised envelope body.
+            Verification is strict: the 3,309-byte ML-DSA-65 signature must match exactly.
+          </li>
+          <li>
+            <strong>Public key length check.</strong> The ML-DSA-65 public key is 1,952 bytes.
+            Any submission with a key of the wrong length is rejected before the crypto call,
+            which prevents a class of length-confusion attacks.
+          </li>
+          <li>
+            <strong>SHA-256(JCS) fingerprint protocol.</strong> The signing and verification flow
+            now canonicalises the JSON envelope body with
+            <a href="https://www.rfc-editor.org/rfc/rfc8785" target="_blank" rel="noopener">RFC 8785 JSON Canonicalization Scheme</a>
+            before hashing. This eliminates key ordering and whitespace ambiguities from the
+            verification input. Any implementation that skips JCS will produce a wrong fingerprint
+            and fail verification, even with a correct key pair.
+          </li>
+        </ul>
+
+        <div class="callout">
+          <p>
+            The ML-DSA-65 parameter set (NIST FIPS 204, security category 3, analogous to AES-192)
+            produces 3,309-byte signatures and 1,952-byte public keys.
+            These figures are normative in the AP2-PQ profile.
+          </p>
+        </div>
+
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Algorithm</td><td>ML-DSA-65 (CRYSTALS-Dilithium, round 3)</td></tr>
+            <tr><td>Standard</td><td>NIST FIPS 204 (final, 2024-08-13)</td></tr>
+            <tr><td>Security category</td><td>3 (AES-192 equivalent)</td></tr>
+            <tr><td>Public key size</td><td>1,952 bytes</td></tr>
+            <tr><td>Signature size</td><td>3,309 bytes</td></tr>
+            <tr><td>Message digest</td><td>SHA-256(JCS-canonicalised envelope body)</td></tr>
+            <tr><td>Implementation</td><td>@noble/post-quantum (audited)</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Why this matters</h2>
+
+        <p>
+          In agent-payment infrastructure, a stubbed crypto endpoint is not infrastructure — it is
+          a marketing claim. An attacker (or a buggy agent) can replay any envelope, forge spend
+          authorisations, or escalate a capped $5 envelope into an uncapped one simply by sending
+          a different signature value. The stub invites exactly that class of attack.
+        </p>
+
+        <p>
+          The risk is not theoretical.
+          The <a href="https://betterclaw.dev/clawhavoc" target="_blank" rel="noopener">ClawHavoc post-mortem</a>
+          (Vellum / Betterclaw, April 2026) documented 138 exploited CVEs and more than 1,400
+          malicious skills distributed via
+          <a href="https://clawhub.ai" target="_blank" rel="noopener">clawhub.ai</a>.
+          Many of those skills bypassed payment authorisation precisely because downstream verifiers
+          did not actually verify. A skill that presents a signed payment envelope to a stubbed
+          verifier gains all the appearance of cryptographic legitimacy with none of the protection.
+        </p>
+
+        <div class="callout callout-warning">
+          <p>
+            Most "post-quantum aware" skills on clawhub.ai today call a verifier that does not
+            verify. The signature bytes are present; the check is absent. That is the gap
+            this deployment closes — for our endpoint.
+          </p>
+        </div>
+
+        <p>
+          The broader point: cryptographic correctness is not something you add after product-market
+          fit. For payment infrastructure, it is the product. An envelope signed with ML-DSA-65 and
+          verified by a real implementation gives a merchant, a payment rail, or an auditor a
+          cryptographic guarantee that the authorisation came from the key that issued it, was not
+          tampered with in transit, and cannot be repudiated. A stub gives none of those properties.
+        </p>
+
+        <h2>Conformance: six published test vectors</h2>
+
+        <p>
+          Deploying a verifier is necessary but not sufficient. Interoperability requires that other
+          implementations — payment rails, merchant SDKs, compliance tools — can independently verify
+          AP2-PQ envelopes and arrive at the same result. We have published six canonical test vectors
+          at
+          <a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json">pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json</a>:
+        </p>
+
+        <ul>
+          <li>Five positive cases (valid envelope, correct signature, must return <code>200</code>)</li>
+          <li>One negative case: TC-N1, which exposes a silent-accept bug in <code>pqcrypto 0.4.0</code> —
+              a Python library that incorrectly accepts a tampered envelope that should fail</li>
+        </ul>
+
+        <p>
+          To run the full conformance suite against any verifier implementation:
+        </p>
+
+        <div class="code-block">
+<span class="comment"># Run conformance suite against your own verifier</span>
+npx @pqsafe/conformance --impl ./your-verifier.js
+
+<span class="comment"># Or against the live production endpoint</span>
+npx @pqsafe/conformance --endpoint https://api.pqsafe.xyz/v1/mandates/verify
+
+<span class="comment"># Verbose output with per-vector pass/fail</span>
+npx @pqsafe/conformance --endpoint https://api.pqsafe.xyz/v1/mandates/verify --verbose
+        </div>
+
+        <p>
+          The conformance package sources its vectors directly from the canonical JSON at
+          <code>pqsafe.xyz</code>, so any future additions to the test vector file are picked up
+          automatically on the next run.
+        </p>
+
+        <h2>Try it: verify a signed envelope</h2>
+
+        <p>
+          The endpoint accepts a JSON body with <code>envelope</code>, <code>signature</code>
+          (base64url), and <code>publicKey</code> (base64url). A minimal example using
+          <code>@pqsafe/agent-pay</code>:
+        </p>
+
+        <div class="code-block">
+<span class="keyword">import</span> { createEnvelope, signEnvelope } <span class="keyword">from</span> <span class="string">'@pqsafe/agent-pay'</span>;
+
+<span class="comment">// 1. Create and sign a spend envelope</span>
+<span class="keyword">const</span> { envelope, keyPair } = <span class="keyword">await</span> <span class="fn">createEnvelope</span>({
+  agentId: <span class="string">'agent-001'</span>,
+  maxAmount: { value: <span class="string">'5.00'</span>, currency: <span class="string">'USD'</span> },
+  allowedRecipients: [<span class="string">'perplexity.ai'</span>],
+  validUntil: <span class="string">'2026-05-05T12:00:00Z'</span>,
+});
+
+<span class="keyword">const</span> { signature } = <span class="keyword">await</span> <span class="fn">signEnvelope</span>(envelope, keyPair.privateKey);
+
+<span class="comment">// 2. Verify against the live API</span>
+<span class="keyword">const</span> res = <span class="keyword">await</span> <span class="fn">fetch</span>(<span class="string">'https://api.pqsafe.xyz/v1/mandates/verify'</span>, {
+  method: <span class="string">'POST'</span>,
+  headers: { <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span> },
+  body: <span class="fn">JSON.stringify</span>({
+    envelope,
+    signature,           <span class="comment">// base64url-encoded, 3,309-byte ML-DSA-65 signature</span>
+    publicKey: keyPair.publicKey,  <span class="comment">// base64url-encoded, 1,952-byte public key</span>
+  }),
+});
+
+<span class="keyword">const</span> result = <span class="keyword">await</span> res.<span class="fn">json</span>();
+console.<span class="fn">log</span>(result);
+<span class="comment">// { valid: true, algorithm: "ML-DSA-65", fips: "FIPS-204", envelopeId: "..." }</span>
+        </div>
+
+        <p>
+          The browser-based verifier at
+          <a href="https://pqsafe.xyz/verify/">pqsafe.xyz/verify/</a>
+          also now runs real ML-DSA-65 verification client-side via the same
+          <code>@noble/post-quantum</code> library — no server round-trip required.
+        </p>
+
+        <h2>What is next</h2>
+
+        <ul>
+          <li>
+            <strong>api.pqsafe.xyz custom domain.</strong> NS migration is pending — currently the
+            verifier endpoint resolves via the Vercel default domain. Custom domain propagation
+            expected within the week.
+          </li>
+          <li>
+            <strong>Multi-region observability.</strong> Latency and error-rate dashboards for the
+            verifier endpoint, broken down by region. The 3,309-byte signature verification adds
+            roughly 2–4 ms per call; we want that number observable.
+          </li>
+          <li>
+            <strong>AP2-PQ v1 spec submission to FIDO Agentic Auth TWG.</strong>
+            The FIDO Alliance Agentic Authentication Technical Working Group was formed on
+            2026-04-28. We are preparing a formal submission of the AP2-PQ profile — the post-quantum
+            extension to FIDO AP2 for agent-initiated payments. The profile is already published
+            at <a href="https://pqsafe.xyz/spec/ap2-pq-v1/">pqsafe.xyz/spec/ap2-pq-v1/</a>.
+          </li>
+          <li>
+            <strong>@pqsafe/conformance v0.1.0 release announcement.</strong>
+            The conformance package is published on npm but has not had a formal launch post yet.
+            That comes next.
+          </li>
+        </ul>
+
+        <h2>References</h2>
+
+        <div class="references">
+          <ol>
+            <li>
+              <a href="https://clawhub.ai/skills/pqsafe-pay" target="_blank" rel="noopener">clawhub.ai/skills/pqsafe-pay</a>
+              — pqsafe-pay OpenClaw skill listing
+            </li>
+            <li>
+              <a href="https://pqsafe.xyz/spec/ap2-pq-v1/" target="_blank" rel="noopener">pqsafe.xyz/spec/ap2-pq-v1/</a>
+              — AP2-PQ profile canonical specification
+            </li>
+            <li>
+              <a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json" target="_blank" rel="noopener">pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json</a>
+              — Conformance test vectors (machine-readable JSON)
+            </li>
+            <li>
+              <a href="https://www.npmjs.com/package/@pqsafe/conformance" target="_blank" rel="noopener">npmjs.com/package/@pqsafe/conformance</a>
+              — Conformance test runner
+            </li>
+            <li>
+              NIST FIPS 204 — <em>Module-Lattice-Based Digital Signature Standard</em>
+              (final, 2024-08-13).
+              <a href="https://doi.org/10.6028/NIST.FIPS.204" target="_blank" rel="noopener">doi.org/10.6028/NIST.FIPS.204</a>
+            </li>
+            <li>
+              FIDO Alliance — Agentic Authentication Technical Working Group formed 2026-04-28.
+              <a href="https://fidoalliance.org" target="_blank" rel="noopener">fidoalliance.org</a>
+            </li>
+            <li>
+              Vellum / Betterclaw — <em>ClawHavoc post-mortem: 138 CVEs, 1,400+ malicious skills</em>.
+              <a href="https://betterclaw.dev/clawhavoc" target="_blank" rel="noopener">betterclaw.dev/clawhavoc</a>
+            </li>
+          </ol>
+        </div>
+
+      </div><!-- /.article-body -->
+
+      <footer class="article-footer">
+        <span>License: <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener">Apache-2.0</a></span>
+        <span>&middot;</span>
+        <span><a href="/feed.xml">Atom feed</a></span>
+        <span>&middot;</span>
+        <span><a href="/blog/">All posts</a></span>
+        <span>&middot;</span>
+        <span><a href="/">pqsafe.xyz</a></span>
+      </footer>
+
+    </article>
+
+  </div><!-- /.page-wrap -->
+
+</body>
+</html>

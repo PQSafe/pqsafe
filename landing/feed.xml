@@ -11,5 +11,27 @@
     <email>dev@pqsafe.xyz</email>
   </author>
   <rights>Copyright 2026 PQSafe — Apache-2.0</rights>
-  <!-- Feed entries will appear here as blog posts / changelog entries are published -->
+
+  <entry>
+    <title>Real ML-DSA-65 verifier deployed at api.pqsafe.xyz</title>
+    <link href="https://pqsafe.xyz/blog/2026-05-05-real-ml-dsa-verifier-deployed/" rel="alternate" type="text/html"/>
+    <id>https://pqsafe.xyz/blog/2026-05-05-real-ml-dsa-verifier-deployed/</id>
+    <published>2026-05-05T00:00:00Z</published>
+    <updated>2026-05-05T00:00:00Z</updated>
+    <author>
+      <name>PQSafe</name>
+      <email>dev@pqsafe.xyz</email>
+    </author>
+    <category term="production"/>
+    <category term="ML-DSA-65"/>
+    <category term="FIPS 204"/>
+    <category term="conformance"/>
+    <summary type="text">For six weeks, /v1/mandates/verify accepted any signature payload. Today the stub is gone — replaced by a real mldsa65.verify() call from @noble/post-quantum. 3,309-byte ML-DSA-65 signature validation, SHA-256(JCS) fingerprint protocol, and six published conformance test vectors. Anyone can run npx @pqsafe/conformance against the live endpoint.</summary>
+    <content type="html">
+      &lt;p&gt;For six weeks, our &lt;code&gt;/v1/mandates/verify&lt;/code&gt; endpoint returned &lt;code&gt;200 OK&lt;/code&gt; for any signature payload. Today that stub is gone. The endpoint now calls &lt;code&gt;mldsa65.verify()&lt;/code&gt; from &lt;a href="https://github.com/paulmillr/noble-post-quantum"&gt;@noble/post-quantum&lt;/a&gt; on every request.&lt;/p&gt;
+      &lt;p&gt;Three concrete things landed in production: real signature verification (3,309-byte ML-DSA-65), public key length check (1,952 bytes), and SHA-256(JCS) fingerprint protocol. Six conformance test vectors published at &lt;a href="https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json"&gt;pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json&lt;/a&gt; — including TC-N1 which exposes a silent-accept bug in pqcrypto 0.4.0.&lt;/p&gt;
+      &lt;p&gt;Run: &lt;code&gt;npx @pqsafe/conformance --endpoint https://api.pqsafe.xyz/v1/mandates/verify&lt;/code&gt;&lt;/p&gt;
+    </content>
+  </entry>
+
 </feed>
