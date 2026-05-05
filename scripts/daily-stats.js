@@ -23,7 +23,7 @@ const NPM_PACKAGES = [
   // Planned — will return 404 until published:
   { name: "@pqsafe/agent-pay-langchain",postPublish: true  },
   { name: "@pqsafe/agent-pay-plaid",    postPublish: true  },
-  { name: "@pqsafe/conformance",        postPublish: true  },
+  { name: "@pqsafe/conformance",        postPublish: false },
   { name: "@pqsafe/cli",               postPublish: true  },
 ];
 
@@ -69,8 +69,15 @@ async function fetchNpmPackage(pkg) {
   );
 
   if (results[0].status === "rejected" && results[0].reason?.status === 404) {
-    // Not yet published
-    entry.published = false;
+    // Downloads API returned 404 — could be a newly published package (lag up to 48h).
+    // Confirm via the registry endpoint before marking as unpublished.
+    try {
+      const meta = await fetchJSON(`https://registry.npmjs.org/${enc}/latest`);
+      entry.published = true;
+      entry.version = meta.version ?? null;
+    } catch {
+      entry.published = false;
+    }
     return entry;
   }
 

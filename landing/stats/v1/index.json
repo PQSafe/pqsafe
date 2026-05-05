@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-05T04:22:38.337Z",
+  "updated": "2026-05-05T04:40:20.923Z",
   "npm": {
     "@pqsafe/openclaw": {
       "last_day": 4,
@@ -47,8 +47,8 @@
       "last_day": 0,
       "last_week": 0,
       "last_month": 0,
-      "published": false,
-      "version": null
+      "published": true,
+      "version": "0.1.0"
     },
     "@pqsafe/cli": {
       "last_day": 0,
@@ -81,9 +81,8 @@
   "github": {
     "stars": 0,
     "forks": 0,
-    "open_issues": 0,
-    "url": "https://github.com/PQSafe/pqsafe",
-    "error": true
+    "open_issues": 2,
+    "url": "https://github.com/PQSafe/pqsafe"
   },
   "totals": {
     "npm_total_last_month": 503,

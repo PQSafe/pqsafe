@@ -60,10 +60,9 @@ When asked to add PQSafe to an existing agent codebase:
 
 1. **Install** the right adapter for the agent framework:
    - OpenClaw: `npm install @pqsafe/openclaw`
-   - LangChain (TS): `npm install @pqsafe/agent-pay-langchain`
    - LangChain (Py): `pip install langchain-pqsafe`
    - CrewAI: `pip install crewai-pqsafe`
-   - Mastra: in PQSafe monorepo at `plugins/mastra-pqsafe`
+   - Mastra: `npm install @pqsafe/mastra`
 
 2. **Wire the verify call** at the payment entry point (the `before_tool_call` hook for OpenClaw, a tool wrapper for LangChain/CrewAI). Block on `valid: false`.
 

@@ -76,7 +76,7 @@ Revoke if the agent goes off-script:
 |---|---|
 | **This Claude Code plugin** | Builder is using Claude Code to write/audit agent code |
 | `@pqsafe/openclaw` | Builder ships an OpenClaw agent (the `pqsafe-pay` skill on ClawHub) |
-| `@pqsafe/agent-pay-langchain` / `langchain-pqsafe` | LangChain-based agent runtime |
+| `langchain-pqsafe` (PyPI) | LangChain-based agent runtime |
 | `crewai-pqsafe` | CrewAI multi-agent orchestration |
 | `@pqsafe/mcp-server` | Production runtime — universal MCP tool, works in any MCP-aware client |
 
