@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security — PQSafe AgentPay</title>
+  <meta name="description" content="PQSafe security disclosure policy, responsible disclosure, and bug bounty program." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    header { margin-bottom: 3rem; }
+    header a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
+    header a:hover { color: #e2e8f0; }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 1rem;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle { color: #94a3b8; margin-top: 0.5rem; }
+    .card {
+      background: #13131f;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; color: #f1f5f9; }
+    .card p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 0.75rem; }
+    .card p:last-child { margin-bottom: 0; }
+    a.link { color: #60a5fa; text-decoration: none; }
+    a.link:hover { text-decoration: underline; }
+    .badge {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+    }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #1e293b;
+      color: #475569;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    footer a { color: #475569; text-decoration: none; }
+    footer a:hover { color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/">&larr; PQSafe AgentPay</a>
+      <h1>Security</h1>
+      <p class="subtitle">Responsible disclosure, bug bounty, and vulnerability policy.</p>
+    </header>
+
+    <div class="card">
+      <h2>Report a Vulnerability</h2>
+      <p>
+        For sensitive disclosures, use
+        <a class="link" href="https://github.com/PQSafe/pqsafe/security/advisories/new">GitHub Security Advisories</a>
+        — this provides an encrypted, private channel directly to the team.
+      </p>
+      <p>
+        For general security questions:
+        <a class="link" href="mailto:security@pqsafe.xyz">security@pqsafe.xyz</a>
+      </p>
+      <p>
+        We prefer responsible disclosure. Please give us a reasonable window to investigate and patch
+        before any public disclosure.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Vulnerability Policy</h2>
+      <p>Scope, disclosure timeline, and out-of-scope items are documented in the full policy.</p>
+      <p><a class="link" href="/security/policy/">Read the full security policy &rarr;</a></p>
+    </div>
+
+    <div class="card">
+      <h2>Bug Bounty</h2>
+      <span class="badge">Launching May 2026</span>
+      <p>
+        An Immunefi bug bounty program is planned for May 2026, covering the AP2-PQ Worker,
+        SpendEnvelopeRegistry contract, and core SDK packages.
+      </p>
+      <p>
+        Until then, we acknowledge all valid critical reports in our
+        <a class="link" href="/security/acknowledgments/">Hall of Fame</a>.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Machine-Readable Disclosure File</h2>
+      <p>
+        <a class="link" href="/.well-known/security.txt"><code>/.well-known/security.txt</code></a>
+        — RFC 9116 compliant disclosure policy.
+      </p>
+    </div>
+
+    <footer>
+      <span>PQSafe AgentPay &mdash; Apache-2.0</span>
+      <span>
+        <a href="/security/policy/">Policy</a> &middot;
+        <a href="/security/acknowledgments/">Hall of Fame</a> &middot;
+        <a href="/.well-known/security.txt">security.txt</a>
+      </span>
+    </footer>
+  </div>
+</body>
+</html>

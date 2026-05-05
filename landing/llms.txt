@@ -71,6 +71,14 @@ YC S26 applicant. Contact: raymond@pqsafe.xyz
 - [Distribution telemetry](https://pqsafe.xyz/stats/): Live npm + PyPI download counters. Auto-updated daily. Intentionally raw pre-launch numbers.
 - [Stats JSON](https://pqsafe.xyz/stats/v1/index.json): Machine-readable download data — npm (4 published packages), PyPI (3 packages), GitHub stars/forks/issues.
 
+## Security
+
+- [Security overview](https://pqsafe.xyz/security/): Responsible disclosure, bug bounty, and contact channels.
+- [Security policy](https://pqsafe.xyz/security/policy/): In-scope systems, vulnerability classes, 90-day disclosure timeline, Immunefi bug bounty (launching May 2026).
+- [security.txt](https://pqsafe.xyz/.well-known/security.txt): RFC 9116 machine-readable disclosure policy.
+- Security contact: security@pqsafe.xyz
+- Sensitive reports: https://github.com/PQSafe/pqsafe/security/advisories/new (encrypted, private channel)
+
 ## Optional
 
 - [Privacy policy](https://pqsafe.xyz/privacy/): Data handling and retention policy.

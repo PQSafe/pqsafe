@@ -1,0 +1,9 @@
+/* TEAM */
+  PQSafe -- post-quantum payment infrastructure
+  Site: https://pqsafe.xyz
+  Contact: dev@pqsafe.xyz
+
+/* SITE */
+  Last update: 2026-05-05
+  Standards: RFC 9116, NIST FIPS 204, FIDO AP2-PQ profile
+  Components: HTML, CSS, vanilla JS, Cloudflare Workers

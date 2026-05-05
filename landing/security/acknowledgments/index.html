@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Acknowledgments — PQSafe AgentPay</title>
+  <meta name="description" content="PQSafe security researcher hall of fame — recognised responsible disclosure contributors." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    header { margin-bottom: 3rem; }
+    header a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
+    header a:hover { color: #e2e8f0; }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 1rem;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle { color: #94a3b8; margin-top: 0.5rem; }
+    .empty-state {
+      background: #13131f;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 3rem 2rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .empty-state h2 { font-size: 1.1rem; font-weight: 600; color: #f1f5f9; margin-bottom: 0.75rem; }
+    .empty-state p { color: #94a3b8; font-size: 0.95rem; }
+    a.link { color: #60a5fa; text-decoration: none; }
+    a.link:hover { text-decoration: underline; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #1e293b;
+      color: #475569;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    footer a { color: #475569; text-decoration: none; }
+    footer a:hover { color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/security/">&larr; Security</a>
+      <h1>Hall of Fame</h1>
+      <p class="subtitle">Recognising researchers who responsibly disclosed vulnerabilities in PQSafe systems.</p>
+    </header>
+
+    <div class="empty-state">
+      <div class="icon">&#128274;</div>
+      <h2>None yet &mdash; be the first.</h2>
+      <p>
+        Recognised researchers will be listed here (with their consent).<br />
+        Find a critical vulnerability and report it via
+        <a class="link" href="https://github.com/PQSafe/pqsafe/security/advisories/new">GitHub Security Advisories</a>
+        or <a class="link" href="mailto:security@pqsafe.xyz">security@pqsafe.xyz</a>.
+      </p>
+    </div>
+
+    <p style="color: #475569; font-size: 0.9rem; text-align: center;">
+      See the <a class="link" href="/security/policy/">Security Policy</a> for scope, disclosure timeline, and bug bounty details.
+    </p>
+
+    <footer>
+      <span>PQSafe AgentPay &mdash; Apache-2.0</span>
+      <span>
+        <a href="/security/">Security</a> &middot;
+        <a href="/security/policy/">Policy</a> &middot;
+        <a href="/.well-known/security.txt">security.txt</a>
+      </span>
+    </footer>
+  </div>
+</body>
+</html>

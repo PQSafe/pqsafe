@@ -8,6 +8,8 @@
       "email": "dev@pqsafe.xyz",
       "url": "https://pqsafe.xyz"
     },
+    "x-security-contact": "security@pqsafe.xyz",
+    "x-security-policy": "https://pqsafe.xyz/security/policy/",
     "license": {
       "name": "Apache-2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0"

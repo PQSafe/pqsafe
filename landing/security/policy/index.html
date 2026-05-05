@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Policy — PQSafe AgentPay</title>
+  <meta name="description" content="PQSafe security vulnerability disclosure policy — scope, timeline, and bug bounty." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    header { margin-bottom: 3rem; }
+    header a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
+    header a:hover { color: #e2e8f0; }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 1rem;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle { color: #94a3b8; margin-top: 0.5rem; }
+    h2 { font-size: 1.2rem; font-weight: 600; margin: 2rem 0 0.75rem; color: #f1f5f9; }
+    p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 0.75rem; }
+    ul { color: #94a3b8; font-size: 0.95rem; margin: 0.5rem 0 0.75rem 1.5rem; }
+    ul li { margin-bottom: 0.3rem; }
+    code {
+      background: #1e293b;
+      border-radius: 4px;
+      padding: 0.15rem 0.4rem;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      color: #a5f3fc;
+    }
+    a.link { color: #60a5fa; text-decoration: none; }
+    a.link:hover { text-decoration: underline; }
+    .badge {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid #1e293b;
+      margin: 2rem 0;
+    }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #1e293b;
+      color: #475569;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    footer a { color: #475569; text-decoration: none; }
+    footer a:hover { color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/security/">&larr; Security</a>
+      <h1>Security Policy</h1>
+      <p class="subtitle">Last updated: 2026-05-05 &mdash; Disclosure timeline: 90 days standard</p>
+    </header>
+
+    <h2>Scope</h2>
+    <p>The following systems and components are in-scope for vulnerability reports:</p>
+    <ul>
+      <li><code>api.pqsafe.xyz</code> &mdash; the AP2-PQ Cloudflare Worker (verify, revoke, audit endpoints)</li>
+      <li>All <code>@pqsafe/*</code> npm packages: <code>agent-pay</code>, <code>openclaw</code>, <code>mcp-server</code>, <code>mastra</code></li>
+      <li>PyPI packages: <code>pqsafe-agent-pay</code>, <code>langchain-pqsafe</code>, <code>crewai-pqsafe</code></li>
+      <li>Smart contract <code>0x142bA5626bf8B032EB0B59052421C42595417F5d</code> (SpendEnvelopeRegistry on Arbitrum Sepolia)</li>
+      <li>ClawHub skill <code>pqsafe-pay</code></li>
+      <li>This website (<code>pqsafe.xyz</code>)</li>
+    </ul>
+
+    <h2>In-Scope Vulnerability Classes</h2>
+    <ul>
+      <li>ML-DSA-65 signature forgery or bypass</li>
+      <li>Replay attacks against SpendEnvelopes</li>
+      <li>Audit-log tampering or hash-chain break</li>
+      <li>Spend-cap bypass (executing above the authorised limit)</li>
+      <li>Recipient-allowlist bypass (paying an unauthorised recipient)</li>
+      <li>Key-rotation flaws (old key accepted after rotation)</li>
+      <li>Dependency CVEs with exploitable impact on in-scope components</li>
+      <li>Authentication or authorisation bypass on revocation endpoint</li>
+      <li>Nonce replay allowing double-spend</li>
+    </ul>
+
+    <h2>Out of Scope</h2>
+    <ul>
+      <li>Third-party payment rails (Stripe, Airwallex, Wise) &mdash; report directly to those providers</li>
+      <li>Social engineering and phishing attacks</li>
+      <li>Physical attacks</li>
+      <li>Theoretical vulnerabilities with no practical exploit path</li>
+      <li>Vulnerabilities in OFAC-sanctioned jurisdictions where we cannot legally engage</li>
+      <li>Rate-limiting and denial-of-service without cryptographic impact</li>
+    </ul>
+
+    <hr class="divider" />
+
+    <h2>Disclosure Timeline</h2>
+    <p>
+      We follow a <strong>90-day coordinated disclosure</strong> timeline. We ask that you:
+    </p>
+    <ul>
+      <li>Report via <a class="link" href="https://github.com/PQSafe/pqsafe/security/advisories/new">GitHub Security Advisories</a> or <a class="link" href="mailto:security@pqsafe.xyz">security@pqsafe.xyz</a></li>
+      <li>Allow us 90 days to investigate, patch, and ship a fix before public disclosure</li>
+      <li>Coordinate the disclosure date with us if a fix requires more time</li>
+    </ul>
+    <p>
+      We will acknowledge receipt within 3 business days and provide a status update within 14 days.
+    </p>
+
+    <h2>Bug Bounty</h2>
+    <span class="badge">Immunefi program launching May 2026</span>
+    <p>
+      A formal Immunefi bug bounty program is planned for May 2026, covering the AP2-PQ Worker,
+      SpendEnvelopeRegistry contract, and core SDK packages. Reward tiers will be published with the
+      program launch.
+    </p>
+    <p>
+      Until the Immunefi program is live, we acknowledge all valid critical and high-severity reports
+      in our <a class="link" href="/security/acknowledgments/">Hall of Fame</a>.
+    </p>
+
+    <h2>Hall of Fame</h2>
+    <p>
+      Researchers who responsibly disclose valid vulnerabilities are recognised in our
+      <a class="link" href="/security/acknowledgments/">Acknowledgments</a> page (with their consent).
+    </p>
+
+    <hr class="divider" />
+
+    <h2>Contact</h2>
+    <ul>
+      <li>Sensitive reports: <a class="link" href="https://github.com/PQSafe/pqsafe/security/advisories/new">GitHub Security Advisories</a> (encrypted, private)</li>
+      <li>General security questions: <a class="link" href="mailto:security@pqsafe.xyz">security@pqsafe.xyz</a></li>
+      <li>Machine-readable policy: <a class="link" href="/.well-known/security.txt"><code>/.well-known/security.txt</code></a> (RFC 9116)</li>
+    </ul>
+
+    <footer>
+      <span>PQSafe AgentPay &mdash; Apache-2.0</span>
+      <span>
+        <a href="/security/">Security</a> &middot;
+        <a href="/security/acknowledgments/">Hall of Fame</a> &middot;
+        <a href="/.well-known/security.txt">security.txt</a>
+      </span>
+    </footer>
+  </div>
+</body>
+</html>
