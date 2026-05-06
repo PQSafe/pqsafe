@@ -10,9 +10,13 @@ optimizer_runs = 200
 evm_version = "cancun"
 
 [rpc_endpoints]
-arbitrum_one = "${ARBITRUM_RPC_URL}"
+arbitrum_one     = "${ARBITRUM_RPC_URL}"
 arbitrum_sepolia = "${ARBITRUM_SEPOLIA_RPC_URL}"
+base             = "${BASE_RPC_URL}"
+optimism         = "${OPTIMISM_RPC_URL}"
 
 [etherscan]
-arbitrum_one = { key = "${ARBISCAN_API_KEY}", url = "https://api.arbiscan.io/api" }
-arbitrum_sepolia = { key = "${ARBISCAN_API_KEY}", url = "https://api-sepolia.arbiscan.io/api" }
+arbitrum_one     = { key = "${ARBISCAN_API_KEY}",             url = "https://api.arbiscan.io/api" }
+arbitrum_sepolia = { key = "${ARBISCAN_API_KEY}",             url = "https://api-sepolia.arbiscan.io/api" }
+base             = { key = "${BASESCAN_API_KEY}",             url = "https://api.basescan.org/api" }
+optimism         = { key = "${OPTIMISM_ETHERSCAN_API_KEY}",   url = "https://api-optimistic.etherscan.io/api" }

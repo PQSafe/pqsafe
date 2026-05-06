@@ -1,0 +1,42 @@
+{
+  "_comment": "PQSafe on-chain contract registry. Addresses populated post-deploy by Raymond. DO NOT edit TBD values manually — update after forge broadcast confirms address.",
+  "_last_updated": "2026-05-05",
+  "_deploy_runbook": "memory/working/pqsafe_mainnet_deploy_runbook_2026-05-05.md",
+
+  "ap2pq_verifier": {
+    "_contract": "SpendEnvelopeRegistryV2_1",
+    "_version": "v2.1.0",
+    "_source": "pqsafe/evm/src/SpendEnvelopeRegistryV2_1.sol",
+    "_compiler": "solc 0.8.24, optimizer 200 runs, evm_version cancun",
+    "_deploy_script": "pqsafe/evm/script/DeployV2_1_Mainnet.s.sol",
+    "_create2_salt": "keccak256('PQSafe.SpendEnvelopeRegistryV2_1.v2.1.0.mainnet')",
+    "_note": "Same CREATE2 salt on all three mainnets → deterministic matching address across Base / Arbitrum One / Optimism",
+
+    "ethereum_mainnet": "TBD",
+    "base_mainnet": "TBD",
+    "arbitrum_one": "TBD",
+    "optimism": "TBD",
+    "arbitrum_sepolia": "0x142bA5626bf8B032EB0B59052421C42595417F5d"
+  },
+
+  "version": "v0.1.0",
+  "abi_location": "pqsafe/evm/out/SpendEnvelopeRegistryV2_1.sol/SpendEnvelopeRegistryV2_1.json",
+  "license": "Apache-2.0",
+
+  "block_explorers": {
+    "_note": "Verify URLs become active after --broadcast --verify completes",
+    "base_mainnet":    "https://basescan.org/address/TBD#code",
+    "arbitrum_one":    "https://arbiscan.io/address/TBD#code",
+    "optimism":        "https://optimistic.etherscan.io/address/TBD#code",
+    "arbitrum_sepolia": "https://sepolia.arbiscan.io/address/0x142bA5626bf8B032EB0B59052421C42595417F5d#code"
+  },
+
+  "roles": {
+    "_note": "Role addresses set per-chain post-deploy. Production admin MUST be a Gnosis Safe 2-of-3 multisig.",
+    "DEFAULT_ADMIN_ROLE": "TBD — Gnosis Safe 2-of-3 multisig",
+    "ISSUER_ROLE":        "TBD — PQSafe issuer service account (api.pqsafe.xyz Worker)",
+    "OPERATOR_ROLE":      "TBD — payment executor service address",
+    "REVOCATION_ROLE":    "TBD — compliance officer address",
+    "PAUSER_ROLE":        "TBD — Forta monitoring bot / ops alert address"
+  }
+}
