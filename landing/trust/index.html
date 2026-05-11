@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PQSafe trust center — security, compliance, and standards posture</title>
+<meta name="description" content="PQSafe AgentPay trust center: security posture, compliance roadmap, standards engagement, and audit status. Honest about what's live vs in-progress." />
+<link rel="canonical" href="https://pqsafe.xyz/trust" />
+<meta property="og:title" content="PQSafe trust center" />
+<meta property="og:description" content="Security, compliance, standards, and audit posture. Honest about what's live vs in-progress." />
+<meta property="og:url" content="https://pqsafe.xyz/trust" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="PQSafe" />
+<meta name="twitter:card" content="summary_large_image" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .badge { display: inline-flex; align-items: center; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.7rem; font-weight: 600; }
+  .b-live { background: #d1fae5; color: #065f46; }
+  .b-prog { background: #fef3c7; color: #92400e; }
+  .b-plan { background: #e0e7ff; color: #3730a3; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🦞</span>
+      <div>
+        <a href="https://pqsafe.xyz" class="font-semibold text-slate-900 hover:underline">PQSafe</a>
+        <span class="text-slate-500"> &middot; Trust Center</span>
+      </div>
+    </div>
+    <nav class="text-sm text-slate-600 flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">Home</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify</a>
+      <a href="https://pqsafe.xyz/bench" class="hover:underline">Bench</a>
+      <a href="https://pqsafe.xyz/compare" class="hover:underline">Compare</a>
+      <a href="https://github.com/PQSafe/pqsafe" class="hover:underline">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-6 py-10">
+
+  <section class="mb-10">
+    <h1 class="text-3xl font-semibold tracking-tight">Trust Center.</h1>
+    <p class="mt-2 text-slate-600 max-w-3xl">
+      Security, compliance, standards, and audit posture for PQSafe AgentPay. This page is intentionally honest: what's live today, what's
+      in progress, and what's a planned milestone with a stated quarter.
+    </p>
+    <div class="mt-4 flex flex-wrap gap-2 text-xs">
+      <span class="badge b-live">Live</span>
+      <span class="badge b-prog">In progress</span>
+      <span class="badge b-plan">Planned</span>
+    </div>
+  </section>
+
+  <section class="mb-10 grid sm:grid-cols-3 gap-4 text-sm">
+    <a href="mailto:security@pqsafe.xyz" class="p-5 bg-white border border-slate-200 rounded hover:border-rose-300 transition">
+      <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Report a vulnerability</div>
+      <div class="font-semibold text-slate-900">security@pqsafe.xyz</div>
+      <div class="text-xs text-slate-500 mt-1">PGP key fingerprint pending publication.</div>
+    </a>
+    <a href="/.well-known/security.txt" class="p-5 bg-white border border-slate-200 rounded hover:border-rose-300 transition">
+      <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">security.txt</div>
+      <div class="font-semibold text-slate-900">RFC 9116</div>
+      <div class="text-xs text-slate-500 mt-1">Canonical contact + disclosure policy.</div>
+    </a>
+    <a href="https://github.com/PQSafe/pqsafe/security" target="_blank" rel="noopener" class="p-5 bg-white border border-slate-200 rounded hover:border-rose-300 transition">
+      <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Security advisories</div>
+      <div class="font-semibold text-slate-900">GitHub Security tab</div>
+      <div class="text-xs text-slate-500 mt-1">Public CVE disclosures + advisories.</div>
+    </a>
+  </section>
+
+  <!-- Cryptography -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-xl font-semibold mb-4">Cryptography</h2>
+    <div class="space-y-3 text-sm">
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>NIST FIPS 204 ML-DSA-65</strong> &mdash; primary post-quantum digital signature. Dual-signed alongside ECDSA P-256 for transition compatibility.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>ECDSA P-256</strong> (SEC1, NIST FIPS 186-5) &mdash; legacy signature path. Every envelope carries both.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>RFC 8785 JCS</strong> &mdash; canonical JSON serialization. Deterministic bytes across implementations.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>SHA-256</strong> envelope fingerprinting &mdash; signatures are over the 32-byte fingerprint, not the raw JSON.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-prog mt-0.5">In progress</span>
+        <div><strong>ML-KEM-768</strong> (FIPS 203) for transport encryption between agents and the issuer &mdash; staged for v1.2.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-plan mt-0.5">Planned Q4 2026</span>
+        <div><strong>SLH-DSA</strong> (FIPS 205) hash-based backup signature path for high-assurance retention beyond ML-DSA's lifetime.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Standards engagement -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-xl font-semibold mb-4">Standards engagement</h2>
+    <div class="space-y-3 text-sm">
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>FIDO Alliance Payments TWG</strong> &mdash; open letter published 2026-05-04 proposing a post-quantum profile (TWG chaired by Mastercard and Visa). <a href="/fido-pq-letter" class="text-rose-600 hover:underline">Read the letter</a>.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-prog mt-0.5">In progress</span>
+        <div><strong>IETF Internet-Draft</strong> for AP2-PQ profile &mdash; package complete, scheduled for filing this month. Co-author invitation extended to Yuan Hao (2nd-state).</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>AP2-PQ profile v1</strong> &mdash; canonical spec at <a href="/ap2-pq-rfc" class="text-rose-600 hover:underline">/ap2-pq-rfc</a>. Six published test vectors at <a href="/spec/ap2-pq-test-vectors-v1.json" class="text-rose-600 hover:underline">/spec/ap2-pq-test-vectors-v1.json</a>.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>Cross-language conformance harness</strong> &mdash; six implementations (TS, Python, Rust, Go, Java, .NET) byte-identical on the AP2-PQ test vector matrix.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Regulatory posture -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-xl font-semibold mb-4">Regulatory &amp; compliance posture</h2>
+    <div class="space-y-3 text-sm">
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>HKMA Quantum Preparedness Index alignment</strong> &mdash; PQSafe is built against the framework HKMA published 2026-02-03. The world's first central-bank PQ readiness scorecard.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-prog mt-0.5">In progress</span>
+        <div><strong>HKMA GenAI Sandbox++</strong> application &mdash; §1+§2 drafted, filing target before 2026-06-30 deadline.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-plan mt-0.5">Planned Q3 2026</span>
+        <div><strong>SOC 2 Type 1 readiness</strong> &mdash; control mapping in progress; Type 1 attestation targeted for late 2026 once the first paying customer engagement begins.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-plan mt-0.5">Planned Q1 2027</span>
+        <div><strong>SOC 2 Type 2</strong> attestation &mdash; 12-month observation window following Type 1.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-prog mt-0.5">In progress</span>
+        <div><strong>7-year audit retention</strong> &mdash; canonical envelope storage architecture designed for FFIEC / HKMA / MAS / FCA retention windows.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Third-party audit -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-xl font-semibold mb-4">Third-party security audit</h2>
+    <div class="space-y-3 text-sm">
+      <div class="flex items-start gap-3">
+        <span class="badge b-plan mt-0.5">Planned</span>
+        <div><strong>Trail of Bits</strong> &mdash; engaged as primary audit firm for the verifier core, key management, and AP2-PQ profile implementation. Engagement triggers on first paying customer, signed LOI, or pre-seed term sheet (whichever first).</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-plan mt-0.5">Planned</span>
+        <div><strong>Cure53</strong> &mdash; secondary firm for browser-side cryptographic surfaces (the in-browser verifier and generator).</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>Internal pre-audit findings</strong> &mdash; 2 critical, 4 high, 5 medium, 4 low resolved 2026-05-09 during the demo stack hardening pass. Internal review log available under NDA.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Legal entity -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-xl font-semibold mb-4">Legal entities</h2>
+    <div class="space-y-3 text-sm">
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>PQSafe Inc.</strong> &mdash; Delaware C-Corp (Stripe Atlas), the operating entity for global commerce.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>Asaptic HK Ltd.</strong> &mdash; Hong Kong entity for HKMA regulatory engagement and APAC operations.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-prog mt-0.5">In progress</span>
+        <div><strong>Stripe Atlas share issuance &amp; 83(b)</strong> &mdash; confirmation in progress with the Atlas team.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open-source posture -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-xl font-semibold mb-4">Open-source posture</h2>
+    <div class="space-y-3 text-sm">
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>Apache 2.0</strong> license across the SDK, conformance harness, framework plugins, and CLI.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>Public source</strong> at <a href="https://github.com/PQSafe/pqsafe" class="text-rose-600 hover:underline">github.com/PQSafe/pqsafe</a>. CI green on Linux / macOS / Windows.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-live mt-0.5">Live</span>
+        <div><strong>518 SDK tests</strong> + cross-language conformance suite. Test vectors are public.</div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="badge b-prog mt-0.5">In progress</span>
+        <div><strong>Public bug bounty program</strong> ($100&ndash;$15K, Disclose.io 2.0 Safe Harbor) &mdash; gated on PGP key publication.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="mb-12 p-6 bg-amber-50 border border-amber-200 rounded text-sm text-amber-900">
+    <strong>Operating principle:</strong> we publish what is true today and what is in progress with a stated milestone. No vague "enterprise-grade" claims, no certifications we have not earned. If a claim on this page becomes stale, file an issue or email <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a>.
+  </section>
+
+  <footer class="text-xs text-slate-500 mt-16 mb-8 border-t border-slate-200 pt-6 space-y-2">
+    <div class="flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">← pqsafe.xyz home</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify</a>
+      <a href="https://pqsafe.xyz/generate" class="hover:underline">Generate</a>
+      <a href="https://pqsafe.xyz/bench" class="hover:underline">Bench</a>
+      <a href="https://pqsafe.xyz/compare" class="hover:underline">Compare</a>
+    </div>
+    <div>Apache-2.0 · PQSafe AgentPay · <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a></div>
+  </footer>
+</main>
+</body>
+</html>
