@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OpenClaw skill cookbook — PQSafe payment recipes</title>
+<meta name="description" content="Six ready-to-paste recipes for the @pqsafe/openclaw skill. Charge a SaaS bill, pay a contractor, settle a stablecoin invoice, gate a high-value transfer, revoke a leaked envelope, run conformance in CI." />
+<link rel="canonical" href="https://pqsafe.xyz/openclaw-cookbook" />
+<meta property="og:title" content="OpenClaw skill cookbook — PQSafe payment recipes" />
+<meta property="og:description" content="Six ready-to-paste recipes for the @pqsafe/openclaw skill." />
+<meta property="og:url" content="https://pqsafe.xyz/openclaw-cookbook" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="PQSafe" />
+<meta name="twitter:card" content="summary_large_image" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  pre.code { background: #0b1020; color: #e6edf3; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.8rem; }
+  pre.code .c { color: #6b7c93; }
+  pre.code .k { color: #f472b6; }
+  pre.code .s { color: #34d399; }
+  pre.code .n { color: #facc15; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🦞</span>
+      <div>
+        <a href="https://pqsafe.xyz" class="font-semibold text-slate-900 hover:underline">PQSafe</a>
+        <span class="text-slate-500"> &middot; OpenClaw cookbook</span>
+      </div>
+    </div>
+    <nav class="text-sm text-slate-600 flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">Home</a>
+      <a href="https://pqsafe.xyz/openclaw-skill" class="hover:underline">Skill</a>
+      <a href="https://pqsafe.xyz/quickstart" class="hover:underline">Quickstart</a>
+      <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/openclaw-pqsafe" class="hover:underline">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-6 py-10">
+
+  <section class="mb-10">
+    <h1 class="text-3xl font-semibold tracking-tight">OpenClaw skill recipes.</h1>
+    <p class="mt-2 text-slate-600 max-w-3xl">
+      Six copy-paste OpenClaw flows using the <code class="mono text-rose-600">pqsafe.pay.v1</code> skill. Each one is self-contained: install, sign a SpendEnvelope, verify on the recipient side. Pair with <a href="/quickstart" class="text-rose-600 hover:underline">/quickstart</a> for the broader SDK landing.
+    </p>
+    <p class="mt-3 text-xs text-slate-500">Skill ID: <code class="mono">pqsafe.pay.v1</code> &middot; current version <code class="mono">0.1.0</code> &middot; License Apache-2.0.</p>
+  </section>
+
+  <section class="mb-10 p-5 bg-white border border-slate-200 rounded text-sm">
+    <div class="font-semibold mb-2">One-time install</div>
+<pre class="code"><span class="k">npm</span> install @pqsafe/openclaw
+<span class="k">export</span> PQSAFE_API_KEY=<span class="s">'pqsafe_live_…'</span>      <span class="c"># from dashboard.pqsafe.xyz</span>
+<span class="k">export</span> PQSAFE_KEY_ID=<span class="s">'key_01HXYZ…'</span>        <span class="c"># optional, defaults to account key</span></pre>
+    <p class="mt-3 text-xs text-slate-500">All recipes assume an OpenClaw runtime; for raw SDK usage see <a href="/quickstart" class="text-rose-600 hover:underline">/quickstart</a>.</p>
+  </section>
+
+  <!-- Recipe 1 -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Recipe 1</div>
+    <h2 class="text-xl font-semibold mb-2">Pay a recurring SaaS bill from an agent</h2>
+    <p class="text-sm text-slate-600 mb-4">Issue a SpendEnvelope authorizing the agent to clear a fixed monthly invoice. Cap, recipient, and currency are bound to the signature.</p>
+<pre class="code"><span class="k">import</span> { invokeSkill } <span class="k">from</span> <span class="s">'@openclaw/runtime'</span>;
+
+<span class="k">const</span> envelope = <span class="k">await</span> invokeSkill(<span class="s">'pqsafe.pay.v1'</span>, {
+  op: <span class="s">'create_envelope'</span>,
+  input: {
+    issuer:        <span class="s">'pq10000000000000000000000000000000000abcd'</span>,
+    agent:         <span class="s">'did:web:agents.example.com:cfo-agent'</span>,
+    maxAmount:     <span class="s">'26.00'</span>,
+    currency:      <span class="s">'USD'</span>,
+    allowedRecipients: [<span class="s">'did:web:sentry.io:billing'</span>],
+    rail:          <span class="s">'stripe-issuing'</span>,
+    ttlSeconds:    <span class="n">300</span>,
+  },
+});
+<span class="c">// envelope.signature.mldsa proves authorization. Hand it to the rail adapter.</span></pre>
+  </section>
+
+  <!-- Recipe 2 -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Recipe 2</div>
+    <h2 class="text-xl font-semibold mb-2">Settle a contractor in USDC on Base</h2>
+    <p class="text-sm text-slate-600 mb-4">Stablecoin rail with explicit chain + token binding. The envelope is verifiable on-chain by the SpendEnvelope registry contract.</p>
+<pre class="code"><span class="k">const</span> envelope = <span class="k">await</span> invokeSkill(<span class="s">'pqsafe.pay.v1'</span>, {
+  op: <span class="s">'create_envelope'</span>,
+  input: {
+    issuer:    <span class="s">'pq1…'</span>,
+    agent:     <span class="s">'did:web:agents.example.com:payroll'</span>,
+    maxAmount: <span class="s">'2500.00'</span>,
+    currency:  <span class="s">'USDC'</span>,
+    rail:      <span class="s">'usdc-base'</span>,
+    chainId:   <span class="n">8453</span>,
+    allowedRecipients: [<span class="s">'0xa1b2c3…'</span>],
+    ttlSeconds: <span class="n">86400</span>,
+  },
+});</pre>
+  </section>
+
+  <!-- Recipe 3 -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Recipe 3</div>
+    <h2 class="text-xl font-semibold mb-2">Gate a high-value transfer with policy + replay check</h2>
+    <p class="text-sm text-slate-600 mb-4">Receiver verifies the envelope against the canonical issuer pubkey, enforces an expected amount, and rejects replays via the on-chain registry.</p>
+<pre class="code"><span class="k">const</span> result = <span class="k">await</span> invokeSkill(<span class="s">'pqsafe.pay.v1'</span>, {
+  op: <span class="s">'verify_envelope'</span>,
+  input: {
+    envelope:           incomingEnvelope,
+    expectedIssuer:     <span class="s">'pq10000…abcd'</span>,
+    expectedAmount:     <span class="s">'10000.00'</span>,
+    expectedCurrency:   <span class="s">'HKD'</span>,
+    expectedRail:       <span class="s">'airwallex-borderless'</span>,
+    checkReplayOnChain: <span class="k">true</span>,
+  },
+});
+
+<span class="k">if</span> (!result.valid) <span class="k">throw</span> <span class="k">new</span> Error(result.reason);
+<span class="c">// → both ECDSA + ML-DSA-65 signatures verified, nonce not seen, amount matches</span></pre>
+  </section>
+
+  <!-- Recipe 4 -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Recipe 4</div>
+    <h2 class="text-xl font-semibold mb-2">Revoke a leaked envelope before it executes</h2>
+    <p class="text-sm text-slate-600 mb-4">If a SpendEnvelope is exposed (e.g., logged in plaintext somewhere it shouldn't be), revoke its nonce on the registry. Any receiver that performs the replay check rejects subsequent attempts.</p>
+<pre class="code"><span class="k">await</span> invokeSkill(<span class="s">'pqsafe.pay.v1'</span>, {
+  op: <span class="s">'revoke_envelope'</span>,
+  input: {
+    nonce:  envelope.mandate.nonce,
+    reason: <span class="s">'EXPOSED_IN_LOGS'</span>,
+  },
+});
+
+<span class="c">// Revocation is on-chain (Arbitrum). Confirmed in &lt; 2 seconds at typical gas price.</span></pre>
+  </section>
+
+  <!-- Recipe 5 -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Recipe 5</div>
+    <h2 class="text-xl font-semibold mb-2">Run conformance in CI on every agent change</h2>
+    <p class="text-sm text-slate-600 mb-4">Verify the skill against the canonical AP2-PQ v1 test vectors in your CI pipeline. Build fails if your impl drifts.</p>
+<pre class="code"><span class="c"># .github/workflows/pqsafe-conformance.yml</span>
+<span class="k">name</span>: <span class="s">PQSafe conformance</span>
+<span class="k">on</span>: [<span class="s">push</span>, <span class="s">pull_request</span>]
+<span class="k">jobs</span>:
+  <span class="k">conformance</span>:
+    <span class="k">runs-on</span>: <span class="s">ubuntu-latest</span>
+    <span class="k">steps</span>:
+      - <span class="k">uses</span>: <span class="s">actions/checkout@v4</span>
+      - <span class="k">uses</span>: <span class="s">actions/setup-node@v4</span>
+        <span class="k">with</span>: { <span class="k">node-version</span>: <span class="n">22</span> }
+      - <span class="k">run</span>: <span class="s">npm i @pqsafe/conformance &amp;&amp; npx @pqsafe/conformance check</span></pre>
+  </section>
+
+  <!-- Recipe 6 -->
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Recipe 6</div>
+    <h2 class="text-xl font-semibold mb-2">Multi-agent shared budget</h2>
+    <p class="text-sm text-slate-600 mb-4">A controller agent issues a single parent envelope; child agents present child envelopes whose <code class="mono text-xs">parent_envelope_hash</code> chains to the parent. The receiver verifies the entire chain.</p>
+<pre class="code"><span class="k">const</span> parent = <span class="k">await</span> invokeSkill(<span class="s">'pqsafe.pay.v1'</span>, {
+  op: <span class="s">'create_envelope'</span>,
+  input: { issuer: <span class="s">'pq1…'</span>, agent: <span class="s">'did:web:agents.example.com:cfo'</span>,
+           maxAmount: <span class="s">'5000.00'</span>, currency: <span class="s">'USD'</span>, rail: <span class="s">'airwallex-borderless'</span>,
+           allowedRecipients: [<span class="s">'did:web:vendor1.com'</span>, <span class="s">'did:web:vendor2.com'</span>],
+           ttlSeconds: <span class="n">3600</span>, scope: <span class="s">'multi-agent'</span> }
+});
+
+<span class="k">const</span> child = <span class="k">await</span> invokeSkill(<span class="s">'pqsafe.pay.v1'</span>, {
+  op: <span class="s">'create_envelope'</span>,
+  input: { issuer: <span class="s">'pq1…'</span>, agent: <span class="s">'did:web:agents.example.com:vendor1-pay'</span>,
+           maxAmount: <span class="s">'500.00'</span>, currency: <span class="s">'USD'</span>, rail: <span class="s">'airwallex-borderless'</span>,
+           allowedRecipients: [<span class="s">'did:web:vendor1.com'</span>], ttlSeconds: <span class="n">300</span>,
+           parentEnvelopeHash: parent.fingerprintHex }
+});
+
+<span class="c">// Receiver verifies child AND parent. Spend on the parent is the sum of all children.</span></pre>
+  </section>
+
+  <section class="mb-12 grid sm:grid-cols-2 gap-4 text-sm">
+    <a href="/openclaw-skill" class="p-5 bg-white border border-rose-300 rounded hover:bg-rose-50 transition">
+      <div class="font-semibold text-rose-700 mb-1">Skill reference →</div>
+      <p class="text-slate-600">Full operation reference for <code class="mono text-xs">pqsafe.pay.v1</code>: input/output schemas, security parameters, rail adapters.</p>
+    </a>
+    <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/openclaw-pqsafe" target="_blank" rel="noopener" class="p-5 bg-white border border-rose-300 rounded hover:bg-rose-50 transition">
+      <div class="font-semibold text-rose-700 mb-1">Source on GitHub →</div>
+      <p class="text-slate-600">Apache-2.0. Tests, skill manifest, TypeScript implementation, Python sibling.</p>
+    </a>
+  </section>
+
+  <footer class="text-xs text-slate-500 mt-16 mb-8 border-t border-slate-200 pt-6 space-y-2">
+    <div class="flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">← pqsafe.xyz home</a>
+      <a href="https://pqsafe.xyz/openclaw-skill" class="hover:underline">OpenClaw skill</a>
+      <a href="https://pqsafe.xyz/quickstart" class="hover:underline">Quickstart</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify</a>
+      <a href="https://pqsafe.xyz/conformance" class="hover:underline">Conformance</a>
+    </div>
+    <div>Apache-2.0 · PQSafe AgentPay · <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a></div>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PQSafe demo walkthrough — what the live demo proves</title>
+<meta name="description" content="A 10-step narrated walkthrough of demo.pqsafe.xyz: AI agent autonomously pays its own SaaS bills using PQSafe-signed envelopes. Real card, real charge, real audit." />
+<link rel="canonical" href="https://pqsafe.xyz/demo-walkthrough" />
+<meta property="og:title" content="PQSafe demo walkthrough — what the live demo proves" />
+<meta property="og:description" content="10-step narrated walkthrough of demo.pqsafe.xyz." />
+<meta property="og:url" content="https://pqsafe.xyz/demo-walkthrough" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="PQSafe" />
+<meta name="twitter:card" content="summary_large_image" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .step-num { width: 32px; height: 32px; border-radius: 999px; background: #0f172a; color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  pre.code { background: #0b1020; color: #e6edf3; padding: 0.75rem; border-radius: 6px; overflow-x: auto; font-size: 0.75rem; }
+  pre.code .c { color: #6b7c93; }
+  pre.code .k { color: #f472b6; }
+  pre.code .s { color: #34d399; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🦞</span>
+      <div>
+        <a href="https://pqsafe.xyz" class="font-semibold text-slate-900 hover:underline">PQSafe</a>
+        <span class="text-slate-500"> &middot; Demo walkthrough</span>
+      </div>
+    </div>
+    <nav class="text-sm text-slate-600 flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">Home</a>
+      <a href="https://demo.pqsafe.xyz" class="hover:underline">Live demo →</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify</a>
+      <a href="https://github.com/PQSafe/pqsafe" class="hover:underline">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-6 py-10">
+
+  <section class="mb-10">
+    <h1 class="text-3xl font-semibold tracking-tight">What the demo proves.</h1>
+    <p class="mt-2 text-slate-600 max-w-3xl">
+      <a href="https://demo.pqsafe.xyz" class="text-rose-600 hover:underline font-semibold">demo.pqsafe.xyz</a> runs an AI agent that pays its own SaaS bills using PQSafe-signed envelopes. Real virtual card, real charges, real audit trail. This page narrates the ten steps that happen end-to-end &mdash; what you see, what the agent is doing under the hood, and why each step matters.
+    </p>
+    <div class="mt-4 flex flex-wrap gap-3">
+      <a href="https://demo.pqsafe.xyz" class="px-4 py-2 bg-rose-600 text-white rounded text-sm font-medium hover:bg-rose-700">Open the live demo →</a>
+      <a href="/verify" class="px-4 py-2 bg-white border border-slate-300 rounded text-sm hover:bg-slate-100">Try the verifier yourself →</a>
+    </div>
+  </section>
+
+  <section class="mb-10 p-6 bg-amber-50 border border-amber-200 rounded text-sm text-amber-900">
+    <strong>What you'll see.</strong> A dashboard view of a single agent, its monthly SaaS bill stack ($26 Sentry · $19 Resend · $20 OpenAI · $20 Vercel), the PQSafe-signed envelopes the agent generated for each charge, and the Airwallex virtual card transactions that actually moved the money. Numbers are real; the agent in this demo is operated by Raymond personally.
+  </section>
+
+  <!-- Steps -->
+  <section class="mb-10 space-y-6">
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">1</span>
+      <div class="flex-1">
+        <div class="font-semibold">Agent receives an invoice notification</div>
+        <p class="text-sm text-slate-600 mt-1">The agent's monitoring layer (here: Sentry's billing webhook, but any inbox poll works) signals that Sentry is about to charge the cardholder. The agent's job is to decide whether to authorize the charge.</p>
+      </div>
+    </div>
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">2</span>
+      <div class="flex-1">
+        <div class="font-semibold">Agent looks up the spend policy</div>
+        <p class="text-sm text-slate-600 mt-1">The agent's policy says: SaaS bills under $50/month, from one of 5 pre-approved vendors, are auto-pay. Sentry @ $26 matches.</p>
+      </div>
+    </div>
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">3</span>
+      <div class="flex-1">
+        <div class="font-semibold">Agent issues a SpendEnvelope</div>
+        <p class="text-sm text-slate-600 mt-1">The agent calls the <code class="mono text-xs">pqsafe.pay.v1</code> skill (or the raw SDK) to generate a signed mandate: agent_id, amount=26.00, currency=USD, recipient=Sentry's DID, nonce, expires in 5 minutes.</p>
+<pre class="code mt-3"><span class="c">// what the skill returns</span>
+{
+  agent_id:  <span class="s">'did:web:agents.raymond.com:saas-pay'</span>,
+  amount:    <span class="s">'26.00'</span>,
+  currency:  <span class="s">'USD'</span>,
+  recipient: <span class="s">'did:web:sentry.io:billing'</span>,
+  nonce:     <span class="s">'a3f2…d801'</span>,
+  signature: { alg: <span class="s">'ap2-ecdsa-p256+ap2-mldsa65'</span>, ecdsa: <span class="s">'…'</span>, mldsa: <span class="s">'…'</span> }
+}</pre>
+      </div>
+    </div>
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">4</span>
+      <div class="flex-1">
+        <div class="font-semibold">PQSafe verifier API confirms the signature</div>
+        <p class="text-sm text-slate-600 mt-1">The envelope hits <code class="mono text-xs">api.pqsafe.xyz/v1/mandates/verify</code> (or local SDK verify). Both signatures pass, nonce isn't in the registry, expires_at is in the future. Verifier returns OK.</p>
+      </div>
+    </div>
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">5</span>
+      <div class="flex-1">
+        <div class="font-semibold">Card-bridge mints a single-use virtual card</div>
+        <p class="text-sm text-slate-600 mt-1">Airwallex Borderless creates a virtual card with exactly the policy bounds: capped at $26, locked to Sentry's merchant ID, expires in 5 minutes. The bridge stores the envelope hash → card ID mapping.</p>
+      </div>
+    </div>
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">6</span>
+      <div class="flex-1">
+        <div class="font-semibold">Sentry charges the virtual card</div>
+        <p class="text-sm text-slate-600 mt-1">Standard card transaction. Sentry sees a normal MasterCard auth, captures $26. The card was created moments ago and will be void within minutes; nothing else can charge it.</p>
+      </div>
+    </div>
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">7</span>
+      <div class="flex-1">
+        <div class="font-semibold">Airwallex webhook fires</div>
+        <p class="text-sm text-slate-600 mt-1">Card-bridge receives the capture event. It joins the capture (amount, merchant, timestamp) with the originating envelope hash and writes the pair to the audit log.</p>
+      </div>
+    </div>
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">8</span>
+      <div class="flex-1">
+        <div class="font-semibold">Nonce gets revoked on the registry</div>
+        <p class="text-sm text-slate-600 mt-1">The card-bridge submits the envelope's nonce to the on-chain SpendEnvelope registry on Arbitrum. Even if the envelope leaks now, replay is prevented.</p>
+      </div>
+    </div>
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">9</span>
+      <div class="flex-1">
+        <div class="font-semibold">Audit row materializes in the dashboard</div>
+        <p class="text-sm text-slate-600 mt-1">A new row in the demo dashboard: timestamp, agent, amount, recipient, envelope fingerprint, registry tx hash, capture tx hash. One signed, verified, captured, audited end-to-end transaction. Click into the row to expand the full envelope JSON and re-verify it in your own browser via <a href="/verify" class="text-rose-600 hover:underline">/verify</a>.</p>
+      </div>
+    </div>
+
+    <div class="p-5 bg-white border border-slate-200 rounded flex gap-4">
+      <span class="step-num">10</span>
+      <div class="flex-1">
+        <div class="font-semibold">A blocked attempt for contrast</div>
+        <p class="text-sm text-slate-600 mt-1">The demo also shows a deliberately blocked attempt: the agent receives a phishing-style "Sentry CFO" invoice for $5,000 from a typo-squat domain. The agent's policy rejects the recipient DID; no envelope is issued; no card is minted. The blocked attempt is logged for audit visibility.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="mb-10 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-xl font-semibold mb-3">What this proves about PQSafe</h2>
+    <ul class="space-y-2 text-sm text-slate-700 list-disc ml-5">
+      <li><strong>Spend authorization is cryptographic, not procedural.</strong> The amount, recipient, currency, and time window are bound to the signature. A leaked envelope can't be repurposed.</li>
+      <li><strong>The post-quantum signature is on the hot path.</strong> Every transaction in the demo carries an ML-DSA-65 signature alongside ECDSA. The verifier checks both.</li>
+      <li><strong>The audit trail is verifiable by anyone.</strong> Envelopes are public artifacts (minus signatures). Anyone can re-verify any historical transaction at <a href="/verify" class="text-rose-600 hover:underline">/verify</a> using the published issuer pubkey.</li>
+      <li><strong>The rail is real, not simulated.</strong> Airwallex Borderless is a regulated card issuer; the captured charges show up on a real card statement. The demo runs on Raymond's own account.</li>
+      <li><strong>Policy failure is observable.</strong> Step 10 shows the same machinery rejecting an attack &mdash; the absence of an envelope is also a verifiable signal.</li>
+    </ul>
+  </section>
+
+  <section class="mb-10 p-6 bg-slate-900 text-slate-100 rounded">
+    <h2 class="text-lg font-semibold mb-3 text-white">Recording &amp; reproducibility</h2>
+    <p class="text-sm text-slate-300 mb-3">
+      The live dashboard is the canonical version. A scripted screen recording will be published at this URL once the May 13 recording session is complete, embedded inline above the steps. In the meantime, the demo at <a href="https://demo.pqsafe.xyz" class="text-rose-300 hover:underline">demo.pqsafe.xyz</a> is open and replayable.
+    </p>
+    <p class="text-sm text-slate-300">
+      To run a copy yourself: clone <code class="mono bg-slate-800 px-1 rounded text-xs">PQSafe/pqsafe</code>, populate the Airwallex sandbox keys, point the issuer at <code class="mono bg-slate-800 px-1 rounded text-xs">sandbox.pqsafe.xyz</code>, and run <code class="mono bg-slate-800 px-1 rounded text-xs">bash demo/run.sh</code>. Documented in the repo README.
+    </p>
+  </section>
+
+  <footer class="text-xs text-slate-500 mt-16 mb-8 border-t border-slate-200 pt-6 space-y-2">
+    <div class="flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">← pqsafe.xyz home</a>
+      <a href="https://demo.pqsafe.xyz" class="hover:underline">Live demo</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify</a>
+      <a href="https://pqsafe.xyz/quickstart" class="hover:underline">Quickstart</a>
+      <a href="https://pqsafe.xyz/openclaw-cookbook" class="hover:underline">OpenClaw cookbook</a>
+    </div>
+    <div>Apache-2.0 · PQSafe AgentPay · <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a></div>
+  </footer>
+</main>
+</body>
+</html>
