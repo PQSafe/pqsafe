@@ -624,6 +624,27 @@
     </div>
   </section>
 
+  <!-- ====== RECOGNITION STRIP ====== -->
+  <section class="py-6 border-t border-b border-gray-900 bg-black/40 fade-in-up">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-center sm:text-left">
+        <span class="text-xs uppercase tracking-widest text-gray-500 font-semibold">Recognition</span>
+        <a href="https://tec.hku.hk/startups-directory/" target="_blank" rel="noopener"
+           class="text-sm text-gray-300 hover:text-emerald-400 transition-colors">
+          <span class="text-emerald-400 font-semibold">HKU TEC</span> Startup Directory
+        </a>
+        <span class="text-gray-700 hidden sm:inline">·</span>
+        <a href="/fido-pq-letter/" class="text-sm text-gray-300 hover:text-cyan-400 transition-colors">
+          <span class="text-cyan-400 font-semibold">FIDO Alliance</span> Agentic Authentication WG
+        </a>
+        <span class="text-gray-700 hidden sm:inline">·</span>
+        <span class="text-sm text-gray-400">
+          <span class="text-violet-400 font-semibold">NIST FIPS&nbsp;204</span> ML-DSA-65
+        </span>
+      </div>
+    </div>
+  </section>
+
   <!-- ====== STATS BAR ====== -->
   <section class="stats-bar py-6 fade-in-up">
     <div class="max-w-5xl mx-auto px-6">
@@ -1152,7 +1173,7 @@
     <div class="text-center mb-16 fade-in-up">
       <div class="section-label">Framework Plugins</div>
       <h2 class="text-3xl sm:text-4xl font-bold text-white">Works with the frameworks you already use</h2>
-      <p class="mt-4 text-gray-400 max-w-xl mx-auto">Drop-in plugins for LangChain, CrewAI, and Mastra. One import away from spend-safe agents.</p>
+      <p class="mt-4 text-gray-400 max-w-xl mx-auto">Drop-in plugins for LangChain, LangGraph, CrewAI, Mastra, Vercel AI, Pydantic AI, AutoGen, LlamaIndex, and Anthropic SDK. One import away from spend-safe agents.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 fade-in-up delay-100">
@@ -1247,6 +1268,169 @@
           <div class="p-3 font-mono text-xs text-emerald-400">npm i @pqsafe/mastra</div>
         </div>
         <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/mastra-pqsafe" target="_blank" rel="noopener"
+           class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View plugin README
+        </a>
+      </div>
+
+      <!-- LangGraph -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>
+              <path d="M8 6h8M6 8v8M18 8v8M8 18h8"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">LangGraph</div>
+            <div class="text-xs text-gray-500">Python &amp; JS</div>
+          </div>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed flex-1">
+          Wraps any LangGraph node with a spend envelope checkpoint — every state transition that moves money requires a signed mandate before it executes.
+        </p>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">pip install langgraph-pqsafe</div>
+        </div>
+        <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/langgraph-pqsafe" target="_blank" rel="noopener"
+           class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View plugin README
+        </a>
+      </div>
+
+      <!-- Vercel AI -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.2);">
+            <svg width="18" height="18" fill="white" viewBox="0 0 24 24">
+              <path d="M12 2L2 22h20L12 2z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">Vercel AI SDK</div>
+            <div class="text-xs text-gray-500">TypeScript</div>
+          </div>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed flex-1">
+          Drop-in tool for the <code class="text-white bg-black/40 px-1.5 py-0.5 rounded text-xs">ai</code> package — adds a signed <code class="text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">pqsafePay</code> tool to any model.generateText or model.streamText call.
+        </p>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">npm i @pqsafe/vercel-ai</div>
+        </div>
+        <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/vercel-ai-pqsafe" target="_blank" rel="noopener"
+           class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View plugin README
+        </a>
+      </div>
+
+      <!-- Pydantic AI -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(244,114,182,0.1); border: 1px solid rgba(244,114,182,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#f472b6" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M4 7l8-4 8 4M4 7v10l8 4 8-4V7M4 7l8 4M12 11v10M20 7l-8 4"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">Pydantic AI</div>
+            <div class="text-xs text-gray-500">Python</div>
+          </div>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed flex-1">
+          Type-safe Pydantic-AI tool that validates payment intents at the model boundary — invalid envelopes never reach the rail. Pairs with Pydantic models for spend policies.
+        </p>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">pip install pydantic-ai-pqsafe</div>
+        </div>
+        <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/pydantic-ai-pqsafe" target="_blank" rel="noopener"
+           class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View plugin README
+        </a>
+      </div>
+
+      <!-- AutoGen -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 3v4M12 17v4M3 12h4M17 12h4"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">AutoGen</div>
+            <div class="text-xs text-gray-500">Python</div>
+          </div>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed flex-1">
+          Multi-agent AutoGen workflows get a shared spend envelope across all agents — one budget, cryptographically enforced, no matter how many agents touch the conversation.
+        </p>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">pip install autogen-pqsafe</div>
+        </div>
+        <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/autogen-pqsafe" target="_blank" rel="noopener"
+           class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+          View plugin README
+        </a>
+      </div>
+
+      <!-- LlamaIndex -->
+      <div class="bg-[#0f0f1a] rounded-2xl p-7 card-glow flex flex-col gap-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25);">
+            <svg width="18" height="18" fill="none" stroke="#fbbf24" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M4 19V5l8 4 8-4v14M4 19l8-4 8 4M4 19h16"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">LlamaIndex</div>
+            <div class="text-xs text-gray-500">Python</div>
+          </div>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed flex-1">
+          Adds an <code class="text-amber-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">AgentPayTool</code> to any LlamaIndex agent or ReActAgent — turns retrieval-driven workflows into spend-safe payment workflows.
+        </p>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="text-xs text-gray-500">Install</span>
+          </div>
+          <div class="p-3 font-mono text-xs text-emerald-400">pip install llamaindex-pqsafe</div>
+        </div>
+        <a href="https://github.com/PQSafe/pqsafe/tree/main/plugins/llamaindex-pqsafe" target="_blank" rel="noopener"
            class="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
