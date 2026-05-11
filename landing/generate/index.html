@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Issue a PQSafe SpendEnvelope — in-browser generator</title>
+<meta name="description" content="Generate a real ML-DSA-65 + ECDSA P-256 signed SpendEnvelope in your browser. Ephemeral keys, RFC 8785 JCS canonicalization, client-side only." />
+<link rel="canonical" href="https://pqsafe.xyz/generate" />
+<meta property="og:title" content="Issue a PQSafe SpendEnvelope — in-browser generator" />
+<meta property="og:description" content="Generate a real ML-DSA-65 + ECDSA P-256 signed SpendEnvelope in your browser. Ephemeral keys, RFC 8785 JCS canonicalization, client-side only." />
+<meta property="og:url" content="https://pqsafe.xyz/generate" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="PQSafe" />
+<meta name="twitter:card" content="summary_large_image" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .truncate-mid { max-width: 100%; overflow-x: auto; white-space: nowrap; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🦞</span>
+      <div>
+        <a href="https://pqsafe.xyz" class="font-semibold text-slate-900 hover:underline">PQSafe</a>
+        <span class="text-slate-500"> &middot; SpendEnvelope Generator</span>
+      </div>
+    </div>
+    <nav class="text-sm text-slate-600 flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">Home</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify</a>
+      <a href="https://pqsafe.xyz/ap2-pq-rfc" class="hover:underline">AP2-PQ RFC</a>
+      <a href="https://github.com/PQSafe/pqsafe" class="hover:underline">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-6 py-10">
+
+  <section class="mb-10">
+    <h1 class="text-3xl font-semibold tracking-tight">Issue a SpendEnvelope.</h1>
+    <p class="mt-2 text-slate-600 max-w-2xl">
+      Real ML-DSA-65 + ECDSA P-256 dual-signature. Ephemeral keypairs generated in your browser,
+      JCS canonicalization per RFC 8785. Nothing is sent to PQSafe servers. Paste the result into the
+      <a href="/verify" class="text-rose-600 hover:underline">verifier</a> with the public keys shown below.
+    </p>
+  </section>
+
+  <section class="mb-10 p-5 bg-amber-50 border border-amber-200 rounded text-sm text-amber-900">
+    <strong>Note:</strong> Envelopes generated here are signed with <em>ephemeral demo keys</em> not registered with the real PQSafe issuer.
+    For production envelopes from the canonical issuer, use <code class="mono">@pqsafe/cli</code> or the issuer API.
+    This page demonstrates the cryptographic shape so integrators can wire up a verifier against a known good envelope.
+  </section>
+
+  <section class="mb-8 grid sm:grid-cols-2 gap-6">
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">agent_id <span class="text-slate-400">(DID of the issuing agent)</span></label>
+      <input id="agent_id" type="text" value="did:web:agents.example.com:agent-demo" class="w-full p-2 mono text-sm bg-white border border-slate-300 rounded" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">recipient <span class="text-slate-400">(DID of the payee)</span></label>
+      <input id="recipient" type="text" value="did:web:seniordeli.com:payee:main" class="w-full p-2 mono text-sm bg-white border border-slate-300 rounded" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">amount <span class="text-slate-400">(decimal string)</span></label>
+      <input id="amount" type="text" value="50.00" class="w-full p-2 mono text-sm bg-white border border-slate-300 rounded" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">currency</label>
+      <select id="currency" class="w-full p-2 mono text-sm bg-white border border-slate-300 rounded">
+        <option value="HKD">HKD</option>
+        <option value="USD" selected>USD</option>
+        <option value="EUR">EUR</option>
+        <option value="SGD">SGD</option>
+        <option value="GBP">GBP</option>
+        <option value="JPY">JPY</option>
+        <option value="CNY">CNY</option>
+      </select>
+    </div>
+    <div class="sm:col-span-2">
+      <label class="block text-sm font-medium text-slate-700 mb-1">nonce <span class="text-slate-400">(replay-protection unique value)</span></label>
+      <div class="flex gap-2">
+        <input id="nonce" type="text" class="flex-1 p-2 mono text-sm bg-white border border-slate-300 rounded" />
+        <button id="reroll-nonce" class="px-3 py-2 text-sm bg-white border border-slate-300 rounded hover:bg-slate-100">Reroll</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-10 flex gap-3 items-center">
+    <button id="gen-keys-btn" class="px-4 py-2 bg-white border border-slate-300 rounded hover:bg-slate-100 text-sm font-medium">Generate keypair</button>
+    <button id="issue-btn" class="px-5 py-2 bg-rose-600 text-white rounded hover:bg-rose-700 font-medium disabled:opacity-40" disabled>Issue Envelope</button>
+    <span id="status" class="ml-auto text-sm text-slate-500"></span>
+  </section>
+
+  <section id="key-panel" class="hidden mb-10 p-6 bg-white border border-slate-200 rounded shadow-sm">
+    <h2 class="text-lg font-semibold mb-3">Public keys (paste into a verifier)</h2>
+    <div class="text-sm space-y-3">
+      <div>
+        <div class="text-slate-500 text-xs uppercase tracking-wide mb-1">ECDSA P-256 (compressed hex, 33 bytes)</div>
+        <div class="mono text-xs bg-slate-100 p-2 rounded break-all" id="ec-pub-display"></div>
+      </div>
+      <div>
+        <div class="text-slate-500 text-xs uppercase tracking-wide mb-1">ML-DSA-65 (base64url, 1952 bytes)</div>
+        <div class="mono text-xs bg-slate-100 p-2 rounded break-all max-h-32 overflow-y-auto" id="ml-pub-display"></div>
+      </div>
+      <div>
+        <div class="text-slate-500 text-xs uppercase tracking-wide mb-1">ML-DSA-65 public key fingerprint (first 8 bytes SHA-256, hex)</div>
+        <div class="mono text-xs bg-slate-100 p-2 rounded" id="ml-fp-display"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="envelope-panel" class="hidden mb-10 p-6 bg-white border border-slate-200 rounded shadow-sm">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold">Issued SpendEnvelope</h2>
+      <div class="flex gap-2">
+        <button id="copy-btn" class="px-3 py-1.5 text-sm bg-white border border-slate-300 rounded hover:bg-slate-100">Copy JSON</button>
+        <a id="open-verify" href="/verify" class="px-3 py-1.5 text-sm bg-rose-600 text-white rounded hover:bg-rose-700">Verify it →</a>
+      </div>
+    </div>
+    <textarea id="envelope-output" readonly rows="18" class="w-full p-3 mono text-xs bg-slate-50 border border-slate-200 rounded"></textarea>
+    <div class="mt-4 grid sm:grid-cols-4 gap-3 text-xs">
+      <div><span class="text-slate-500">JCS canonical:</span> <span class="mono" id="m-canon">—</span> bytes</div>
+      <div><span class="text-slate-500">ECDSA sig:</span> <span class="mono" id="m-ec-sig">—</span> bytes DER</div>
+      <div><span class="text-slate-500">ML-DSA sig:</span> <span class="mono" id="m-ml-sig">—</span> bytes</div>
+      <div><span class="text-slate-500">Fingerprint:</span> <span class="mono truncate-mid" id="m-fp">—</span></div>
+    </div>
+  </section>
+
+  <section class="mb-12 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-lg font-semibold mb-4">How issuance works</h2>
+    <ol class="space-y-3 text-sm text-slate-700">
+      <li><strong>1. Capture intent.</strong> The agent records what it wants to spend, where, and under what policy. These become the mandate fields above.</li>
+      <li><strong>2. Canonicalize.</strong> Mandate fields (without <code class="mono text-rose-700">signature</code>) are serialized via RFC 8785 JCS — sorted keys, normalized numbers, deterministic encoding. Any equivalent JSON produces identical bytes.</li>
+      <li><strong>3. Fingerprint.</strong> SHA-256 of the canonical bytes produces a 32-byte fingerprint. The signature is over the fingerprint, not the raw JSON.</li>
+      <li><strong>4. Dual-sign.</strong> The fingerprint is signed with both ECDSA P-256 (~71 bytes DER) and ML-DSA-65 (3309 bytes per FIPS 204). Either signing key alone produces a valid signature; the verifier checks both.</li>
+    </ol>
+    <div class="mt-4 text-xs text-slate-500">
+      Spec: <a class="text-rose-600 hover:underline" href="https://csrc.nist.gov/pubs/fips/204/final">NIST FIPS 204</a> ·
+      <a class="text-rose-600 hover:underline" href="https://datatracker.ietf.org/doc/rfc8785/">RFC 8785 JCS</a> ·
+      AP2 Post-Quantum Profile (<a class="text-rose-600 hover:underline" href="https://pqsafe.xyz/ap2-pq-rfc">RFC</a> · <a class="text-rose-600 hover:underline" href="https://pqsafe.xyz/fido-pq-letter">FIDO open letter</a>)
+    </div>
+  </section>
+
+  <section class="mb-12 p-6 bg-white border border-slate-200 rounded">
+    <h2 class="text-lg font-semibold mb-3">For production</h2>
+    <p class="text-sm text-slate-700 mb-3">
+      Ephemeral keys are for exploration only. In production, the canonical PQSafe issuer holds the long-lived
+      keypair, registers the public key fingerprint on-chain (Arbitrum), and exposes a controlled HTTP issuance API.
+    </p>
+    <pre class="mono text-xs bg-slate-900 text-slate-100 p-4 rounded overflow-x-auto">npm i -g @pqsafe/cli
+pqsafe issue \
+  --agent did:web:youragent.com:agent-1 \
+  --amount 50.00 --currency USD \
+  --recipient did:web:merchant.com:payee \
+  --output envelope.json</pre>
+    <p class="mt-3 text-sm">
+      <a href="https://github.com/PQSafe/pqsafe/tree/main/packages/cli" class="text-rose-600 hover:underline">@pqsafe/cli docs &rarr;</a>
+    </p>
+  </section>
+
+  <footer class="text-xs text-slate-500 mt-16 mb-8 border-t border-slate-200 pt-6 space-y-2">
+    <div class="flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">← pqsafe.xyz home</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify a SpendEnvelope →</a>
+      <a href="https://pqsafe.xyz/ap2-pq-rfc" class="hover:underline">AP2-PQ Profile RFC →</a>
+      <a href="https://github.com/PQSafe/pqsafe" class="hover:underline">GitHub</a>
+    </div>
+    <div>
+      Apache-2.0 · All cryptography runs client-side; no envelope data leaves your browser.
+      PQSafe AgentPay · <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a>
+    </div>
+  </footer>
+</main>
+
+<script type="module">
+import { generateKeypairs, issueEnvelope, randomNonce, mldsaFingerprint } from './generate.js';
+
+const statusEl = document.getElementById('status');
+const issueBtn = document.getElementById('issue-btn');
+const genBtn = document.getElementById('gen-keys-btn');
+let keys = null;
+
+document.getElementById('nonce').value = randomNonce();
+
+document.getElementById('reroll-nonce').addEventListener('click', () => {
+  document.getElementById('nonce').value = randomNonce();
+});
+
+genBtn.addEventListener('click', async () => {
+  statusEl.textContent = 'Generating ephemeral keypairs…';
+  await new Promise(r => setTimeout(r, 30));
+  const t0 = performance.now();
+  keys = generateKeypairs();
+  const ms = (performance.now() - t0).toFixed(0);
+
+  const fp = await mldsaFingerprint(keys.mldsa.pub);
+  document.getElementById('ec-pub-display').textContent = keys.ecdsa.pub_hex_compressed;
+  document.getElementById('ml-pub-display').textContent = keys.mldsa.pub_b64url;
+  document.getElementById('ml-fp-display').textContent = fp;
+  document.getElementById('key-panel').classList.remove('hidden');
+
+  issueBtn.disabled = false;
+  statusEl.textContent = `Keypairs generated in ${ms}ms. Click "Issue Envelope".`;
+});
+
+issueBtn.addEventListener('click', async () => {
+  if (!keys) { statusEl.textContent = 'Generate keypairs first.'; return; }
+  const mandate = {
+    agent_id: document.getElementById('agent_id').value.trim(),
+    amount: document.getElementById('amount').value.trim(),
+    currency: document.getElementById('currency').value,
+    nonce: document.getElementById('nonce').value.trim(),
+    recipient: document.getElementById('recipient').value.trim(),
+  };
+  if (Object.values(mandate).some(v => !v)) { statusEl.textContent = 'All fields required.'; return; }
+
+  statusEl.textContent = 'Canonicalizing + signing…';
+  await new Promise(r => setTimeout(r, 30));
+  const t0 = performance.now();
+  const result = await issueEnvelope(mandate, keys);
+  const ms = (performance.now() - t0).toFixed(0);
+
+  document.getElementById('envelope-output').value = JSON.stringify(result.envelope, null, 2);
+  document.getElementById('m-canon').textContent = result.canonical_bytes;
+  document.getElementById('m-ec-sig').textContent = result.ecdsa_sig_bytes;
+  document.getElementById('m-ml-sig').textContent = result.mldsa_sig_bytes;
+  document.getElementById('m-fp').textContent = result.fingerprint_hex;
+  document.getElementById('envelope-panel').classList.remove('hidden');
+
+  statusEl.textContent = `Envelope issued in ${ms}ms.`;
+});
+
+document.getElementById('copy-btn').addEventListener('click', async () => {
+  const text = document.getElementById('envelope-output').value;
+  await navigator.clipboard.writeText(text);
+  const btn = document.getElementById('copy-btn');
+  const orig = btn.textContent;
+  btn.textContent = 'Copied ✓';
+  setTimeout(() => { btn.textContent = orig; }, 1500);
+});
+</script>
+
+</body>
+</html>
