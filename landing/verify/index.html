@@ -94,11 +94,29 @@
   </section>
 
   <section class="mb-12 p-6 bg-amber-50 border border-amber-200 rounded">
-    <h2 class="text-lg font-semibold mb-3 text-amber-900">Try the failure modes</h2>
-    <p class="text-sm text-amber-900 mb-4">Cryptographic verification rejects tampered envelopes. Click below to see explicit fail cases:</p>
-    <div class="flex flex-wrap gap-2">
-      <button data-load="tampered" class="example-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100">Tampered amount (TC1 + 1¢)</button>
-      <button data-load="tc5" class="example-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100">Show TC5 tamper case</button>
+    <h2 class="text-lg font-semibold mb-2 text-amber-900">Tamper Explorer</h2>
+    <p class="text-sm text-amber-900 mb-4">Click any field below to load TC1, mutate that field, and re-verify automatically. Every mandate change rejects both signatures because the canonical JCS bytes change → fingerprint changes → ECDSA &amp; ML-DSA-65 both fail. Mutating one signature alone shows the other still passing.</p>
+    <div class="mb-3 text-xs uppercase tracking-wide text-amber-800 font-semibold">Mutate a mandate field</div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-5">
+      <button data-tamper="amount" class="tamper-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100 text-left">amount <span class="text-amber-600">+0.01</span></button>
+      <button data-tamper="recipient" class="tamper-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100 text-left">recipient <span class="text-amber-600">→ attacker</span></button>
+      <button data-tamper="currency" class="tamper-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100 text-left">currency <span class="text-amber-600">HKD ⇄ USD</span></button>
+      <button data-tamper="agent_id" class="tamper-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100 text-left">agent_id <span class="text-amber-600">spoof</span></button>
+      <button data-tamper="nonce" class="tamper-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100 text-left">nonce <span class="text-amber-600">flip 1 char</span></button>
+      <button data-tamper="add_field" class="tamper-btn px-3 py-2 text-sm bg-white border border-amber-300 rounded hover:bg-amber-100 text-left">inject field <span class="text-amber-600">+ "malicious"</span></button>
+    </div>
+    <div class="mb-3 text-xs uppercase tracking-wide text-amber-800 font-semibold">Mutate one signature only</div>
+    <div class="grid grid-cols-2 gap-2">
+      <button data-tamper="sig_ecdsa" class="tamper-btn px-3 py-2 text-sm bg-white border border-rose-300 rounded hover:bg-rose-50 text-left">ECDSA sig <span class="text-rose-600">flip 1 char</span></button>
+      <button data-tamper="sig_mldsa" class="tamper-btn px-3 py-2 text-sm bg-white border border-rose-300 rounded hover:bg-rose-50 text-left">ML-DSA-65 sig <span class="text-rose-600">flip 1 char</span></button>
+    </div>
+    <div id="tamper-note" class="hidden mt-5 p-4 bg-white border border-amber-300 rounded text-sm">
+      <div class="font-semibold text-amber-900 mb-1" id="tamper-note-title"></div>
+      <div class="text-amber-800 mb-2" id="tamper-note-body"></div>
+      <div class="mono text-xs grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div><span class="text-slate-500">before:</span> <span id="tamper-before" class="text-slate-900 break-all"></span></div>
+        <div><span class="text-slate-500">after:</span> <span id="tamper-after" class="text-rose-700 break-all"></span></div>
+      </div>
     </div>
   </section>
 
@@ -133,7 +151,7 @@
 </main>
 
 <script type="module">
-import { verifyEnvelope, tamperEnvelope } from './verify.js';
+import { verifyEnvelope, tamperEnvelope, tamperField } from './verify.js';
 
 let vectors = null;
 const statusEl = document.getElementById('status');
@@ -164,9 +182,38 @@ document.querySelectorAll('.example-btn').forEach(btn => {
   });
 });
 
+document.querySelectorAll('.tamper-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const field = btn.dataset.tamper;
+    const tc1 = vectors.tcs[0].envelope;
+    const { envelope, changed } = tamperField(tc1, field);
+    inputEl.value = JSON.stringify(envelope, null, 2);
+    // show tamper-note
+    const note = document.getElementById('tamper-note');
+    note.classList.remove('hidden');
+    document.getElementById('tamper-note-title').textContent = `Tampered field: ${changed.field}`;
+    document.getElementById('tamper-note-body').textContent = changed.note;
+    document.getElementById('tamper-before').textContent = String(changed.before);
+    document.getElementById('tamper-after').textContent = String(changed.after);
+    // auto-verify
+    statusEl.textContent = 'Verifying tampered envelope…';
+    const t0 = performance.now();
+    const result = await verifyEnvelope(
+      inputEl.value,
+      vectors.ecdsa_public_key_compressed_hex,
+      vectors.mldsa_public_key_base64url
+    );
+    const ms = (performance.now() - t0).toFixed(0);
+    renderResult(result, ms);
+    statusEl.textContent = `Verified in ${ms}ms — expected: ${changed.kind === 'mandate' ? 'both fail' : changed.kind.toUpperCase() + ' fails, other passes'}.`;
+    note.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+});
+
 document.getElementById('clear-btn').addEventListener('click', () => {
   inputEl.value = '';
   resultEl.classList.add('hidden');
+  document.getElementById('tamper-note').classList.add('hidden');
   statusEl.textContent = '';
 });
 

@@ -92,3 +92,79 @@ export function tamperEnvelope(env) {
   if (cloned.spend_cap) cloned.spend_cap = (parseFloat(cloned.spend_cap) + 1);
   return cloned;
 }
+
+// Tamper a specific field. Returns { envelope, changed: {field, before, after, kind} }
+// kind: 'mandate' = canonical bytes change, both sigs fail
+//       'ecdsa'   = only ECDSA signature mutated
+//       'mldsa'   = only ML-DSA-65 signature mutated
+export function tamperField(env, field) {
+  const cloned = JSON.parse(JSON.stringify(env));
+  let before, after, kind = 'mandate', note = '';
+
+  const flipChar = (s) => {
+    if (!s || s.length < 2) return s + 'x';
+    const idx = Math.floor(s.length / 2);
+    const c = s[idx];
+    const swap = c === 'a' ? 'b' : c === '0' ? '1' : c.toUpperCase() === c.toLowerCase() ? 'X' : (c === c.toLowerCase() ? c.toUpperCase() : c.toLowerCase());
+    return s.slice(0, idx) + swap + s.slice(idx + 1);
+  };
+
+  switch (field) {
+    case 'amount':
+      before = cloned.amount;
+      after = String((parseFloat(before || '0') + 0.01).toFixed(2));
+      cloned.amount = after;
+      note = 'Adds 0.01 to the authorized amount.';
+      break;
+    case 'recipient':
+      before = cloned.recipient;
+      after = 'did:web:attacker.example.com:payee:rogue';
+      cloned.recipient = after;
+      note = 'Substitutes recipient with an attacker-controlled DID.';
+      break;
+    case 'currency':
+      before = cloned.currency;
+      after = before === 'HKD' ? 'USD' : 'HKD';
+      cloned.currency = after;
+      note = 'Switches the currency code.';
+      break;
+    case 'agent_id':
+      before = cloned.agent_id;
+      after = before ? before.replace(/agent-\w+/, 'agent-attacker') : 'did:web:attacker:agent';
+      cloned.agent_id = after;
+      note = 'Spoofs the issuing agent identity.';
+      break;
+    case 'nonce':
+      before = cloned.nonce;
+      after = flipChar(before || '0'.repeat(32));
+      cloned.nonce = after;
+      note = 'Flips one character of the replay nonce.';
+      break;
+    case 'add_field':
+      before = '(none)';
+      after = '"injected":"malicious"';
+      cloned.injected = 'malicious';
+      note = 'Injects a new top-level mandate field.';
+      break;
+    case 'sig_ecdsa':
+      before = cloned.signature?.ecdsa?.slice(0, 16) + '…';
+      after = flipChar(cloned.signature.ecdsa);
+      cloned.signature.ecdsa = after;
+      after = after.slice(0, 16) + '…';
+      kind = 'ecdsa';
+      note = 'Flips one character of the ECDSA signature only. ML-DSA still passes.';
+      break;
+    case 'sig_mldsa':
+      before = cloned.signature?.mldsa?.slice(0, 16) + '…';
+      after = flipChar(cloned.signature.mldsa);
+      cloned.signature.mldsa = after;
+      after = after.slice(0, 16) + '…';
+      kind = 'mldsa';
+      note = 'Flips one character of the ML-DSA-65 signature only. ECDSA still passes.';
+      break;
+    default:
+      throw new Error('Unknown tamper field: ' + field);
+  }
+
+  return { envelope: cloned, changed: { field, before, after, kind, note } };
+}
