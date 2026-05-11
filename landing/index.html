@@ -461,30 +461,35 @@
         <span class="font-bold text-lg text-white tracking-tight">PQSafe</span>
       </a>
       <div class="flex items-center gap-4">
-        <a href="#integrations" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
-          Integrations
-        </a>
-        <a href="/quickstart/" class="hidden sm:flex items-center gap-2 text-sm text-emerald-300 hover:text-emerald-200 transition-colors">
-          Quickstart
-        </a>
         <a href="/verify/" class="hidden sm:flex items-center gap-2 text-sm text-rose-300 hover:text-rose-200 transition-colors">
           Verify
         </a>
-        <a href="/generate/" class="hidden lg:flex items-center gap-2 text-sm text-rose-300 hover:text-rose-200 transition-colors">
-          Generate
-        </a>
-        <a href="/bench/" class="hidden lg:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
-          Bench
-        </a>
-        <a href="/compare/" class="hidden lg:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
-          Compare
-        </a>
-        <a href="/trust/" class="hidden lg:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
-          Trust
-        </a>
-        <a href="/claude-skill/" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
-          Claude
-        </a>
+        <div class="hidden sm:block relative group">
+          <button class="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-200 transition-colors">
+            Tools
+            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="absolute right-0 mt-2 w-56 rounded-lg border border-gray-800 bg-[#0a0a14] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 py-2">
+            <div class="px-3 pt-1 pb-2 text-[10px] uppercase tracking-widest text-gray-500">Developers</div>
+            <a href="/quickstart/" class="block px-3 py-1.5 text-sm text-emerald-300 hover:bg-gray-900">Quickstart</a>
+            <a href="/generate/" class="block px-3 py-1.5 text-sm text-rose-300 hover:bg-gray-900">Generate</a>
+            <a href="/bench/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Bench</a>
+            <a href="/conformance/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Conformance</a>
+            <a href="/openclaw-cookbook/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">OpenClaw cookbook</a>
+            <a href="/github-action/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">GitHub Action</a>
+            <a href="#integrations" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Integrations</a>
+            <a href="/claude-skill/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Claude Code skill</a>
+            <div class="px-3 pt-3 pb-2 text-[10px] uppercase tracking-widest text-gray-500 border-t border-gray-900 mt-2">Decide / buy</div>
+            <a href="/compare/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Compare</a>
+            <a href="/trust/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Trust</a>
+            <a href="/customers/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Design partners</a>
+            <a href="/demo-walkthrough/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Demo walkthrough</a>
+            <div class="px-3 pt-3 pb-2 text-[10px] uppercase tracking-widest text-gray-500 border-t border-gray-900 mt-2">Operate</div>
+            <a href="/status/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Status</a>
+            <a href="/incidents/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Hall of Shame</a>
+            <a href="/press/" class="block px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-900">Press</a>
+          </div>
+        </div>
         <a href="/handbook" class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
           Handbook
         </a>
@@ -492,9 +497,9 @@
           Blog
         </a>
         <a href="https://ledger.pqsafe.xyz" target="_blank" rel="noopener"
-           class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
+           class="hidden lg:flex items-center gap-1 text-sm text-gray-400 hover:text-gray-200 transition-colors">
           Ledger
-          <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 font-medium">Beta · pilot launches Jun 2026</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-700 text-slate-300 font-medium whitespace-nowrap">Beta</span>
         </a>
         <a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener"
            class="hidden sm:flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors">
