@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PQSafe quickstart — verified envelope in 60 seconds</title>
+<meta name="description" content="Zero to verified SpendEnvelope in under 60 seconds. Install, verify a test vector, reject a tampered one. Snippets for 10 agent frameworks." />
+<link rel="canonical" href="https://pqsafe.xyz/quickstart" />
+<meta property="og:title" content="PQSafe quickstart — verified envelope in 60 seconds" />
+<meta property="og:description" content="Zero to verified SpendEnvelope in under 60 seconds. Snippets for 10 agent frameworks." />
+<meta property="og:url" content="https://pqsafe.xyz/quickstart" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="PQSafe" />
+<meta name="twitter:card" content="summary_large_image" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .step-num { width: 36px; height: 36px; border-radius: 8px; background: #0f172a; color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .tab-btn[aria-selected="true"] { background: #0f172a; color: white; border-color: #0f172a; }
+  pre.code { background: #0b1020; color: #e6edf3; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.8rem; }
+  pre.code .c { color: #6b7c93; }
+  pre.code .k { color: #f472b6; }
+  pre.code .s { color: #34d399; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🦞</span>
+      <div>
+        <a href="https://pqsafe.xyz" class="font-semibold text-slate-900 hover:underline">PQSafe</a>
+        <span class="text-slate-500"> &middot; Quickstart</span>
+      </div>
+    </div>
+    <nav class="text-sm text-slate-600 flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">Home</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify</a>
+      <a href="https://pqsafe.xyz/generate" class="hover:underline">Generate</a>
+      <a href="https://pqsafe.xyz/bench" class="hover:underline">Bench</a>
+      <a href="https://pqsafe.xyz/compare" class="hover:underline">Compare</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-6 py-10">
+
+  <section class="mb-12">
+    <h1 class="text-3xl font-semibold tracking-tight">Verify your first envelope in 60 seconds.</h1>
+    <p class="mt-2 text-slate-600 max-w-2xl">One command. One paste. One signed mandate. No signup, no API key, no email.</p>
+  </section>
+
+  <!-- 60s walk-through -->
+  <section class="mb-14 space-y-10">
+
+    <!-- Step 1 -->
+    <div>
+      <div class="flex items-center gap-3 mb-4">
+        <span class="step-num">1</span>
+        <div>
+          <h2 class="text-lg font-semibold">Install the SDK</h2>
+          <p class="text-xs text-slate-500">0:00 &mdash; 0:20</p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Node / TypeScript</div>
+<pre class="code"><span class="c"># core SDK</span>
+<span class="k">npm</span> i @pqsafe/agent-pay
+
+<span class="c"># conformance test vectors (optional)</span>
+<span class="k">npm</span> i @pqsafe/conformance</pre>
+        </div>
+        <div>
+          <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">Python</div>
+<pre class="code"><span class="c"># core SDK</span>
+<span class="k">pip</span> install pqsafe
+
+<span class="c"># conformance test vectors (optional)</span>
+<span class="k">pip</span> install pqsafe-conformance</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div>
+      <div class="flex items-center gap-3 mb-4">
+        <span class="step-num">2</span>
+        <div>
+          <h2 class="text-lg font-semibold">Verify a test envelope</h2>
+          <p class="text-xs text-slate-500">0:20 &mdash; 0:40</p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">verify.ts</div>
+<pre class="code"><span class="k">import</span> { verify } <span class="k">from</span> <span class="s">'@pqsafe/agent-pay'</span>;
+
+<span class="k">const</span> vec = <span class="k">await</span> fetch(
+  <span class="s">'https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json'</span>
+).then(r =&gt; r.json());
+
+<span class="k">const</span> result = <span class="k">await</span> verify(vec.tcs[0].envelope, {
+  ecdsa_pub_hex: vec.ecdsa_public_key_compressed_hex,
+  mldsa_pub_b64u: vec.mldsa_public_key_base64url,
+});
+
+console.log(result.valid ? <span class="s">'OK'</span> : <span class="s">'REJECTED'</span>);
+<span class="c">// → OK</span></pre>
+        </div>
+        <div>
+          <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">verify.py</div>
+<pre class="code"><span class="k">from</span> pqsafe <span class="k">import</span> verify
+<span class="k">import</span> urllib.request, json
+
+vec = json.load(urllib.request.urlopen(
+  <span class="s">'https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json'</span>
+))
+
+result = verify(
+  vec[<span class="s">'tcs'</span>][0][<span class="s">'envelope'</span>],
+  ecdsa_pub_hex=vec[<span class="s">'ecdsa_public_key_compressed_hex'</span>],
+  mldsa_pub_b64u=vec[<span class="s">'mldsa_public_key_base64url'</span>],
+)
+
+print(<span class="s">'OK'</span> <span class="k">if</span> result.valid <span class="k">else</span> <span class="s">'REJECTED'</span>)
+<span class="c"># → OK</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div>
+      <div class="flex items-center gap-3 mb-4">
+        <span class="step-num">3</span>
+        <div>
+          <h2 class="text-lg font-semibold">Reject a tampered one</h2>
+          <p class="text-xs text-slate-500">0:40 &mdash; 0:60</p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">tamper.ts</div>
+<pre class="code"><span class="k">const</span> evil = structuredClone(vec.tcs[0].envelope);
+evil.amount = <span class="s">'9999.00'</span>;  <span class="c">// mutate</span>
+
+<span class="k">const</span> r = <span class="k">await</span> verify(evil, {
+  ecdsa_pub_hex: vec.ecdsa_public_key_compressed_hex,
+  mldsa_pub_b64u: vec.mldsa_public_key_base64url,
+});
+
+console.log(r.valid ? <span class="s">'OK'</span> : <span class="s">'REJECTED'</span>);
+<span class="c">// → REJECTED</span></pre>
+        </div>
+        <div>
+          <div class="text-xs uppercase tracking-wide text-slate-500 mb-1">tamper.py</div>
+<pre class="code"><span class="k">import</span> copy
+evil = copy.deepcopy(vec[<span class="s">'tcs'</span>][0][<span class="s">'envelope'</span>])
+evil[<span class="s">'amount'</span>] = <span class="s">'9999.00'</span>  <span class="c"># mutate</span>
+
+r = verify(
+  evil,
+  ecdsa_pub_hex=vec[<span class="s">'ecdsa_public_key_compressed_hex'</span>],
+  mldsa_pub_b64u=vec[<span class="s">'mldsa_public_key_base64url'</span>],
+)
+
+print(<span class="s">'OK'</span> <span class="k">if</span> r.valid <span class="k">else</span> <span class="s">'REJECTED'</span>)
+<span class="c"># → REJECTED</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Framework tabs -->
+  <section class="mb-14">
+    <h2 class="text-xl font-semibold mb-2">Drop into your agent framework</h2>
+    <p class="text-sm text-slate-600 mb-5">One import. The <code class="mono text-rose-600">pqsafePay</code> tool gates every payment call on a verified envelope. Snippets below are minimal &mdash; consult each plugin's README for production wiring.</p>
+
+    <div class="flex flex-wrap gap-2 mb-4" role="tablist">
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="true" data-tab="langchain">LangChain</button>
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="false" data-tab="langgraph">LangGraph</button>
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="false" data-tab="vercel-ai">Vercel AI</button>
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="false" data-tab="pydantic-ai">Pydantic AI</button>
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="false" data-tab="crewai">CrewAI</button>
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="false" data-tab="mastra">Mastra</button>
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="false" data-tab="autogen">AutoGen</button>
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="false" data-tab="llamaindex">LlamaIndex</button>
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="false" data-tab="anthropic">Anthropic SDK</button>
+      <button class="tab-btn px-3 py-1.5 text-sm bg-white border border-slate-300 rounded" aria-selected="false" data-tab="raw">Raw SDK</button>
+    </div>
+
+    <div class="tab-panel" data-panel="langchain">
+<pre class="code"><span class="k">pip</span> install langchain-pqsafe</pre>
+<pre class="code mt-2"><span class="k">from</span> langchain.agents <span class="k">import</span> AgentExecutor
+<span class="k">from</span> langchain_pqsafe <span class="k">import</span> AgentPayTool
+
+agent = AgentExecutor(
+    tools=[AgentPayTool(spend_cap=<span class="s">'100.00'</span>, currency=<span class="s">'USD'</span>)],
+    ...
+)
+<span class="c"># every payment the agent attempts is gated by a signed envelope</span></pre>
+    </div>
+
+    <div class="tab-panel hidden" data-panel="langgraph">
+<pre class="code"><span class="k">pip</span> install langgraph-pqsafe</pre>
+<pre class="code mt-2"><span class="k">from</span> langgraph.graph <span class="k">import</span> StateGraph
+<span class="k">from</span> langgraph_pqsafe <span class="k">import</span> spend_envelope_checkpoint
+
+graph = StateGraph(State)
+graph.add_node(<span class="s">'pay'</span>, spend_envelope_checkpoint(make_payment))
+<span class="c"># state transitions that move money require a signed mandate first</span></pre>
+    </div>
+
+    <div class="tab-panel hidden" data-panel="vercel-ai">
+<pre class="code"><span class="k">npm</span> i @pqsafe/vercel-ai</pre>
+<pre class="code mt-2"><span class="k">import</span> { generateText } <span class="k">from</span> <span class="s">'ai'</span>;
+<span class="k">import</span> { pqsafePay } <span class="k">from</span> <span class="s">'@pqsafe/vercel-ai'</span>;
+
+<span class="k">await</span> generateText({
+  model: openai(<span class="s">'gpt-4o'</span>),
+  tools: { pqsafePay: pqsafePay({ spend_cap: <span class="s">'100.00'</span> }) },
+  prompt: <span class="s">'Pay the invoice from acme.com'</span>,
+});</pre>
+    </div>
+
+    <div class="tab-panel hidden" data-panel="pydantic-ai">
+<pre class="code"><span class="k">pip</span> install pydantic-ai-pqsafe</pre>
+<pre class="code mt-2"><span class="k">from</span> pydantic_ai <span class="k">import</span> Agent
+<span class="k">from</span> pydantic_ai_pqsafe <span class="k">import</span> SpendEnvelopeTool
+
+agent = Agent(<span class="s">'openai:gpt-4o'</span>, tools=[SpendEnvelopeTool()])
+<span class="c"># the SpendEnvelope schema is validated at the model boundary</span></pre>
+    </div>
+
+    <div class="tab-panel hidden" data-panel="crewai">
+<pre class="code"><span class="k">pip</span> install crewai-pqsafe</pre>
+<pre class="code mt-2"><span class="k">from</span> crewai <span class="k">import</span> Task
+<span class="k">from</span> crewai_pqsafe <span class="k">import</span> with_spend_envelope
+
+task = with_spend_envelope(
+    Task(description=<span class="s">'Reimburse the user'</span>),
+    spend_cap=<span class="s">'50.00'</span>, currency=<span class="s">'USD'</span>,
+)</pre>
+    </div>
+
+    <div class="tab-panel hidden" data-panel="mastra">
+<pre class="code"><span class="k">npm</span> i @pqsafe/mastra</pre>
+<pre class="code mt-2"><span class="k">import</span> { Agent } <span class="k">from</span> <span class="s">'@mastra/core'</span>;
+<span class="k">import</span> { pqsafePayTool } <span class="k">from</span> <span class="s">'@pqsafe/mastra'</span>;
+
+<span class="k">const</span> agent = <span class="k">new</span> Agent({
+  tools: { pqsafePay: pqsafePayTool({ spend_cap: <span class="s">'100.00'</span> }) },
+});</pre>
+    </div>
+
+    <div class="tab-panel hidden" data-panel="autogen">
+<pre class="code"><span class="k">pip</span> install autogen-pqsafe</pre>
+<pre class="code mt-2"><span class="k">from</span> autogen <span class="k">import</span> ConversableAgent
+<span class="k">from</span> autogen_pqsafe <span class="k">import</span> register_spend_envelope
+
+agent = ConversableAgent(<span class="s">'cfo'</span>, llm_config={...})
+register_spend_envelope(agent, shared_cap=<span class="s">'500.00'</span>)
+<span class="c"># shared budget across all agents in the conversation</span></pre>
+    </div>
+
+    <div class="tab-panel hidden" data-panel="llamaindex">
+<pre class="code"><span class="k">pip</span> install llamaindex-pqsafe</pre>
+<pre class="code mt-2"><span class="k">from</span> llama_index.agent <span class="k">import</span> ReActAgent
+<span class="k">from</span> llamaindex_pqsafe <span class="k">import</span> AgentPayTool
+
+agent = ReActAgent.from_tools([AgentPayTool(spend_cap=<span class="s">'100.00'</span>)])</pre>
+    </div>
+
+    <div class="tab-panel hidden" data-panel="anthropic">
+<pre class="code"><span class="k">pip</span> install anthropic-pqsafe</pre>
+<pre class="code mt-2"><span class="k">from</span> anthropic <span class="k">import</span> Anthropic
+<span class="k">from</span> anthropic_pqsafe <span class="k">import</span> with_pqsafe_intercept
+
+client = with_pqsafe_intercept(Anthropic(), spend_cap=<span class="s">'100.00'</span>)
+<span class="c"># intercepts Computer Use payments and gates them on a signed envelope</span></pre>
+    </div>
+
+    <div class="tab-panel hidden" data-panel="raw">
+<pre class="code"><span class="k">npm</span> i @pqsafe/agent-pay</pre>
+<pre class="code mt-2"><span class="k">import</span> { issue, verify } <span class="k">from</span> <span class="s">'@pqsafe/agent-pay'</span>;
+
+<span class="k">const</span> envelope = <span class="k">await</span> issue({
+  agent_id: <span class="s">'did:web:agents.example.com:agent-1'</span>,
+  amount: <span class="s">'50.00'</span>, currency: <span class="s">'USD'</span>,
+  recipient: <span class="s">'did:web:merchant.example.com:payee'</span>,
+});
+
+<span class="k">const</span> result = <span class="k">await</span> verify(envelope, publicKeys);
+<span class="k">if</span> (!result.valid) <span class="k">throw</span> <span class="k">new</span> Error(<span class="s">'rejected'</span>);</pre>
+    </div>
+  </section>
+
+  <!-- What just happened -->
+  <section class="mb-14">
+    <details class="bg-white border border-slate-200 rounded p-5">
+      <summary class="cursor-pointer font-semibold text-slate-700">What just happened</summary>
+      <div class="mt-3 text-sm text-slate-700 space-y-2">
+        <p>The SDK fetched the canonical test vectors, ran RFC 8785 JCS canonicalization on the mandate (without the signature field), SHA-256'd the canonical bytes to get a 32-byte fingerprint, and verified two signatures over that fingerprint: ECDSA P-256 (legacy compatibility) and ML-DSA-65 (FIPS 204 post-quantum). Both must pass.</p>
+        <p>When you mutated <code class="mono text-xs bg-slate-100 px-1 rounded">amount</code>, the canonical bytes changed, the fingerprint changed, and both signatures stopped matching. There is no way to flip a field and re-use the original signature &mdash; you would need the issuer's private keys.</p>
+        <p>This is what makes the SpendEnvelope a <em>cryptographic permission slip</em> rather than a session token. The amount, the recipient, the currency, and the nonce are bound to the signature. Replay protection comes from the nonce registry (on-chain + edge cache). Revocation comes from a separate signed revoke list. Audit comes from the canonical envelope retention.</p>
+        <p>Why two signatures? ECDSA P-256 gives you universal verifier compatibility today. ML-DSA-65 gives you forward security through the post-quantum transition. The cost is ~3KB of signature bytes and ~0.03 ms of native verify time on top of ECDSA &mdash; see <a href="/bench" class="text-rose-600 hover:underline">/bench</a>.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="mb-14 grid sm:grid-cols-2 gap-4 text-sm">
+    <a href="/verify" class="p-5 bg-white border border-rose-300 rounded hover:bg-rose-50 transition">
+      <div class="font-semibold text-rose-700 mb-1">Try the Tamper Explorer →</div>
+      <p class="text-slate-600">8 one-click mutations on a real envelope. See exactly which signature fails when which field changes.</p>
+    </a>
+    <a href="/generate" class="p-5 bg-white border border-rose-300 rounded hover:bg-rose-50 transition">
+      <div class="font-semibold text-rose-700 mb-1">Issue one in your browser →</div>
+      <p class="text-slate-600">Generate an ephemeral keypair and sign a SpendEnvelope client-side. No setup.</p>
+    </a>
+    <a href="/compare" class="p-5 bg-white border border-slate-200 rounded hover:bg-slate-100 transition">
+      <div class="font-semibold mb-1">Compare to JWT / AP2 / Stripe Issuing →</div>
+      <p class="text-slate-600">Capability matrix, where each one wins, when post-quantum matters.</p>
+    </a>
+    <a href="/ap2-pq-rfc" class="p-5 bg-white border border-slate-200 rounded hover:bg-slate-100 transition">
+      <div class="font-semibold mb-1">Read the AP2-PQ spec →</div>
+      <p class="text-slate-600">Wire-level details of the canonical envelope shape and dual-signature scheme.</p>
+    </a>
+  </section>
+
+  <footer class="text-xs text-slate-500 mt-16 mb-8 border-t border-slate-200 pt-6 space-y-2">
+    <div class="flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">← pqsafe.xyz home</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify</a>
+      <a href="https://pqsafe.xyz/generate" class="hover:underline">Generate</a>
+      <a href="https://pqsafe.xyz/bench" class="hover:underline">Bench</a>
+      <a href="https://pqsafe.xyz/compare" class="hover:underline">Compare</a>
+      <a href="https://github.com/PQSafe/pqsafe" class="hover:underline">GitHub</a>
+    </div>
+    <div>Apache-2.0 · PQSafe AgentPay · <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a></div>
+  </footer>
+</main>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+    btn.setAttribute('aria-selected', 'true');
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.toggle('hidden', p.dataset.panel !== tab);
+    });
+  });
+});
+</script>
+
+</body>
+</html>
