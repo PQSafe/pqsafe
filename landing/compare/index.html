@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PQSafe vs JWT, AP2, Stripe Issuing, OAuth — agent payment authorization compared</title>
+<meta name="description" content="Fair comparison of PQSafe AgentPay against raw JWT, Google AP2, Stripe Issuing, OAuth scopes, and plain ECDSA mandates. Where each one wins. When post-quantum matters." />
+<link rel="canonical" href="https://pqsafe.xyz/compare" />
+<meta property="og:title" content="PQSafe vs JWT, AP2, Stripe Issuing — agent payment authorization compared" />
+<meta property="og:description" content="Fair comparison of PQSafe AgentPay against raw JWT, Google AP2, Stripe Issuing, OAuth scopes, and plain ECDSA mandates." />
+<meta property="og:url" content="https://pqsafe.xyz/compare" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="PQSafe" />
+<meta name="twitter:card" content="summary_large_image" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .yes  { color: #059669; }
+  .no   { color: #dc2626; }
+  .part { color: #d97706; }
+  th.solcol, td.solcol { min-width: 110px; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🦞</span>
+      <div>
+        <a href="https://pqsafe.xyz" class="font-semibold text-slate-900 hover:underline">PQSafe</a>
+        <span class="text-slate-500"> &middot; Compare</span>
+      </div>
+    </div>
+    <nav class="text-sm text-slate-600 flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">Home</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify</a>
+      <a href="https://pqsafe.xyz/generate" class="hover:underline">Generate</a>
+      <a href="https://pqsafe.xyz/bench" class="hover:underline">Bench</a>
+      <a href="https://github.com/PQSafe/pqsafe" class="hover:underline">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-6 py-10">
+
+  <section class="mb-10">
+    <h1 class="text-3xl font-semibold tracking-tight">Why PQSafe vs the alternatives.</h1>
+    <p class="mt-2 text-slate-600 max-w-3xl">
+      Scope: cryptographic authorization for AI agent payments. We compare PQSafe AgentPay against
+      five common stacks teams reach for first. Honest about where each one wins and where it falls short for autonomous-agent spend control.
+    </p>
+  </section>
+
+  <section class="mb-12 overflow-x-auto">
+    <h2 class="text-xl font-semibold mb-4">Capability matrix</h2>
+    <table class="w-full text-sm bg-white border border-slate-200 rounded">
+      <thead class="bg-slate-100 text-slate-600 text-xs">
+        <tr>
+          <th class="text-left p-3">Capability</th>
+          <th class="p-3 solcol">PQSafe AgentPay</th>
+          <th class="p-3 solcol">Raw JWT (HS/RS256)</th>
+          <th class="p-3 solcol">Raw AP2 (Google)</th>
+          <th class="p-3 solcol">Stripe Issuing</th>
+          <th class="p-3 solcol">OAuth 2.0 scopes</th>
+          <th class="p-3 solcol">Plain ECDSA mandates</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 text-center text-sm">
+        <tr>
+          <td class="p-3 text-left">Post-quantum signature (FIPS 204 / ML-DSA)</td>
+          <td class="p-3 yes font-semibold">✓</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 no">✗ <sup><a href="#fn1" class="text-blue-600">1</a></sup></td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 no">✗</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Policy-bounded spend (amount cap + recipient allowlist)</td>
+          <td class="p-3 yes font-semibold">✓</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 yes">✓</td>
+          <td class="p-3 yes">✓</td>
+          <td class="p-3 part">◐ scope-level</td>
+          <td class="p-3 part">◐ per-field</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Replay protection (nonce registry)</td>
+          <td class="p-3 yes font-semibold">✓ on-chain + D1</td>
+          <td class="p-3 part">◐ jti claim</td>
+          <td class="p-3 yes">✓</td>
+          <td class="p-3 yes">✓ idempotency keys</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 part">◐ DIY</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Cryptographic revocation</td>
+          <td class="p-3 yes font-semibold">✓ envelope + key</td>
+          <td class="p-3 no">✗ token blacklist</td>
+          <td class="p-3 part">◐</td>
+          <td class="p-3 yes">✓ via API</td>
+          <td class="p-3 part">◐ via auth server</td>
+          <td class="p-3 no">✗</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Audit-grade evidence chain (7yr retention)</td>
+          <td class="p-3 yes font-semibold">✓</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 part">◐</td>
+          <td class="p-3 yes">✓ Stripe-native</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 part">◐ DIY</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Multi-rail (cards + bank + USDC)</td>
+          <td class="p-3 yes">✓ via Airwallex/Wise/Stripe/USDC</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 part">◐ rail-agnostic by spec</td>
+          <td class="p-3 part">◐ cards only</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 no">✗</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Open-source reference impl</td>
+          <td class="p-3 yes font-semibold">✓ Apache-2.0</td>
+          <td class="p-3 yes">✓ many libs</td>
+          <td class="p-3 yes">✓</td>
+          <td class="p-3 no">✗ proprietary</td>
+          <td class="p-3 yes">✓ RFC 6749</td>
+          <td class="p-3 yes">✓</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Standards body filed</td>
+          <td class="p-3 yes font-semibold">✓ FIDO Payments TWG <sup><a href="#fn2" class="text-blue-600">2</a></sup></td>
+          <td class="p-3 yes">✓ RFC 7519</td>
+          <td class="p-3 part">◐ vendor spec</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 yes">✓ RFC 6749</td>
+          <td class="p-3 no">✗</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Runs in browser</td>
+          <td class="p-3 yes">✓ <a href="/verify" class="text-rose-600 hover:underline">/verify</a> + <a href="/generate" class="text-rose-600 hover:underline">/generate</a></td>
+          <td class="p-3 yes">✓</td>
+          <td class="p-3 part">◐</td>
+          <td class="p-3 no">✗ server-only</td>
+          <td class="p-3 yes">✓</td>
+          <td class="p-3 yes">✓</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Runs in Edge Worker (CF / Vercel)</td>
+          <td class="p-3 yes">✓ live on CF</td>
+          <td class="p-3 yes">✓</td>
+          <td class="p-3 part">◐</td>
+          <td class="p-3 part">◐ via REST</td>
+          <td class="p-3 yes">✓</td>
+          <td class="p-3 yes">✓</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">Designed for autonomous agents (vs humans)</td>
+          <td class="p-3 yes font-semibold">✓</td>
+          <td class="p-3 no">✗ session-token model</td>
+          <td class="p-3 yes">✓</td>
+          <td class="p-3 part">◐ human-cardholder default</td>
+          <td class="p-3 no">✗</td>
+          <td class="p-3 part">◐ DIY</td>
+        </tr>
+        <tr>
+          <td class="p-3 text-left">License</td>
+          <td class="p-3 mono text-xs">Apache-2.0</td>
+          <td class="p-3 mono text-xs">RFC / various</td>
+          <td class="p-3 mono text-xs">Apache-2.0</td>
+          <td class="p-3 mono text-xs">Commercial</td>
+          <td class="p-3 mono text-xs">RFC</td>
+          <td class="p-3 mono text-xs">N/A (you write it)</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-3 text-xs text-slate-500 space-y-1">
+      <div>Legend: <span class="yes">✓</span> supported · <span class="part">◐</span> partial / requires extension · <span class="no">✗</span> not supported.</div>
+      <div id="fn1"><strong>1.</strong> Google's AP2 is signature-agnostic by spec; current reference impls ship ECDSA-only. PQSafe's AP2-PQ profile extends AP2 with FIPS 204.</div>
+      <div id="fn2"><strong>2.</strong> Open letter at <a href="/fido-pq-letter" class="text-rose-600 hover:underline">/fido-pq-letter</a>; Internet-Draft package staged for IETF filing.</div>
+    </div>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-semibold mb-4">Where each one wins</h2>
+    <div class="grid sm:grid-cols-2 gap-4 text-sm">
+      <div class="p-5 bg-white border border-slate-200 rounded">
+        <div class="font-semibold mb-1">Raw JWT</div>
+        <p class="text-slate-600">Wins when you need a stateless session token, you don't care about replay (or you accept a short TTL), and your audit window is measured in days. Universal library support, near-zero learning curve.</p>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded">
+        <div class="font-semibold mb-1">Google AP2</div>
+        <p class="text-slate-600">Wins when your stack is already aligned with Google's Agent Payments Protocol and you have buy-in on its mandate envelope shape. PQSafe extends AP2 rather than replacing it &mdash; AP2-PQ adds the post-quantum profile.</p>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded">
+        <div class="font-semibold mb-1">Stripe Issuing</div>
+        <p class="text-slate-600">Wins for managed virtual cards with no infra to run. Massive rail coverage, fraud detection, and dispute handling baked in. Trade-off: closed-source, US-anchored, and not designed for autonomous-agent spend control.</p>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded">
+        <div class="font-semibold mb-1">OAuth 2.0 scopes</div>
+        <p class="text-slate-600">Wins for delegated human access to APIs. Mature ecosystem, every major platform supports it. Trade-off: scopes are coarse permissions, not transaction-bound spend authorizations; replay and audit are out of scope.</p>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded">
+        <div class="font-semibold mb-1">Plain ECDSA mandates</div>
+        <p class="text-slate-600">Wins when you fully understand cryptographic systems and want zero dependencies. You write the canonicalization, replay registry, revocation, audit trail, and key rotation yourself &mdash; equivalent to building PQSafe from scratch.</p>
+      </div>
+      <div class="p-5 bg-rose-50 border border-rose-300 rounded">
+        <div class="font-semibold mb-1">PQSafe AgentPay</div>
+        <p class="text-slate-600">Wins when your agents are signing transactions today that must remain verifiable into the post-quantum era, when your regulator (HKMA, MAS, FCA, FFIEC) requires 7-year audit retention, and when you want a standards-track path instead of a proprietary lock-in.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-semibold mb-3">Where PQSafe wins specifically</h2>
+    <ol class="space-y-3 text-sm text-slate-700 list-decimal ml-5">
+      <li><strong>Post-quantum from day one.</strong> FIPS 204 ML-DSA-65 dual-signed alongside ECDSA P-256. No migration ceremony in 2030 when CRQC becomes plausible &mdash; signatures issued today remain verifiable through 2033 and beyond.</li>
+      <li><strong>Cryptographic spend envelopes for autonomous agents.</strong> Mandates carry per-transaction amount caps, recipient allowlists, currency constraints, time windows, and replay nonces &mdash; all signed, all verified, all enforceable at any rail. JWT and OAuth model sessions, not bounded spend.</li>
+      <li><strong>Standards body engagement.</strong> First public post-quantum proposal to the FIDO Alliance Payments TWG (chaired by Mastercard and Visa). Open letter at <a href="/fido-pq-letter" class="text-rose-600 hover:underline">/fido-pq-letter</a>. Vendor-neutral path, not a proprietary moat.</li>
+    </ol>
+  </section>
+
+  <section class="mb-12 p-6 bg-amber-50 border border-amber-200 rounded">
+    <h2 class="text-lg font-semibold mb-2 text-amber-900">Does post-quantum matter for your use case?</h2>
+    <p class="text-sm text-amber-900">
+      Quantum computers capable of breaking ECDSA / RSA are widely estimated to arrive in the early-to-mid 2030s.
+      That only matters to you if signatures you issue <em>today</em> must remain valid into that window.
+    </p>
+    <ul class="mt-3 text-sm text-amber-900 list-disc ml-5 space-y-1">
+      <li>Banking, payments, insurance, healthcare: <strong>yes</strong>. Regulators mandate 7-year audit retention. HKMA published the world's first Quantum Preparedness Index in February 2026.</li>
+      <li>Ephemeral sessions, short-TTL tokens, throwaway IoT auth: <strong>no</strong>. Use JWT or OAuth.</li>
+      <li>Anything in between: depends on liability tail. PQ migration costs more later than now.</li>
+    </ul>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-semibold mb-3">What PQSafe is NOT</h2>
+    <ul class="space-y-2 text-sm text-slate-700 list-disc ml-5">
+      <li>Not a payment processor. We sign the authorization envelope; rails (Airwallex, Wise, Stripe, USDC) move the money.</li>
+      <li>Not a hosted ledger. <code class="mono">ledger.pqsafe.xyz</code> is in pilot for Jun 2026 launch. No live transaction data shown there yet.</li>
+      <li>Not a fraud-detection system. PQSafe enforces policy at the cryptographic layer; behavioral fraud detection is complementary, not replaced.</li>
+      <li>Not a card issuer. We wrap card issuance through partners (Airwallex Borderless is the default rail).</li>
+    </ul>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-semibold mb-3">Migration paths</h2>
+    <div class="grid sm:grid-cols-2 gap-4 text-sm">
+      <div class="p-5 bg-white border border-slate-200 rounded">
+        <div class="font-semibold mb-1">From Google AP2</div>
+        <p class="text-slate-600">PQSafe's AP2-PQ profile extends AP2 with a post-quantum signature option. Existing mandate shape is preserved; you add the FIPS 204 signature alongside (or replacing) ECDSA. See the <a href="/ap2-pq-rfc" class="text-rose-600 hover:underline">AP2-PQ RFC</a>.</p>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded">
+        <div class="font-semibold mb-1">From Stripe Issuing</div>
+        <p class="text-slate-600">Keep Stripe as your card rail. Wrap each charge with a PQSafe-signed envelope verified before the Stripe API call. PQSafe enforces the agent's spend policy; Stripe handles the card mechanics.</p>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded">
+        <div class="font-semibold mb-1">From raw JWT</div>
+        <p class="text-slate-600">Replace the JWT's <code class="mono text-xs">payload</code> with a PQSafe SpendEnvelope. Both verify in your existing middleware path. The migration adds policy bounds + replay + audit at the same place you were doing JWT validation.</p>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded">
+        <div class="font-semibold mb-1">From plain ECDSA mandates</div>
+        <p class="text-slate-600">Hardest migration to do alone, easiest to adopt PQSafe for: your codebase already canonicalizes, signs, and verifies. PQSafe gives you the post-quantum layer, the policy DSL, the replay registry, and the audit chain &mdash; without re-inventing each one.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="text-xs text-slate-500 mt-16 mb-8 border-t border-slate-200 pt-6 space-y-2">
+    <div class="flex flex-wrap gap-x-4 gap-y-1">
+      <a href="https://pqsafe.xyz" class="hover:underline">← pqsafe.xyz home</a>
+      <a href="https://pqsafe.xyz/verify" class="hover:underline">Verify a SpendEnvelope →</a>
+      <a href="https://pqsafe.xyz/generate" class="hover:underline">Generate one →</a>
+      <a href="https://pqsafe.xyz/bench" class="hover:underline">Performance numbers →</a>
+      <a href="https://pqsafe.xyz/ap2-pq-rfc" class="hover:underline">AP2-PQ RFC</a>
+    </div>
+    <div>Apache-2.0 · PQSafe AgentPay · <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a></div>
+  </footer>
+</main>
+</body>
+</html>
