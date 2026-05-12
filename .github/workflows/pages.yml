@@ -1,25 +1,25 @@
-name: Deploy Landing Page
+name: Deploy landing → Cloudflare Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'landing/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
 permissions:
   contents: read
-  pages: write
-  id-token: write
+  deployments: write
 concurrency:
-  group: pages
+  group: pages-cf
   cancel-in-progress: false
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
         with:
-          path: landing
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy landing --project-name=pqsafe-landing --branch=main --commit-dirty=true
