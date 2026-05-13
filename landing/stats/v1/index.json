@@ -1,30 +1,30 @@
 {
-  "updated": "2026-05-12T02:54:45.684Z",
+  "updated": "2026-05-13T03:23:43.759Z",
   "npm": {
     "@pqsafe/openclaw": {
-      "last_day": 2,
-      "last_week": 22,
+      "last_day": 0,
+      "last_week": 19,
       "last_month": 71,
       "published": true,
       "version": "0.1.0"
     },
     "@pqsafe/mcp-server": {
-      "last_day": 1,
-      "last_week": 24,
+      "last_day": 0,
+      "last_week": 17,
       "last_month": 67,
       "published": true,
       "version": "0.1.0"
     },
     "@pqsafe/agent-pay": {
-      "last_day": 0,
-      "last_week": 14,
-      "last_month": 230,
+      "last_day": 4,
+      "last_week": 17,
+      "last_month": 234,
       "published": true,
       "version": "0.1.1"
     },
     "@pqsafe/mastra": {
-      "last_day": 2,
-      "last_week": 12,
+      "last_day": 0,
+      "last_week": 11,
       "last_month": 207,
       "published": true,
       "version": "0.1.1"
@@ -44,9 +44,9 @@
       "version": null
     },
     "@pqsafe/conformance": {
-      "last_day": 2,
-      "last_week": 61,
-      "last_month": 61,
+      "last_day": 1,
+      "last_week": 62,
+      "last_month": 62,
       "published": true,
       "version": "0.1.0"
     },
@@ -60,24 +60,22 @@
   },
   "pypi": {
     "langchain-pqsafe": {
-      "last_day": 0,
-      "last_week": 0,
-      "last_month": 0,
-      "published": false,
-      "error": true
+      "last_day": 8,
+      "last_week": 40,
+      "last_month": 295,
+      "published": true
     },
     "crewai-pqsafe": {
-      "last_day": 0,
-      "last_week": 57,
-      "last_month": 303,
+      "last_day": 6,
+      "last_week": 49,
+      "last_month": 309,
       "published": true
     },
     "pqsafe-agent-pay": {
-      "last_day": 0,
-      "last_week": 0,
-      "last_month": 0,
-      "published": false,
-      "error": true
+      "last_day": 6,
+      "last_week": 28,
+      "last_month": 299,
+      "published": true
     }
   },
   "github": {
@@ -87,14 +85,14 @@
     "url": "https://github.com/PQSafe/pqsafe"
   },
   "totals": {
-    "npm_total_last_month": 636,
-    "npm_total_last_week": 133,
-    "npm_total_last_day": 7,
-    "pypi_total_last_month": 303,
-    "pypi_total_last_week": 57,
-    "pypi_total_last_day": 0,
-    "combined_last_month": 939,
-    "combined_last_week": 190,
-    "combined_last_day": 7
+    "npm_total_last_month": 641,
+    "npm_total_last_week": 126,
+    "npm_total_last_day": 5,
+    "pypi_total_last_month": 903,
+    "pypi_total_last_week": 117,
+    "pypi_total_last_day": 20,
+    "combined_last_month": 1544,
+    "combined_last_week": 243,
+    "combined_last_day": 25
   }
 }
