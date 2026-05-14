@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Payment Security Patterns Cookbook — PQSafe ML-DSA-65 for AI Agent Payments</title>
+<meta name="description" content="Cryptographic mandate patterns for AI agent payments: ML-DSA-65 SpendEnvelopes, before_tool_call interception, replay protection, and spend caps. LangChain, CrewAI, OpenClaw, Vercel AI SDK recipes." />
+<link rel="canonical" href="https://pqsafe.xyz/cookbook/payment-security-patterns" />
+<link rel="alternate" type="text/markdown" href="https://pqsafe.xyz/cookbook/payment-security-patterns/index.md" />
+<meta property="og:title" content="Payment Security Patterns — PQSafe Cookbook" />
+<meta property="og:description" content="Cryptographic mandate patterns for AI agent payments. Originally submitted for OpenClaw Cookbook merge 2026-05-05, awaiting upstream review." />
+<meta property="og:url" content="https://pqsafe.xyz/cookbook/payment-security-patterns" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="PQSafe" />
+<meta name="twitter:card" content="summary_large_image" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  pre.code { background: #0b1020; color: #e6edf3; padding: 1.25rem; border-radius: 8px; overflow-x: auto; font-size: 0.78rem; line-height: 1.6; }
+  pre.code .c { color: #6b7c93; }
+  pre.code .k { color: #f472b6; }
+  pre.code .s { color: #34d399; }
+  pre.code .n { color: #facc15; }
+  .tag { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
+    <a href="https://pqsafe.xyz" class="flex items-center gap-2">
+      <span class="font-bold text-lg tracking-tight">PQSafe</span>
+      <span class="text-slate-400 text-sm">/ cookbook</span>
+    </a>
+    <a href="https://github.com/rayc0/docs/tree/cookbook/payment-security-patterns" target="_blank"
+       class="text-sm text-slate-500 hover:text-slate-800 flex items-center gap-1">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+</header>
+
+<!-- Upstream notice banner -->
+<div class="bg-blue-50 border-b border-blue-200 text-blue-800 text-sm px-6 py-3 text-center">
+  Originally submitted for <strong>OpenClaw Cookbook</strong> merge on 2026-05-05
+  (<a href="https://github.com/rayc0/docs/tree/cookbook/payment-security-patterns" class="underline" target="_blank">fork branch</a>
+  · commit 6897f17). PR blocked by upstream settings — full content published here in the interim.
+</div>
+
+<main class="max-w-4xl mx-auto px-6 py-12">
+
+  <!-- Tags -->
+  <div class="flex flex-wrap gap-2 mb-4">
+    <span class="tag">payments</span>
+    <span class="tag">post-quantum</span>
+    <span class="tag">ML-DSA-65</span>
+    <span class="tag">langchain</span>
+    <span class="tag">crewai</span>
+    <span class="tag">openclaw</span>
+    <span class="tag">FIDO AP2-PQ</span>
+  </div>
+
+  <h1 class="text-3xl font-bold mb-3">Payment Security Patterns for AI Agent Frameworks</h1>
+  <p class="text-slate-500 text-sm mb-8">Published 2026-05-14 · <a href="https://pqsafe.xyz" class="underline">PQSafe</a> · Apache-2.0 · <a href="index.md" class="underline">raw markdown</a></p>
+
+  <p class="text-lg text-slate-700 mb-8 leading-relaxed">
+    AI agents that handle payments introduce a new class of risk: compromised keys, runaway spend,
+    hallucinated recipients, and — looking ahead — quantum adversaries capable of breaking today's
+    ECDSA signatures. This cookbook entry shows how to wrap every agent payment action in a
+    <strong>ML-DSA-65 SignedActionEnvelope</strong> using PQSafe, giving you cryptographically-enforced
+    spend caps, merchant constraints, time bounds, and replay protection today.
+  </p>
+
+  <!-- Why this matters callout -->
+  <div class="bg-amber-50 border border-amber-200 rounded-lg p-5 mb-10">
+    <h2 class="font-semibold text-amber-900 mb-2">Why This Matters: The ClawHavoc Attack</h2>
+    <p class="text-amber-800 text-sm leading-relaxed">
+      The ClawHavoc supply-chain attack of April 2026 exposed 138 CVEs across 1,400+ malicious skills
+      on clawhub.ai. Several silently redirected payment tool calls to attacker-controlled accounts.
+      A skill ecosystem without a mandatory verification layer is structurally unsafe.
+      The FIDO Alliance's AP2-PQ profile (published 28 April 2026) establishes the standard pattern.
+      This cookbook implements it.
+    </p>
+  </div>
+
+  <!-- Threat Model -->
+  <h2 class="text-2xl font-bold mb-4 mt-10">The Threat Model</h2>
+  <div class="overflow-x-auto mb-8">
+    <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+      <thead class="bg-slate-100">
+        <tr>
+          <th class="text-left px-4 py-3 font-semibold">Attack Vector</th>
+          <th class="text-left px-4 py-3 font-semibold">How SpendEnvelope Stops It</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr><td class="px-4 py-3 font-mono text-xs">Hallucinated recipient</td><td class="px-4 py-3 text-slate-600">Recipient ID is signed into envelope — mismatch at verification = block</td></tr>
+        <tr class="bg-slate-50"><td class="px-4 py-3 font-mono text-xs">Prompt-injected amount</td><td class="px-4 py-3 text-slate-600">Amount ceiling is signed — exceeding it at verification = block</td></tr>
+        <tr><td class="px-4 py-3 font-mono text-xs">Replayed mandate</td><td class="px-4 py-3 text-slate-600">Nonce is single-use — server-side replay log rejects second use</td></tr>
+        <tr class="bg-slate-50"><td class="px-4 py-3 font-mono text-xs">Compromised package upgrade</td><td class="px-4 py-3 text-slate-600">Envelope covers all fields via canonical serialization — any tamper = invalid signature</td></tr>
+        <tr><td class="px-4 py-3 font-mono text-xs">Stale allowlist</td><td class="px-4 py-3 text-slate-600">Envelope carries explicit expiry (≤5 min recommended) — clock check = block</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Recipe 1: LangChain -->
+  <h2 class="text-2xl font-bold mb-4 mt-10">Recipe 1: LangChain Agent with PQSafe SpendEnvelope</h2>
+
+  <div class="mb-3 flex gap-2">
+    <button onclick="document.getElementById('lc-py').style.display='block';document.getElementById('lc-ts').style.display='none';this.classList.add('font-bold');" class="text-sm px-3 py-1 bg-white border border-slate-300 rounded font-bold">Python</button>
+    <button onclick="document.getElementById('lc-ts').style.display='block';document.getElementById('lc-py').style.display='none';" class="text-sm px-3 py-1 bg-white border border-slate-300 rounded">TypeScript</button>
+  </div>
+
+  <div id="lc-py">
+<pre class="code"><span class="k">import</span> os, uuid
+<span class="k">from</span> datetime <span class="k">import</span> datetime, timedelta, timezone
+<span class="k">from</span> langchain.agents <span class="k">import</span> AgentExecutor, create_openai_tools_agent
+<span class="k">from</span> langchain.tools <span class="k">import</span> Tool
+<span class="k">from</span> langchain_openai <span class="k">import</span> ChatOpenAI
+<span class="k">from</span> langchain_pqsafe <span class="k">import</span> PQSafeAuthorizer, SpendEnvelope
+
+authorizer = PQSafeAuthorizer(api_key=os.environ[<span class="s">"PQSAFE_API_KEY"</span>])
+
+<span class="k">def</span> <span class="n">authorize_and_pay</span>(charge_request: str) -> str:
+    amount_cents = <span class="s">2999</span>
+    merchant_id  = <span class="s">"stripe:acct_xxx"</span>
+
+    envelope = SpendEnvelope(
+        agent_id=<span class="s">"lc-agent-prod-01"</span>,
+        amount_usd_cents=amount_cents,
+        merchant_id=merchant_id,
+        expires_at=(datetime.now(timezone.utc) + timedelta(minutes=5)).strftime(<span class="s">"%Y-%m-%dT%H:%M:%SZ"</span>),
+        nonce=str(uuid.uuid4()),
+    )
+
+    signed = authorizer.sign(envelope)              <span class="c"># ML-DSA-65, 3,309-byte sig</span>
+    result = authorizer.verify(signed, endpoint=<span class="s">"https://pqsafe.xyz/verify"</span>)
+    <span class="k">if not</span> result.ok:
+        <span class="k">return</span> f<span class="s">"Payment blocked by PQSafe: {result.reason}"</span>
+
+    <span class="c"># stripe.PaymentIntent.create(amount=amount_cents, currency="usd", ...)</span>
+    <span class="k">return</span> f<span class="s">"Payment of ${amount_cents/100:.2f} authorized. Nonce: {signed.nonce}"</span>
+
+payment_tool = Tool(
+    name=<span class="s">"authorized_payment"</span>,
+    func=authorize_and_pay,
+    description=<span class="s">"Charge a customer. Input: '&lt;amount&gt; to &lt;merchant_id&gt;'. Post-quantum authorization required."</span>,
+)
+
+llm      = ChatOpenAI(model=<span class="s">"gpt-4o"</span>, temperature=0)
+executor = AgentExecutor(agent=create_openai_tools_agent(llm, [payment_tool], prompt=...), tools=[payment_tool])
+executor.invoke({<span class="s">"input"</span>: <span class="s">"Charge the customer $29.99 for the Pro plan."</span>})</pre>
+  </div>
+
+  <div id="lc-ts" style="display:none;">
+<pre class="code"><span class="k">import</span> { AgentExecutor, createOpenAIToolsAgent } <span class="k">from</span> <span class="s">"langchain/agents"</span>;
+<span class="k">import</span> { DynamicTool } <span class="k">from</span> <span class="s">"@langchain/core/tools"</span>;
+<span class="k">import</span> { ChatOpenAI } <span class="k">from</span> <span class="s">"@langchain/openai"</span>;
+<span class="k">import</span> { PQSafeAuthorizer, SpendEnvelope } <span class="k">from</span> <span class="s">"@pqsafe/openclaw"</span>;
+<span class="k">import</span> { randomUUID } <span class="k">from</span> <span class="s">"crypto"</span>;
+
+<span class="k">const</span> authorizer = <span class="k">new</span> PQSafeAuthorizer({ apiKey: process.env.PQSAFE_API_KEY! });
+
+<span class="k">const</span> paymentTool = <span class="k">new</span> DynamicTool({
+  name: <span class="s">"authorized_payment"</span>,
+  description: <span class="s">"Charge a customer with post-quantum authorization."</span>,
+  func: <span class="k">async</span> (chargeRequest) => {
+    <span class="k">const</span> envelope = <span class="k">new</span> SpendEnvelope({
+      agentId: <span class="s">"lc-agent-prod-01"</span>,
+      amountUsdCents: 2999,
+      merchantId: <span class="s">"stripe:acct_xxx"</span>,
+      expiresAt: <span class="k">new</span> Date(Date.now() + 5 * 60_000).toISOString(),
+      nonce: randomUUID(),
+    });
+    <span class="k">const</span> signed = <span class="k">await</span> authorizer.sign(envelope);
+    <span class="k">const</span> result = <span class="k">await</span> authorizer.verify(signed, <span class="s">"https://pqsafe.xyz/verify"</span>);
+    <span class="k">if</span> (!result.ok) <span class="k">return</span> `Payment blocked: ${result.reason}`;
+    <span class="k">return</span> `Payment of $29.99 authorized. Nonce: ${signed.nonce}`;
+  },
+});</pre>
+  </div>
+
+  <!-- Recipe 2: CrewAI -->
+  <h2 class="text-2xl font-bold mb-4 mt-10">Recipe 2: CrewAI Multi-Agent with Shared SpendEnvelope</h2>
+  <p class="text-slate-600 mb-4 text-sm">A single envelope shared across agents — the nonce ensures it can only be consumed once.</p>
+
+<pre class="code"><span class="k">from</span> crewai <span class="k">import</span> Agent, Crew, Task
+<span class="k">from</span> pqsafe <span class="k">import</span> PQSafeAuthorizer, SpendEnvelope
+
+authorizer = PQSafeAuthorizer(api_key=os.environ[<span class="s">"PQSAFE_API_KEY"</span>])
+
+<span class="k">def</span> <span class="n">create_shared_envelope</span>(amount_cents: int, merchant_id: str) -> dict:
+    envelope = SpendEnvelope(
+        agent_id=<span class="s">"crewai-billing-crew-v1"</span>,
+        amount_usd_cents=amount_cents,
+        merchant_id=merchant_id,
+        expires_at=(datetime.now(timezone.utc) + timedelta(minutes=10)).strftime(<span class="s">"%Y-%m-%dT%H:%M:%SZ"</span>),
+        nonce=str(uuid.uuid4()),
+    )
+    <span class="k">return</span> authorizer.sign(envelope).to_dict()
+
+shared_envelope = create_shared_envelope(amount_cents=4999, merchant_id=<span class="s">"stripe:acct_live"</span>)
+
+billing_agent = Agent(
+    role=<span class="s">"Billing Specialist"</span>,
+    goal=<span class="s">"Execute authorized payments only — never move money without a verified envelope."</span>,
+    allow_delegation=False,
+)
+billing_task = Task(
+    description=f<span class="s">"Verify and execute this envelope: {shared_envelope}"</span>,
+    agent=billing_agent,
+    expected_output=<span class="s">"Payment executed confirmation with nonce."</span>,
+)
+Crew(agents=[billing_agent], tasks=[billing_task]).kickoff()</pre>
+
+  <!-- Recipe 3: OpenClaw -->
+  <h2 class="text-2xl font-bold mb-4 mt-10">Recipe 3: OpenClaw Skill with pqsafe-pay</h2>
+  <p class="text-slate-600 mb-4 text-sm">Install via <code class="mono text-xs bg-slate-100 px-1 py-0.5 rounded">clawhub install pqsafe-pay</code> or <code class="mono text-xs bg-slate-100 px-1 py-0.5 rounded">npm install @pqsafe/openclaw</code></p>
+
+<pre class="code"><span class="k">import</span> { OpenClawAgent } <span class="k">from</span> <span class="s">"@openclaw/sdk"</span>;
+<span class="k">import</span> { pqsafePay, SpendEnvelope } <span class="k">from</span> <span class="s">"@pqsafe/openclaw"</span>;
+<span class="k">import</span> { randomUUID } <span class="k">from</span> <span class="s">"crypto"</span>;
+
+<span class="k">const</span> agent = <span class="k">new</span> OpenClawAgent({
+  skills: [pqsafePay({ apiKey: process.env.PQSAFE_API_KEY!, verifyEndpoint: <span class="s">"https://pqsafe.xyz/verify"</span> })],
+});
+
+agent.on(<span class="s">"authorizePayment"</span>, <span class="k">async</span> (ctx) => {
+  <span class="k">const</span> envelope = <span class="k">new</span> SpendEnvelope({
+    agentId: ctx.agentId,
+    amountUsdCents: ctx.params.amountCents,
+    merchantId: ctx.params.merchantId,
+    expiresAt: <span class="k">new</span> Date(Date.now() + 5 * 60_000).toISOString(),
+    nonce: randomUUID(),
+  });
+  <span class="k">const</span> signed = <span class="k">await</span> ctx.skills.pqsafePay.sign(envelope);
+  <span class="k">const</span> result = <span class="k">await</span> ctx.skills.pqsafePay.verify(signed);
+  <span class="k">if</span> (!result.ok) { ctx.reject(`PQSafe blocked: ${result.reason}`); <span class="k">return</span>; }
+  ctx.resolve({ authorized: <span class="k">true</span>, nonce: signed.nonce });
+});</pre>
+
+  <!-- Verification failure table -->
+  <h2 class="text-2xl font-bold mb-4 mt-10">What Happens When Verification Fails</h2>
+  <div class="overflow-x-auto mb-8">
+    <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+      <thead class="bg-slate-100">
+        <tr>
+          <th class="text-left px-4 py-3 font-semibold">Reason Code</th>
+          <th class="text-left px-4 py-3 font-semibold">What Triggered It</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr><td class="px-4 py-3 mono text-xs">SIGNATURE_INVALID</td><td class="px-4 py-3 text-slate-600">Envelope fields tampered after signing, or wrong key used</td></tr>
+        <tr class="bg-slate-50"><td class="px-4 py-3 mono text-xs">ENVELOPE_EXPIRED</td><td class="px-4 py-3 text-slate-600">expires_at passed — prevents delayed replay attacks</td></tr>
+        <tr><td class="px-4 py-3 mono text-xs">NONCE_REPLAYED</td><td class="px-4 py-3 text-slate-600">Nonce already consumed — prevents double-spend across threads</td></tr>
+        <tr class="bg-slate-50"><td class="px-4 py-3 mono text-xs">MERCHANT_MISMATCH</td><td class="px-4 py-3 text-slate-600">merchant_id in request doesn't match the signed envelope</td></tr>
+        <tr><td class="px-4 py-3 mono text-xs">AMOUNT_EXCEEDED</td><td class="px-4 py-3 text-slate-600">Requested charge exceeds signed amount_usd_cents ceiling</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Security Model -->
+  <h2 class="text-2xl font-bold mb-4 mt-10">Security Model</h2>
+  <div class="bg-slate-900 text-slate-200 rounded-lg p-5 text-sm font-mono leading-relaxed mb-8">
+    <div><span class="text-slate-400">Algorithm:      </span> ML-DSA-65 (NIST FIPS 204, CRYSTALS-Dilithium3 level 3)</div>
+    <div><span class="text-slate-400">Signature size: </span> 3,309 bytes — covers every SpendEnvelope field</div>
+    <div><span class="text-slate-400">Verifier:       </span> Cloudflare Worker at pqsafe.xyz/verify — stateless, global</div>
+    <div><span class="text-slate-400">Replay:         </span> Server-side nonce log, TTL = expires_at + 10 minutes</div>
+    <div><span class="text-slate-400">RFC draft:      </span> draft-chau-ap2-pq-spend-envelope-00</div>
+    <div><span class="text-slate-400">Standards:      </span> FIDO Alliance Agentic Authentication TWG (AP2-PQ, Apr 28 2026)</div>
+  </div>
+
+  <!-- Resources -->
+  <h2 class="text-2xl font-bold mb-4 mt-10">Resources</h2>
+  <ul class="space-y-2 text-sm text-slate-700 mb-12">
+    <li><a href="https://www.npmjs.com/package/@pqsafe/openclaw" class="underline text-blue-600">npm: @pqsafe/openclaw</a></li>
+    <li><a href="https://pypi.org/project/langchain-pqsafe/" class="underline text-blue-600">PyPI: langchain-pqsafe</a></li>
+    <li><a href="https://clawhub.ai/skills/pqsafe-pay" class="underline text-blue-600">ClawHub skill: pqsafe-pay</a></li>
+    <li><a href="https://pqsafe.xyz/spec" class="underline text-blue-600">Spec: draft-chau-ap2-pq-spend-envelope-00</a></li>
+    <li><a href="https://fidoalliance.org/fido-alliance-agentic-authentication-technical-working-group/" class="underline text-blue-600">FIDO Agentic Authentication TWG</a></li>
+    <li><a href="https://github.com/rayc0/docs/tree/cookbook/payment-security-patterns" class="underline text-blue-600">Fork branch (GitHub): rayc0/docs@cookbook/payment-security-patterns</a></li>
+    <li><a href="index.md" class="underline text-blue-600">Raw markdown of this page</a></li>
+  </ul>
+
+  <div class="border-t border-slate-200 pt-6 text-xs text-slate-400">
+    License: Apache-2.0 (SDK) / MIT (docs). Developer contact: <a href="mailto:dev@pqsafe.xyz" class="underline">dev@pqsafe.xyz</a>
+  </div>
+</main>
+
+</body>
+</html>
