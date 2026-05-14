@@ -16,7 +16,7 @@ type: rfc
 
 ## Abstract
 
-This document specifies a post-quantum signing profile for AP2-style SD-JWT mandate credentials, contributed to the FIDO Alliance Payments Technical Working Group. The profile adds two JOSE header parameters — `pq_alg` and `pq_sig` — to the existing JWT header used in AP2 v0.2 mandate credentials. The primary algorithm identifier is `"ML-DSA-65"`, corresponding to NIST FIPS 204 (initial public draft qualifier: NIST IR 8547 ipd). A hybrid profile `"ES256+ML-DSA-65"` is defined for deployments requiring both classical interoperability and quantum resistance in a single signing operation. The extension is strictly backward-compatible: classical verifiers that do not recognize `pq_alg` continue to verify the `alg: "ES256"` signature and ignore the additional header parameters.
+This document specifies a post-quantum signing profile for AP2-style SD-JWT mandate credentials, proposed to the FIDO Alliance Payments Technical Working Group via open letter (May 2026). The profile adds two JOSE header parameters — `pq_alg` and `pq_sig` — to the existing JWT header used in AP2 v0.2 mandate credentials. The primary algorithm identifier is `"ML-DSA-65"`, corresponding to NIST FIPS 204 (initial public draft qualifier: NIST IR 8547 ipd). A hybrid profile `"ES256+ML-DSA-65"` is defined for deployments requiring both classical interoperability and quantum resistance in a single signing operation. The extension is strictly backward-compatible: classical verifiers that do not recognize `pq_alg` continue to verify the `alg: "ES256"` signature and ignore the additional header parameters.
 
 | Field | Value |
 |-------|-------|

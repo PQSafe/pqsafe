@@ -147,7 +147,7 @@ address format, (3) currency, (4) operator configuration.
 - **On-chain anchor:** SHA-256 of canonical envelope JSON committed to Arbitrum Sepolia SpendEnvelopeRegistry (0x142bA5626bf8B032EB0B59052421C42595417F5d, Arbiscan-verified).
 - **Test suite:** 518 tests passing across 5 sub-packages (agent-pay, openclaw, mcp-server, mastra, evm).
 - **Standards:** NIST FIPS 204 (final), NIST IR 8547 (initial public draft), HKMA Quantum Preparedness Index Feb 2026, PSD2 Article 69.
-- **FIDO alignment:** AP2-PQ profile donated to FIDO Alliance Payments TWG 2026-04-28.
+- **FIDO alignment:** AP2-PQ profile proposed to FIDO Alliance Payments TWG via open letter (May 2026); engaging with TWG; formal membership pending.
 
 ---
 

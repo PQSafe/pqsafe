@@ -191,7 +191,7 @@ Every payment can be anchored on-chain by committing the SpendEnvelope hash to t
 ## Standards contributions
 
 - [FIDO Alliance open letter](https://pqsafe.xyz/fido-pq-letter/) — proposing AP2-PQ profile for post-quantum mandate signatures (published 2026-05-02)
-- [AP2-PQ Profile RFC](https://pqsafe.xyz/ap2-pq-rfc/) — full JOSE header parameter specification, donated to FIDO Alliance 2026-04-28
+- [AP2-PQ Profile RFC](https://pqsafe.xyz/ap2-pq-rfc/) — full JOSE header parameter specification, proposed to FIDO Alliance Payments TWG via open letter (May 2026)
 - [OpenClaw Skill](https://pqsafe.xyz/openclaw-skill/) — `pqsafe.pay.v1` listed in OpenClaw (367K stars, 50K+ tools, 180K devs)
 
 ---
