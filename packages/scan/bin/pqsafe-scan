@@ -1,0 +1,86 @@
+#!/usr/bin/env node
+import { readFileSync, existsSync, statSync } from 'fs';
+import { readdir } from 'fs/promises';
+import { join, extname } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const { scan } = await import(join(__dirname, '../dist/scanner.js'));
+const { printReport, jsonReport } = await import(join(__dirname, '../dist/reporter.js'));
+
+const args = process.argv.slice(2);
+const flags = new Set(args.filter(a => a.startsWith('--')));
+const targets = args.filter(a => !a.startsWith('--'));
+
+const JSON_OUTPUT = flags.has('--json');
+
+if (flags.has('--help') || flags.has('-h') || targets.length === 0 && !flags.has('--stdin')) {
+  console.log(`
+  pqsafe-scan — AI Agent Security Scanner
+
+  Usage:
+    pqsafe-scan <file>           Scan a single file
+    pqsafe-scan <dir>            Scan all .ts/.js/.py files in directory
+    pqsafe-scan --stdin          Read from stdin
+    pqsafe-scan <file> --json    JSON output
+
+  Examples:
+    pqsafe-scan ./agents/payment-agent.ts
+    pqsafe-scan ./src/agents/
+    cat agent.py | pqsafe-scan --stdin
+
+  https://pqsafe.xyz/scan
+`);
+  process.exit(0);
+}
+
+async function scanFile(filepath) {
+  if (!existsSync(filepath)) {
+    console.error(`File not found: ${filepath}`);
+    return 1;
+  }
+  const code = readFileSync(filepath, 'utf8');
+  const report = scan({ code, filename: filepath });
+  JSON_OUTPUT ? console.log(jsonReport(report)) : printReport(report);
+  return report.findings.some(f => f.severity === 'CRITICAL') ? 2 : 0;
+}
+
+async function scanDir(dirpath) {
+  const EXTS = new Set(['.ts', '.js', '.py', '.mjs', '.cjs']);
+  const files = await readdir(dirpath, { recursive: true });
+  const agentFiles = files
+    .filter(f => EXTS.has(extname(f)) && !f.includes('node_modules') && !f.includes('.git'))
+    .map(f => join(dirpath, f));
+
+  if (agentFiles.length === 0) { console.log('No agent files found.'); return 0; }
+
+  let exitCode = 0;
+  const reports = [];
+  for (const file of agentFiles) {
+    const code = readFileSync(file, 'utf8');
+    const report = scan({ code, filename: file });
+    reports.push(report);
+    if (!JSON_OUTPUT) printReport(report);
+    if (report.findings.some(f => f.severity === 'CRITICAL')) exitCode = 2;
+  }
+  if (JSON_OUTPUT) console.log(JSON.stringify(reports, null, 2));
+  return exitCode;
+}
+
+if (flags.has('--stdin')) {
+  let code = '';
+  process.stdin.setEncoding('utf8');
+  process.stdin.on('data', chunk => { code += chunk; });
+  process.stdin.on('end', () => {
+    const report = scan({ code, filename: 'stdin' });
+    JSON_OUTPUT ? console.log(jsonReport(report)) : printReport(report);
+    process.exit(report.findings.some(f => f.severity === 'CRITICAL') ? 2 : 0);
+  });
+} else {
+  const target = targets[0];
+  const stat = statSync(target, { throwIfNoEntry: false });
+  if (!stat) { console.error(`Not found: ${target}`); process.exit(1); }
+  const exitCode = await (stat.isDirectory() ? scanDir(target) : scanFile(target));
+  process.exit(exitCode);
+}

@@ -6,7 +6,8 @@
     "landing",
     "agent-pay",
     "packages/conformance",
-    "packages/cli"
+    "packages/cli",
+    "packages/scan"
   ],
   "scripts": {
     "docs:api": "typedoc --options typedoc.json"

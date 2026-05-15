@@ -1,0 +1,43 @@
+{
+  "name": "@pqsafe/scan",
+  "version": "0.1.0",
+  "description": "Static security scanner for AI agents — finds critical vulnerabilities in LangChain, AutoGen, CrewAI, and custom agents",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "pqsafe-scan": "bin/pqsafe-scan"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "scan": "node bin/pqsafe-scan"
+  },
+  "keywords": [
+    "ai-agent",
+    "security",
+    "scanner",
+    "langchain",
+    "autogen",
+    "crewai",
+    "post-quantum",
+    "pqsafe",
+    "llm-security",
+    "prompt-injection"
+  ],
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
