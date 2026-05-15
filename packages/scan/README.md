@@ -1,9 +1,9 @@
-# @pqsafe/scan
+# pqsafe-scan
 
 **Static security scanner for AI agents.** Finds critical vulnerabilities in LangChain, AutoGen, CrewAI, and custom agents before they reach production.
 
 ```bash
-npx @pqsafe/scan ./my-agent.ts
+npx pqsafe-scan ./my-agent.ts
 ```
 
 ```
@@ -36,9 +36,9 @@ npx @pqsafe/scan ./my-agent.ts
 ## Install
 
 ```bash
-npm install -g @pqsafe/scan
+npm install -g pqsafe-scan
 # or run without installing
-npx @pqsafe/scan ./agent.ts
+npx pqsafe-scan ./agent.ts
 ```
 
 ## Usage
@@ -77,7 +77,7 @@ pqsafe-scan ./agent.ts && echo "Safe to deploy"
 ## Programmatic API
 
 ```typescript
-import { scan } from '@pqsafe/scan';
+import { scan } from 'pqsafe-scan';
 
 const report = scan({ code: agentCode, filename: 'agent.ts' });
 
@@ -91,7 +91,7 @@ console.log(report.findings); // detailed findings with line numbers
 ```yaml
 # .github/workflows/security.yml
 - name: Scan AI agents
-  run: npx @pqsafe/scan ./src/agents/ --json
+  run: npx pqsafe-scan ./src/agents/ --json
 ```
 
 Exit codes: `0` = clean, `2` = CRITICAL findings (blocks deploy)
