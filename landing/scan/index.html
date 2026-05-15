@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>pqsafe-scan — AI Agent Security Scanner</title>
+<meta name="description" content="Free static security scanner for AI agents. Paste your LangChain, AutoGen, CrewAI, or custom agent code and get a security grade instantly. Finds exposed secrets, missing auth, spending limits, prompt injection, and more." />
+<link rel="canonical" href="https://pqsafe.xyz/scan" />
+<meta property="og:title" content="pqsafe-scan — AI Agent Security Scanner" />
+<meta property="og:description" content="Paste your agent code. Get a security grade. Free, no signup." />
+<meta property="og:url" content="https://pqsafe.xyz/scan" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="PQSafe" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="pqsafe-scan — AI Agent Security Scanner" />
+<meta name="twitter:description" content="Paste your agent code. Get a security grade. Free, no signup." />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .grade-A\+ { background: #16a34a; }
+  .grade-A  { background: #16a34a; }
+  .grade-B  { background: #ca8a04; }
+  .grade-C  { background: #ea580c; }
+  .grade-D  { background: #dc2626; }
+  .grade-F  { background: #dc2626; }
+  textarea:focus { outline: 2px solid #f97316; }
+  .finding-CRITICAL { border-left: 4px solid #dc2626; background: #fef2f2; }
+  .finding-HIGH     { border-left: 4px solid #ea580c; background: #fff7ed; }
+  .finding-MEDIUM   { border-left: 4px solid #ca8a04; background: #fefce8; }
+  .finding-LOW      { border-left: 4px solid #2563eb; background: #eff6ff; }
+  .badge-CRITICAL { background:#dc2626; color:white; }
+  .badge-HIGH     { background:#ea580c; color:white; }
+  .badge-MEDIUM   { background:#ca8a04; color:white; }
+  .badge-LOW      { background:#2563eb; color:white; }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+<!-- Nav -->
+<nav class="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+  <a href="/" class="flex items-center gap-2 text-orange-500 font-bold text-lg mono">
+    🔐 PQSafe
+  </a>
+  <div class="flex items-center gap-6 text-sm text-slate-400">
+    <a href="/verify" class="hover:text-white transition-colors">Verify</a>
+    <a href="/scan" class="text-white font-medium">Scan</a>
+    <a href="https://docs.pqsafe.xyz" class="hover:text-white transition-colors">Docs</a>
+    <a href="https://github.com/pqsafe-xyz" class="hover:text-white transition-colors">GitHub</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="max-w-4xl mx-auto px-6 pt-16 pb-8 text-center">
+  <div class="inline-flex items-center gap-2 bg-slate-800 rounded-full px-4 py-1.5 text-xs text-slate-300 mb-6 mono">
+    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+    Free · No signup · Runs locally
+  </div>
+  <h1 class="text-4xl font-bold mb-4">
+    Is your AI agent <span class="text-orange-500">actually secure?</span>
+  </h1>
+  <p class="text-slate-400 text-lg max-w-2xl mx-auto mb-8">
+    Paste your agent code and get a security grade in seconds. Finds critical vulnerabilities before they reach production.
+  </p>
+
+  <!-- Framework badges -->
+  <div class="flex flex-wrap justify-center gap-2 mb-10 text-xs">
+    <span class="bg-slate-800 px-3 py-1 rounded-full text-slate-300">LangChain</span>
+    <span class="bg-slate-800 px-3 py-1 rounded-full text-slate-300">AutoGen</span>
+    <span class="bg-slate-800 px-3 py-1 rounded-full text-slate-300">CrewAI</span>
+    <span class="bg-slate-800 px-3 py-1 rounded-full text-slate-300">LlamaIndex</span>
+    <span class="bg-slate-800 px-3 py-1 rounded-full text-slate-300">Custom agents</span>
+  </div>
+</div>
+
+<!-- Scanner -->
+<div class="max-w-4xl mx-auto px-6 pb-16">
+  <div class="bg-slate-900 rounded-2xl border border-slate-700 overflow-hidden">
+
+    <!-- Input area -->
+    <div class="p-6 border-b border-slate-700">
+      <div class="flex items-center justify-between mb-3">
+        <label class="text-sm font-medium text-slate-300">Paste your agent code</label>
+        <div class="flex gap-2">
+          <button onclick="loadExample('langchain')" class="text-xs text-slate-500 hover:text-orange-400 transition-colors mono">try LangChain example</button>
+          <span class="text-slate-700">·</span>
+          <button onclick="loadExample('autogen')" class="text-xs text-slate-500 hover:text-orange-400 transition-colors mono">AutoGen</button>
+          <span class="text-slate-700">·</span>
+          <button onclick="clearCode()" class="text-xs text-slate-500 hover:text-orange-400 transition-colors mono">clear</button>
+        </div>
+      </div>
+      <textarea
+        id="code-input"
+        class="w-full h-64 bg-slate-950 text-slate-200 mono text-sm p-4 rounded-xl resize-none border border-slate-700 focus:border-orange-500"
+        placeholder="# Paste your LangChain, AutoGen, CrewAI, or custom agent code here...
+# Works with Python and TypeScript/JavaScript
+
+from langchain.agents import AgentExecutor
+..."
+        spellcheck="false"
+      ></textarea>
+    </div>
+
+    <!-- Scan button -->
+    <div class="px-6 py-4 bg-slate-900 flex items-center justify-between">
+      <p class="text-xs text-slate-500">Code is analysed locally in your browser. Never sent to a server.</p>
+      <button
+        onclick="runScan()"
+        id="scan-btn"
+        class="bg-orange-500 hover:bg-orange-400 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors flex items-center gap-2"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        Scan Agent
+      </button>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="hidden p-6 border-t border-slate-700">
+      <div id="grade-section" class="flex items-center gap-6 mb-8">
+        <div id="grade-badge" class="w-20 h-20 rounded-2xl flex items-center justify-center text-white">
+          <span id="grade-text" class="text-4xl font-black mono"></span>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <span id="score-text" class="text-2xl font-bold"></span>
+            <span class="text-slate-500 text-sm">/ 100</span>
+          </div>
+          <p id="summary-text" class="text-slate-400"></p>
+          <div id="share-section" class="mt-3 flex items-center gap-3">
+            <button onclick="shareReport()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-300 transition-colors flex items-center gap-1.5">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+              Share report
+            </button>
+            <span id="share-confirm" class="text-xs text-green-400 hidden">Link copied!</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="findings-list" class="space-y-3"></div>
+
+      <div id="all-pass" class="hidden text-center py-8">
+        <div class="text-4xl mb-3">✅</div>
+        <p class="text-green-400 font-semibold text-lg">All checks passed</p>
+        <p class="text-slate-500 text-sm mt-1">Your agent looks secure. Consider adding PQSafe spend envelopes for post-quantum authorization.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- What it checks -->
+  <div class="mt-12 grid md:grid-cols-3 gap-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <div class="text-2xl mb-3">🔑</div>
+      <h3 class="font-semibold mb-1">Exposed Secrets</h3>
+      <p class="text-slate-400 text-sm">Finds hardcoded API keys, tokens, and credentials before they reach git history.</p>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <div class="text-2xl mb-3">💸</div>
+      <h3 class="font-semibold mb-1">Spending Limits</h3>
+      <p class="text-slate-400 text-sm">Agents with payment tools and no budget cap can drain accounts in a single runaway loop.</p>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <div class="text-2xl mb-3">💉</div>
+      <h3 class="font-semibold mb-1">Prompt Injection</h3>
+      <p class="text-slate-400 text-sm">Detects user-controlled input interpolated into system prompts — the most common LLM attack vector.</p>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <div class="text-2xl mb-3">🔒</div>
+      <h3 class="font-semibold mb-1">Missing Auth</h3>
+      <p class="text-slate-400 text-sm">HTTP endpoints with no authentication allow anyone who finds the URL to invoke your agent.</p>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <div class="text-2xl mb-3">⚛️</div>
+      <h3 class="font-semibold mb-1">Quantum-Vulnerable Crypto</h3>
+      <p class="text-slate-400 text-sm">RSA/ECDSA will be broken by quantum computers. NSA CNSA 2.0 mandates migration by 2027.</p>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <div class="text-2xl mb-3">🛑</div>
+      <h3 class="font-semibold mb-1">No Kill Switch</h3>
+      <p class="text-slate-400 text-sm">Agents without timeouts or max_iterations can loop indefinitely, burning API credits.</p>
+    </div>
+  </div>
+
+  <!-- CLI section -->
+  <div class="mt-12 bg-slate-900 border border-slate-800 rounded-2xl p-8">
+    <h2 class="text-xl font-bold mb-2">Use in CI/CD</h2>
+    <p class="text-slate-400 text-sm mb-6">Block deploys when CRITICAL vulnerabilities are found. Exit code 2 on critical findings.</p>
+    <div class="space-y-3">
+      <div class="bg-slate-950 rounded-xl p-4 mono text-sm">
+        <span class="text-slate-500"># Install</span><br/>
+        <span class="text-green-400">npm</span> install -g @pqsafe/scan
+      </div>
+      <div class="bg-slate-950 rounded-xl p-4 mono text-sm">
+        <span class="text-slate-500"># Scan a file or directory</span><br/>
+        <span class="text-green-400">pqsafe-scan</span> ./src/agents/
+      </div>
+      <div class="bg-slate-950 rounded-xl p-4 mono text-sm">
+        <span class="text-slate-500"># GitHub Actions</span><br/>
+        - name: Scan AI agents<br/>
+        &nbsp;&nbsp;run: <span class="text-green-400">npx @pqsafe/scan</span> ./agents/ --json
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="border-t border-slate-800 px-6 py-8 text-center text-sm text-slate-500">
+  <p>
+    <a href="/" class="hover:text-white transition-colors">PQSafe</a> ·
+    <a href="https://github.com/pqsafe-xyz/pqsafe" class="hover:text-white transition-colors ml-3">GitHub</a> ·
+    <a href="https://docs.pqsafe.xyz" class="hover:text-white transition-colors ml-3">Docs</a> ·
+    Apache-2.0
+  </p>
+</footer>
+
+<script>
+// ── Checks (ported from @pqsafe/scan) ──────────────────────────────────────
+
+const SECRET_PATTERNS = [
+  { r: /sk-[a-zA-Z0-9]{20,}/g, label: 'OpenAI API key' },
+  { r: /sk-ant-[a-zA-Z0-9\-]{20,}/g, label: 'Anthropic API key' },
+  { r: /AIza[0-9A-Za-z\-_]{35}/g, label: 'Google API key' },
+  { r: /ghp_[a-zA-Z0-9]{36}/g, label: 'GitHub personal access token' },
+  { r: /(?:password|passwd|secret|api_key|apikey|token)\s*[:=]\s*["'][^"']{8,}["']/gi, label: 'Hardcoded credential' },
+  { r: /Bearer\s+[a-zA-Z0-9\-._~+/]+=*/g, label: 'Hardcoded Bearer token' },
+];
+
+function checkExposedSecrets(code) {
+  const findings = []; const lines = code.split('\n');
+  for (const {r, label} of SECRET_PATTERNS) {
+    r.lastIndex = 0; let m;
+    while ((m = r.exec(code)) !== null) {
+      const ln = code.slice(0, m.index).split('\n').length;
+      findings.push({ id:'exposed-secrets', name:'Exposed API Keys & Secrets', severity:'CRITICAL', status:'FAIL',
+        message: `${label} hardcoded at line ${ln}`,
+        snippet: lines[ln-1]?.trim().slice(0,70),
+        fix: 'Move to environment variables. Never commit credentials.' });
+    }
+  }
+  return findings;
+}
+
+function checkSpendingLimits(code) {
+  const payIndicators = [/stripe/i,/airwallex/i,/payment/i,/charge/i,/billing/i,/spend/i,/pay\(/i,/purchase/i];
+  const limitPatterns = [/max_spend/i,/spending_limit/i,/budget/i,/cost_limit/i,/maxBudget/i,/transaction_limit/i];
+  if (!payIndicators.some(p=>p.test(code))) return [];
+  if (limitPatterns.some(p=>p.test(code))) return [];
+  return [{ id:'spending-limits', name:'Missing Spending Limits', severity:'CRITICAL', status:'FAIL',
+    message: 'Agent can make payments but no spending limit is defined. A runaway agent can drain your account.',
+    fix: 'Add a max_spend or budget_cap. Use PQSafe spend envelopes for cryptographic enforcement.' }];
+}
+
+function checkAuth(code) {
+  const epPatterns = [/app\.(get|post|put|delete)\s*\(/i,/router\.(get|post)\s*\(/i,/fastify\.(get|post)/i,/http\.createServer/i,/serve\s*\(/i];
+  const authPatterns = [/authenticate/i,/authorization/i,/api_key/i,/bearer/i,/jwt\./i,/isAuthenticated/i,/requiresAuth/i];
+  if (!epPatterns.some(p=>p.test(code))) return [];
+  if (authPatterns.some(p=>p.test(code))) return [];
+  return [{ id:'auth-missing', name:'Unauthenticated Agent Endpoint', severity:'CRITICAL', status:'FAIL',
+    message: 'HTTP endpoint with no authentication — anyone who finds this URL can invoke your agent.',
+    fix: 'Add API key validation or JWT verification before agent invocation.' }];
+}
+
+function checkKillSwitch(code) {
+  const agentPats = [/AgentExecutor/i,/create_react_agent/i,/AutoGen/i,/AssistantAgent/i,/CrewAI/i];
+  const killPats = [/max_iterations/i,/maxIterations/i,/timeout/i,/max_turns/i,/max_steps/i,/abort/i];
+  if (!agentPats.some(p=>p.test(code))) return [];
+  if (killPats.some(p=>p.test(code))) return [];
+  return [{ id:'kill-switch', name:'Missing Kill Switch / Timeout', severity:'HIGH', status:'FAIL',
+    message: 'No max_iterations or timeout found. Agent can run indefinitely, burning API credits.',
+    fix: 'Set max_iterations (LangChain), max_turns (AutoGen), or a wall-clock timeout.' }];
+}
+
+function checkAuditLogging(code) {
+  const agentPats = [/AgentExecutor/i,/AutoGen/i,/AssistantAgent/i,/CrewAI/i,/Agent\s*\(/i];
+  const logPats = [/console\.log/i,/logger\./i,/winston/i,/pino/i,/audit/i,/callbacks/i,/langfuse/i,/langsmith/i];
+  if (!agentPats.some(p=>p.test(code))) return [];
+  if (logPats.some(p=>p.test(code))) return [];
+  return [{ id:'audit-logging', name:'Missing Audit Logging', severity:'HIGH', status:'FAIL',
+    message: 'No audit logging detected. You will have no record of what your agent did when things go wrong.',
+    fix: 'Add callbacks (LangChain) or logging middleware. Consider Langfuse or LangSmith.' }];
+}
+
+function checkPromptInjection(code) {
+  const patterns = [
+    { r:/system.*?[`'"]\s*\$\{[^}]*(?:user|input|query|message|request)[^}]*\}/gi, msg:'User input interpolated into system prompt' },
+    { r:/f["'].*\{(?:user|input|query|message|request)[^}]*\}.*["']/gi, msg:'User input f-string in prompt (Python)' },
+    { r:/system.*?[`'"]\s*\+\s*(?:user|input|query|message|request)/gi, msg:'User input concatenated into system prompt' },
+  ];
+  const findings = []; const lines = code.split('\n');
+  for (const {r, msg} of patterns) {
+    r.lastIndex = 0; const m = r.exec(code);
+    if (m) {
+      const ln = code.slice(0, m.index).split('\n').length;
+      findings.push({ id:'prompt-injection', name:'Prompt Injection Vulnerability', severity:'HIGH', status:'FAIL',
+        message: `${msg} at line ${ln}. Attacker can hijack agent instructions.`,
+        snippet: lines[ln-1]?.trim().slice(0,70),
+        fix: 'Never interpolate user input into system prompts. Validate all external inputs.' });
+    }
+  }
+  return findings;
+}
+
+function checkPQCrypto(code) {
+  const classical = [{r:/\bRSA\b/g,l:'RSA'},{r:/\bECDSA\b/g,l:'ECDSA'},{r:/\bEd25519\b/g,l:'Ed25519'}];
+  const pqSafe = [/ML-DSA/i,/CRYSTALS/i,/Dilithium/i,/pqsafe/i];
+  if (pqSafe.some(p=>p.test(code))) return [];
+  const findings = []; const lines = code.split('\n');
+  for (const {r,l} of classical) {
+    r.lastIndex = 0; const m = r.exec(code);
+    if (m) {
+      const ln = code.slice(0,m.index).split('\n').length;
+      findings.push({ id:'pq-crypto', name:'Quantum-Vulnerable Cryptography', severity:'MEDIUM', status:'WARN',
+        message: `${l} detected at line ${ln}. Quantum computers will break this. NSA CNSA 2.0 mandates migration by 2027.`,
+        snippet: lines[ln-1]?.trim().slice(0,70),
+        fix: 'Migrate to ML-DSA-65 (NIST FIPS 204). Use @pqsafe/sdk for drop-in post-quantum agent authorization.' });
+      break;
+    }
+  }
+  return findings;
+}
+
+function checkRateLimiting(code) {
+  const callPats = [/tool_calls/i,/invoke\(/i,/\.run\(/i,/\.call\(/i];
+  const ratePats = [/rate.?limit/i,/rateLimit/i,/throttle/i,/p-limit/i,/bottleneck/i];
+  if (callPats.filter(p=>p.test(code)).length < 2) return [];
+  if (ratePats.some(p=>p.test(code))) return [];
+  return [{ id:'rate-limiting', name:'Missing Rate Limiting', severity:'MEDIUM', status:'WARN',
+    message: 'No rate limiting on tool calls. A looping agent can exhaust API quotas.',
+    fix: 'Add rate limiting with p-limit or bottleneck. Set max_iterations on the agent executor.' }];
+}
+
+// ── Scanner ──────────────────────────────────────────────────────────────────
+
+const SEVERITY_SCORE = { CRITICAL:30, HIGH:15, MEDIUM:7, LOW:2, INFO:0 };
+
+function runChecks(code) {
+  return [
+    ...checkExposedSecrets(code),
+    ...checkAuth(code),
+    ...checkSpendingLimits(code),
+    ...checkPromptInjection(code),
+    ...checkKillSwitch(code),
+    ...checkAuditLogging(code),
+    ...checkPQCrypto(code),
+    ...checkRateLimiting(code),
+  ];
+}
+
+function computeGrade(score) {
+  if (score >= 95) return 'A+';
+  if (score >= 85) return 'A';
+  if (score >= 70) return 'B';
+  if (score >= 55) return 'C';
+  if (score >= 35) return 'D';
+  return 'F';
+}
+
+// ── UI ────────────────────────────────────────────────────────────────────────
+
+let lastReport = null;
+
+function runScan() {
+  const code = document.getElementById('code-input').value.trim();
+  if (!code) { alert('Paste some agent code first.'); return; }
+
+  const findings = runChecks(code);
+  const deductions = findings.reduce((s,f) => s + (SEVERITY_SCORE[f.severity]||0), 0);
+  const score = Math.max(0, 100 - deductions);
+  const grade = computeGrade(score);
+  const criticals = findings.filter(f=>f.severity==='CRITICAL').length;
+  const highs = findings.filter(f=>f.severity==='HIGH').length;
+
+  let summary = 'No issues found. Your agent looks secure.';
+  if (criticals > 0) summary = `${criticals} CRITICAL issue${criticals>1?'s':''} found — agent is not safe to deploy.`;
+  else if (highs > 0) summary = `${highs} HIGH severity issue${highs>1?'s':''} — fix before production.`;
+  else if (findings.length > 0) summary = `Grade ${grade} — ${findings.length} issue${findings.length>1?'s':''} to review.`;
+
+  lastReport = { grade, score, findings, summary };
+  renderReport(lastReport);
+}
+
+function renderReport({ grade, score, findings, summary }) {
+  document.getElementById('results').classList.remove('hidden');
+  document.getElementById('grade-text').textContent = grade;
+  const badge = document.getElementById('grade-badge');
+  badge.className = `w-20 h-20 rounded-2xl flex items-center justify-center text-white grade-${grade.replace('+','\\+')}`;
+  badge.style.background = ['A+','A'].includes(grade) ? '#16a34a' : ['B'].includes(grade) ? '#ca8a04' : ['C'].includes(grade) ? '#ea580c' : '#dc2626';
+  document.getElementById('score-text').textContent = score;
+  document.getElementById('summary-text').textContent = summary;
+
+  const list = document.getElementById('findings-list');
+  list.innerHTML = '';
+
+  if (findings.length === 0) {
+    document.getElementById('all-pass').classList.remove('hidden');
+  } else {
+    document.getElementById('all-pass').classList.add('hidden');
+    for (const f of findings) {
+      const div = document.createElement('div');
+      div.className = `finding-${f.severity} rounded-xl p-4`;
+      div.innerHTML = `
+        <div class="flex items-start gap-3">
+          <span class="badge-${f.severity} text-xs font-bold px-2 py-0.5 rounded-md mono shrink-0 mt-0.5">${f.severity}</span>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-slate-900 text-sm">${f.name}</p>
+            <p class="text-slate-600 text-sm mt-1">${f.message}</p>
+            ${f.snippet ? `<p class="mono text-xs bg-slate-100 text-slate-700 rounded px-3 py-1.5 mt-2 truncate">${escHtml(f.snippet)}</p>` : ''}
+            <p class="text-slate-500 text-xs mt-2"><span class="font-semibold text-slate-700">Fix:</span> ${f.fix}</p>
+          </div>
+        </div>`;
+      list.appendChild(div);
+    }
+  }
+
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function shareReport() {
+  const text = lastReport ? `I scanned my AI agent with pqsafe-scan and got grade ${lastReport.grade} (${lastReport.score}/100). ${lastReport.summary} https://pqsafe.xyz/scan` : 'https://pqsafe.xyz/scan';
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('share-confirm').classList.remove('hidden');
+    setTimeout(() => document.getElementById('share-confirm').classList.add('hidden'), 2000);
+  });
+}
+
+function clearCode() {
+  document.getElementById('code-input').value = '';
+  document.getElementById('results').classList.add('hidden');
+}
+
+const EXAMPLES = {
+  langchain: `from langchain.agents import AgentExecutor, create_react_agent
+from langchain_openai import ChatOpenAI
+from langchain.tools import tool
+import stripe
+from flask import Flask, request
+
+# Hardcoded credentials — CRITICAL
+openai_key = "sk-proj-abc123realkey456789DEFGHIJKLMN"
+stripe_client = stripe.Stripe("sk-live-reallivekey123456789012345678")
+
+app = Flask(__name__)
+
+@tool
+def pay_vendor(vendor_id: str, amount: float) -> str:
+    """Pay a vendor via Stripe"""
+    stripe_client.payment_intents.create(amount=int(amount*100), currency="usd")
+    return f"Paid {vendor_id} ${amount}"
+
+llm = ChatOpenAI(model="gpt-4o")
+agent = create_react_agent(llm, [pay_vendor], prompt)
+
+# No auth on endpoint — CRITICAL
+@app.route("/agent/run", methods=["POST"])
+def run_agent():
+    user_input = request.json["message"]
+    # Prompt injection — HIGH
+    system = f"You are a payment agent. User requested: {user_input}"
+    executor = AgentExecutor(agent=agent, tools=[pay_vendor])  # no max_iterations
+    return executor.invoke({"input": user_input})`,
+
+  autogen: `import autogen
+import openai
+
+# Hardcoded key — CRITICAL
+openai.api_key = "sk-ant-api03-realkey-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+config = {
+    "model": "gpt-4o",
+    "api_key": "sk-proj-anotherkey-ABCDEFGHIJKLMNOP"
+}
+
+assistant = autogen.AssistantAgent(
+    name="payment_assistant",
+    llm_config={"config_list": [config]},
+    # No system message sanitization
+)
+
+user_proxy = autogen.UserProxyAgent(
+    name="user_proxy",
+    human_input_mode="NEVER",
+    # No max_turns limit — HIGH
+)
+
+# Start conversation — no spending limits
+user_proxy.initiate_chat(assistant, message="Process all pending payments")`
+};
+
+function loadExample(name) {
+  document.getElementById('code-input').value = EXAMPLES[name] || '';
+  document.getElementById('results').classList.add('hidden');
+}
+</script>
+</body>
+</html>
