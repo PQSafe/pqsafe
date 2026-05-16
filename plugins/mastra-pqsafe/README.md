@@ -11,7 +11,7 @@ Part of the [PQSafe AgentPay](https://github.com/PQSafe/pqsafe) ecosystem. Built
 
 ## What it does
 
-`@pqsafe/mastra` wraps PQSafe AgentPay as a Mastra-native integration. A Mastra workflow step calls `pqsafe.pay()` with a signed SpendEnvelope — a post-quantum (ML-DSA-65) token issued by the human wallet owner — and PQSafe enforces the policy constraints before routing the payment across the configured rail.
+`@pqsafe/mastra` wraps PQSafe AgentPay as a Mastra-native integration. A Mastra workflow step calls `pqsafe.pay()` with a signed SpendEnvelope — a post-quantum (ML-DSA-65) token issued by the human operator — and PQSafe enforces the policy constraints before routing the payment across the configured rail.
 
 Your Mastra workflows get cryptographically-scoped, time-bounded, quantum-resistant payment authorization with no long-lived API keys or plaintext credentials in the workflow definition. The envelope travels with the workflow trigger and is self-verifying.
 
@@ -61,7 +61,7 @@ const paySupplierWorkflow = new Workflow({ name: 'pay-supplier' })
     new Step({
       id: 'execute-payment',
       execute: async ({ context }) => {
-        // signedEnvelope comes from the workflow trigger — issued by the wallet owner
+        // signedEnvelope comes from the workflow trigger — issued by the operator
         const result = await pqsafe.pay(context.triggerData.signedEnvelope, {
           recipient: context.triggerData.recipient,
           amount: context.triggerData.amount,
@@ -97,7 +97,7 @@ await run.start({
 
 ## How it works
 
-1. A human wallet owner issues a **signed SpendEnvelope** using `@pqsafe/agent-pay` (or the PQSafe wallet extension). The envelope encodes: agent ID, max amount, allowed recipients, currency, and validity window — all bound by an ML-DSA-65 signature.
+1. A human operator issues a **signed SpendEnvelope** using `@pqsafe/agent-pay` (or the PQSafe Chrome extension). The envelope encodes: agent ID, max amount, allowed recipients, currency, and validity window — all bound by an ML-DSA-65 signature.
 2. The envelope is passed as workflow trigger data — it travels with the job, not stored in the workflow definition.
 3. Inside a Mastra step, `pqsafe.pay()` verifies the post-quantum signature server-side, enforces all policy constraints, and routes the payment to the cheapest available rail (Airwallex, Wise, Stripe, USDC/Base, or x402).
 4. The step receives `{ txId, status, rail }` and can branch on the result or pass it downstream.
@@ -130,7 +130,7 @@ Returns a `PQSafeIntegration` object.
 
 | Parameter | Type | Description |
 |---|---|---|
-| `signedEnvelope` | `SignedEnvelope` | `{ envelopeJson, signature, dsaPublicKey }` — issued by the wallet owner |
+| `signedEnvelope` | `SignedEnvelope` | `{ envelopeJson, signature, dsaPublicKey }` — issued by the operator |
 | `request.recipient` | `string` | Recipient address (IBAN, crypto addr, domain, etc.) |
 | `request.amount` | `number` | Amount in the envelope's currency |
 | `request.memo` | `string?` | Optional human-readable reference |

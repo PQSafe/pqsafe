@@ -11,7 +11,7 @@ Part of the [PQSafe AgentPay](https://github.com/PQSafe/pqsafe) ecosystem. Built
 
 ## What it does
 
-`crewai-pqsafe` provides `PQSafePaymentTool`, a CrewAI-compatible tool that gives your agents the ability to make payments authorized by a **signed SpendEnvelope** — a post-quantum (ML-DSA-65, NIST FIPS 204) token issued by the human wallet owner. Add the tool to any CrewAI `Agent` and every `pqsafe_pay` call is signature-verified and policy-enforced before any payment is dispatched.
+`crewai-pqsafe` provides `PQSafePaymentTool`, a CrewAI-compatible tool that gives your agents the ability to make payments authorized by a **signed SpendEnvelope** — a post-quantum (ML-DSA-65, NIST FIPS 204) token issued by the human operator. Add the tool to any CrewAI `Agent` and every `pqsafe_pay` call is signature-verified and policy-enforced before any payment is dispatched.
 
 No long-lived API keys in your crew definition. No credentials to rotate. The envelope constrains exactly what the agent can spend, to whom, via which rail, and for how long — and it cannot be forged or exceeded.
 
@@ -74,7 +74,7 @@ pay_invoice = Task(
 
 crew = Crew(agents=[finance_agent], tasks=[pay_invoice])
 
-# Kick off — inject the pre-signed envelope issued by the wallet owner
+# Kick off — inject the pre-signed envelope issued by the operator
 signed_envelope = {
     "envelopeJson": '{"version":1,"issuer":"pq1...","agent":"finance-crew-v1",...}',
     "signature": "deadbeef...",
@@ -89,7 +89,7 @@ print(result)
 
 ## How it works
 
-1. A human wallet owner issues a **signed SpendEnvelope** using `pqsafe-agent-pay` (or the PQSafe wallet). The envelope encodes: agent ID, max amount, allowed recipients, currency, and validity window — all bound by an ML-DSA-65 post-quantum signature.
+1. A human operator issues a **signed SpendEnvelope** using `pqsafe-agent-pay` (or the PQSafe Chrome extension). The envelope encodes: agent ID, max amount, allowed recipients, currency, and validity window — all bound by an ML-DSA-65 post-quantum signature.
 2. The envelope is passed into the crew as an input variable. It travels with the task context, not stored in the tool.
 3. When the agent decides to pay, it calls the `pqsafe_pay` tool with `envelope_json`, `recipient`, `amount`, and optional `memo`.
 4. `PQSafePaymentTool` verifies the post-quantum signature server-side, enforces all policy constraints, and routes the payment to the cheapest available rail (Airwallex, Wise, Stripe, USDC/Base, or x402).

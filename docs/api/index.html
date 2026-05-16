@@ -3,7 +3,7 @@
 <a href="https://codecov.io/gh/PQSafe/pqsafe"><img src="https://codecov.io/gh/PQSafe/pqsafe/branch/main/graph/badge.svg" alt="codecov"></a></p>
 <p>Post-quantum signed spend envelopes for AI agent payments, routed across multiple payment rails.</p>
 <h2 id="what-it-is" class="tsd-anchor-link">What it is<a href="#what-it-is" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>AgentPay lets a human wallet owner issue a cryptographically-bound <strong>SpendEnvelope</strong> to an AI agent. The envelope defines exactly what the agent can spend, to whom, via which rail, and for how long — enforced by an ML-DSA-65 signature that no current or near-future adversary can forge.</p>
+<p>AgentPay lets a human operator issue a cryptographically-bound <strong>SpendEnvelope</strong> to an AI agent. The envelope defines exactly what the agent can spend, to whom, via which rail, and for how long — enforced by an ML-DSA-65 signature that no current or near-future adversary can forge.</p>
 <p>The agent calls <code>executeAgentPayment(signedEnvelope, request)</code> and the SDK:</p>
 <ol>
 <li>Verifies the PQ signature</li>
@@ -15,7 +15,7 @@
 <p>No centralized server. No API key storage in the SDK. The envelope IS the authorization.</p>
 <h2 id="dogfood-use-case-raymonds-8-ventures" class="tsd-anchor-link">Dogfood use case — Raymond's 8 ventures<a href="#dogfood-use-case-raymonds-8-ventures" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p>Raymond runs 8 ventures with a zero-headcount back-office model. AI operators (content officers, procurement bots, invoicing agents) handle routine payments autonomously. Without AgentPay, each autonomous payment would require human approval — eliminating the speed advantage.</p>
-<p>With AgentPay, Raymond issues scoped envelopes from his PQSafe wallet:</p>
+<p>With AgentPay, Raymond issues scoped envelopes via PQSafe AgentPay:</p>
 <table>
 <thead>
 <tr>

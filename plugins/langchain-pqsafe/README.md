@@ -11,7 +11,7 @@ Part of the [PQSafe AgentPay](https://github.com/PQSafe/pqsafe) ecosystem. Built
 
 ## What it does
 
-`langchain-pqsafe` provides `PQSafePaymentTool`, a LangChain `BaseTool` that gives your agent the ability to make payments authorized by a **signed SpendEnvelope** — a post-quantum (ML-DSA-65, NIST FIPS 204) token issued by the human wallet owner. Add the tool to your agent's tool list and every `pqsafe_pay` tool call is automatically signature-verified and policy-enforced before any payment is dispatched.
+`langchain-pqsafe` provides `PQSafePaymentTool`, a LangChain `BaseTool` that gives your agent the ability to make payments authorized by a **signed SpendEnvelope** — a post-quantum (ML-DSA-65, NIST FIPS 204) token issued by the human operator. Add the tool to your agent's tool list and every `pqsafe_pay` tool call is automatically signature-verified and policy-enforced before any payment is dispatched.
 
 No long-lived API keys in your agent code. No credentials to rotate. The envelope constrains exactly what the agent can spend, to whom, via which rail, and for how long — and it cannot be forged or exceeded.
 
@@ -52,7 +52,7 @@ from langchain_core.prompts import PromptTemplate
 # 1. Build the tool
 payment_tool = PQSafePaymentTool()
 
-# 2. Your signed envelope (issued by the wallet owner, stored securely)
+# 2. Your signed envelope (issued by the operator, stored securely)
 signed_envelope = {
     "envelopeJson": '{"version":1,"issuer":"pq1...","agent":"research-agent-v1",...}',
     "signature": "deadbeef...",
@@ -82,7 +82,7 @@ print(result["output"])
 
 ## How it works
 
-1. A human wallet owner issues a **signed SpendEnvelope** using `pqsafe-agent-pay` (or the PQSafe wallet). The envelope encodes: agent ID, max amount, allowed recipients, currency, and validity window — all bound by an ML-DSA-65 post-quantum signature.
+1. A human operator issues a **signed SpendEnvelope** using `pqsafe-agent-pay` (or the PQSafe Chrome extension). The envelope encodes: agent ID, max amount, allowed recipients, currency, and validity window — all bound by an ML-DSA-65 post-quantum signature.
 2. The envelope is passed to the LangChain agent as prompt context (or tool input). It travels with the agent's context, not stored in the tool.
 3. When the LLM decides to pay, it calls the `pqsafe_pay` tool with `envelope_json`, `recipient`, `amount`, and optional `memo`.
 4. `PQSafePaymentTool` verifies the post-quantum signature server-side, enforces all policy constraints, and routes the payment to the cheapest available rail (Airwallex, Wise, Stripe, USDC/Base, or x402).

@@ -11,7 +11,7 @@
 
 ## What it does
 
-`@pqsafe/agent-pay` lets a human wallet owner issue a cryptographically-bound **SpendEnvelope** to an AI agent. The envelope defines exactly what the agent can spend, to whom, via which payment rail, and for how long — enforced by an ML-DSA-65 (NIST FIPS 204) signature that no current or near-future adversary can forge.
+`@pqsafe/agent-pay` lets a human operator issue a cryptographically-bound **SpendEnvelope** to an AI agent. The envelope defines exactly what the agent can spend, to whom, via which payment rail, and for how long — enforced by an ML-DSA-65 (NIST FIPS 204) signature that no current or near-future adversary can forge.
 
 The agent calls `executeAgentPayment(signedEnvelope, request)` and the SDK verifies the post-quantum signature, validates the envelope's policy constraints (amount ceiling, recipient allowlist, time window), and routes the payment across the configured rail. No centralized server. No API key stored in the SDK. The envelope **is** the authorization — it travels with the agent and is self-contained.
 
@@ -40,7 +40,7 @@ npm install @pqsafe/agent-pay
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import { createEnvelope, signEnvelope, executeAgentPayment } from '@pqsafe/agent-pay'
 
-// 1. Wallet owner issues a scoped envelope
+// 1. Operator issues a scoped envelope
 const envelope = createEnvelope({
   issuer: 'pq1a1b2c3d...',           // PQSafe address
   agent: 'supplier-bot-v1',
@@ -95,7 +95,7 @@ console.log(result.rail)    // "airwallex"
 ## Architecture
 
 ```
-wallet (extension)
+operator (extension)
   └─ createEnvelope() + signEnvelope()   ← envelope.ts
        │
        ▼
