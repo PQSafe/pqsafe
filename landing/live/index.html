@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>PQSafe — Agent Pays Its Own Bill (Post-Quantum, Live)</title>
+<link rel="canonical" href="https://pqsafe.xyz/live" />
 <meta name="description" content="Watch an AI agent autonomously authorize a payment with a real ML-DSA-65 (NIST FIPS 204) post-quantum signature — then watch tampering get caught instantly. Live in your browser." />
 <style>
   :root{
@@ -151,13 +152,13 @@
 
   <footer>
     Real ML-DSA-65 sign/verify runs locally via <span class="step">@noble/post-quantum</span> · same SpendEnvelope schema + RFC 8785 canonicalization as the PQSafe SDK.<br/>
-    <a href="https://pqsafe.xyz">pqsafe.xyz</a> · <a href="https://pqsafe.xyz/verify/">/verify</a> · Asaptic (HK) Limited
-    <div class="note" id="needNet">Requires internet to load the FIPS-204 library from CDN.</div>
+    <a href="https://pqsafe.xyz">pqsafe.xyz</a> · <a href="https://pqsafe.xyz/verify/">/verify</a> · <a href="/live">/live</a> · Asaptic (HK) Limited
+    <div class="note" id="needNet" style="display:none">FIPS-204 library vendored locally — works fully offline.</div>
   </footer>
 </div>
 
 <script type="module">
-import { ml_dsa65 } from 'https://esm.sh/@noble/post-quantum@0.6.0/ml-dsa';
+import { ml_dsa65 } from './vendor/ml-dsa.bundle.js';
 
 // ---------- tiny helpers ----------
 const $ = s => document.querySelector(s);

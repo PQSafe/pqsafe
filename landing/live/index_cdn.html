@@ -1,3 +1,4 @@
+<!-- CDN variant (loads @noble/post-quantum from esm.sh). Dev reference only. The vendored, production-canonical version is index.html. -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -152,12 +153,12 @@
   <footer>
     Real ML-DSA-65 sign/verify runs locally via <span class="step">@noble/post-quantum</span> · same SpendEnvelope schema + RFC 8785 canonicalization as the PQSafe SDK.<br/>
     <a href="https://pqsafe.xyz">pqsafe.xyz</a> · <a href="https://pqsafe.xyz/verify/">/verify</a> · Asaptic (HK) Limited
-    <div class="note" id="needNet" style="display:none">FIPS-204 library vendored locally — works fully offline.</div>
+    <div class="note" id="needNet">Requires internet to load the FIPS-204 library from CDN.</div>
   </footer>
 </div>
 
 <script type="module">
-import { ml_dsa65 } from './vendor/ml-dsa.bundle.js';
+import { ml_dsa65 } from 'https://esm.sh/@noble/post-quantum@0.6.0/ml-dsa';
 
 // ---------- tiny helpers ----------
 const $ = s => document.querySelector(s);
