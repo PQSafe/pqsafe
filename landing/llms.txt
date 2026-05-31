@@ -28,8 +28,11 @@ YC S26 applicant. Contact: raymond@pqsafe.xyz
 
 - [Agent Payments Handbook](https://pqsafe.xyz/handbook/): Full developer guide — envelope lifecycle, rail selection, key management, Arbitrum registry, quickstart examples in TypeScript and Python.
 - [Public Envelope Verifier](https://pqsafe.xyz/verify/): Browser-based tool to verify any ML-DSA-65 signed SpendEnvelope without running any code.
+- [Envelope Generator](https://pqsafe.xyz/generate): Browser-based tool to create and sign a SpendEnvelope with a generated ML-DSA-65 key pair.
+- [Benchmark](https://pqsafe.xyz/bench): ML-DSA-65 sign/verify throughput benchmark running live in the browser (WebAssembly).
+- [Signature Scanner](https://pqsafe.xyz/scan): Paste any JSON blob to detect and validate embedded ML-DSA-65 signatures.
+- [Live demo](https://pqsafe.xyz/live): Interactive browser demo — watch an AI agent autonomously authorize a payment with a real ML-DSA-65 post-quantum signature, then watch tampering get caught instantly.
 - [Ledger API](https://ledger.pqsafe.xyz): Read-only envelope ledger — look up any committed envelope by ID.
-- [Demo environment](https://demo.pqsafe.xyz): Live sandbox — create, sign, verify, and execute test envelopes against live sandbox rails (Airwallex + Wise).
 - [OpenAPI spec](https://pqsafe.xyz/openapi.yaml): Machine-readable API definition for the verifier and ledger endpoints.
 
 ## Standards & policy

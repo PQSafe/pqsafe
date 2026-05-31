@@ -50,6 +50,35 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Locked flat URL taxonomy: interactive tools at /live /generate /bench /scan -->
+  <url>
+    <loc>https://pqsafe.xyz/live</loc>
+    <lastmod>2026-05-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://pqsafe.xyz/generate</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://pqsafe.xyz/bench</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://pqsafe.xyz/scan</loc>
+    <lastmod>2026-05-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <url>
     <loc>https://pqsafe.xyz/handbook/</loc>
     <lastmod>2026-05-04</lastmod>

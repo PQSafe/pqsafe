@@ -294,7 +294,10 @@ not a ratified FIDO standard.
 | Handbook                    | https://pqsafe.xyz/handbook/                                    |
 | Envelope Verifier           | https://pqsafe.xyz/verify/                                      |
 | Ledger API                  | https://ledger.pqsafe.xyz                                       |
-| Demo environment            | https://demo.pqsafe.xyz                                         |
+| Live demo                   | https://pqsafe.xyz/live                                         |
+| Envelope Generator          | https://pqsafe.xyz/generate                                     |
+| Benchmark                   | https://pqsafe.xyz/bench                                        |
+| Signature Scanner           | https://pqsafe.xyz/scan                                         |
 | FIDO open letter            | https://pqsafe.xyz/fido-pq-letter/                              |
 | AP2-PQ RFC draft            | https://pqsafe.xyz/ap2-pq-rfc/                                  |
 | OpenClaw skill page         | https://pqsafe.xyz/openclaw-skill/                              |
