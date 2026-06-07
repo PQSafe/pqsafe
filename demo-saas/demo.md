@@ -67,23 +67,23 @@ Before spending a cent, the agent calls `verifyEnvelope(signed)`:
 
 All checks pass. The agent proceeds.
 
-### Step 6 — PQSafe issues a virtual Visa card for this envelope
+### Step 6 — PQSafe authorizes payment; the licensed rail provisions a virtual card
 
 This is the key architectural innovation for SaaS payments.
 
-Most SaaS services accept credit cards, not bank transfers. So PQSafe issues a **virtual Visa card** via Airwallex Issuing (or Stripe Issuing as fallback), bound 1:1 to this envelope:
+Most SaaS services accept credit cards, not bank transfers. PQSafe **does not issue cards or move funds** — it produces a cryptographically signed authorization (the `SignedEnvelope`) that the licensed payment rail (Airwallex) reads before provisioning a virtual card bound 1:1 to this envelope:
 
 - Spend cap = `envelope.maxAmount` ($50)
 - Expiry = `envelope.validUntil`
-- Bound to envelope nonce — one card, one authorization, one agent
+- Bound to envelope nonce — one authorization, one agent, one transaction window
 
-The agent receives the virtual card number (PAN, expiry, CVV). It can enter these at any SaaS checkout — Perplexity, Anthropic, GitHub Copilot, Firecrawl, etc. — exactly like a human would.
+The agent receives a virtual card reference it can present at any SaaS checkout — Perplexity, Anthropic, GitHub Copilot, Firecrawl, etc. — exactly like a human would.
 
-**The card is not reusable beyond the envelope.** When the envelope expires, the card dies. If a malicious prompt tries to use the card for an unauthorized vendor, the Airwallex Issuing merchant controls block it.
+**PQSafe authorizes and audits; Airwallex (a licensed payment institution) moves the money.** The card is not reusable beyond the envelope. When the envelope expires, the card dies. If a malicious prompt tries to use the card for an unauthorized vendor, Airwallex's merchant controls block it — because the `allowedRecipients` scope is embedded in the signed envelope that Airwallex validates.
 
-### Step 7 — Agent pays Perplexity Pro — $20.00 USD
+### Step 7 — Agent triggers a $20.00 USD payment to Perplexity Pro
 
-`executeAgentPayment(signed, { recipient: "perplexity.ai", amount: 20 })` runs all five guard-rail checks, then routes to Airwallex. The charge is processed. A transaction receipt is returned with a UUID.
+`executeAgentPayment(signed, { recipient: "perplexity.ai", amount: 20 })` runs all five guard-rail checks, then passes the authorization to Airwallex. Airwallex (the licensed rail) executes the charge and returns a transaction receipt with a UUID. **PQSafe's role here is authorization and audit logging — it does not touch the funds.**
 
 The entire flow — from "I need Perplexity" to "payment confirmed" — takes under 3 seconds. No human in the loop.
 
@@ -125,6 +125,6 @@ PQSafe removes that friction without removing control. The human sets the budget
 | Public key size | 1952 bytes |
 | Signature size | 3309 bytes |
 | Payment rail | Airwallex (sandbox + live) |
-| Virtual card | Airwallex Issuing (Visa) |
+| Virtual card | Provisioned by Airwallex (licensed rail); PQSafe authorizes, does not issue |
 | SDK | `@pqsafe/agent-pay` (TypeScript, MIT) |
 | Demo mode | Mock (no creds) or real Airwallex sandbox |

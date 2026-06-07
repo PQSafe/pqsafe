@@ -110,7 +110,7 @@ Crew(agents=[billing_agent], tasks=[Task(
 ## Recipe 3: OpenClaw Skill with pqsafe-pay
 
 ```typescript
-// clawhub install pqsafe-pay  OR  npm install @pqsafe/openclaw
+// Open-source — clone/self-host: github.com/pqsafe/openclaw  OR  npm install @pqsafe/openclaw
 import { OpenClawAgent } from "@openclaw/sdk";
 import { pqsafePay, SpendEnvelope } from "@pqsafe/openclaw";
 import { randomUUID } from "crypto";
@@ -163,7 +163,6 @@ agent.on("authorizePayment", async (ctx) => {
 
 - npm: [@pqsafe/openclaw](https://www.npmjs.com/package/@pqsafe/openclaw)
 - PyPI: [langchain-pqsafe](https://pypi.org/project/langchain-pqsafe/)
-- ClawHub: [clawhub.ai/skills/pqsafe-pay](https://clawhub.ai/skills/pqsafe-pay)
 - Spec: [pqsafe.xyz/spec](https://pqsafe.xyz/spec)
 - FIDO TWG: [fidoalliance.org/...](https://fidoalliance.org/fido-alliance-agentic-authentication-technical-working-group/)
 - Fork: [github.com/rayc0/docs@cookbook/payment-security-patterns](https://github.com/rayc0/docs/tree/cookbook/payment-security-patterns)

@@ -61,7 +61,7 @@ You are creating a post-quantum signed payment mandate for an AI agent. The user
 - ML-DSA-65 sig = 3,309 bytes
 - Apache-2.0 license
 - Don't claim "global first" — first-batch (首批) is honest
-- Use `clawhub.ai`, never `.dev`
+- `@pqsafe/openclaw` is open-source / self-hostable — clone from the repo; do NOT reference ClawHub (PQSafe is not published there)
 
 ## Errors
 - If the user is in production mode and `PQSAFE_API_KEY` is missing → STOP, tell them to get a key from dashboard.pqsafe.xyz, do NOT attempt to substitute test mode silently

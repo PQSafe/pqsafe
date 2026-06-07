@@ -1,14 +1,14 @@
 ---
-title: "PQSafe AgentPay — The signed permission slip for AI agents spending money"
+title: "PQSafe — Post-quantum authorization for AI agent payments"
 url: https://pqsafe.xyz/
 type: homepage
 ---
 
-# PQSafe AgentPay
+# PQSafe
 
-**The signed permission slip for AI agents spending money.**
+**Post-quantum authorization and audit layer for AI agent payments.**
 
-Your agent is mid-task and needs Perplexity Pro. It checks its **SpendEnvelope** — a cryptographically signed budget — PQSafe routes a payment via Airwallex, the agent pays, and resumes. No human logs in. Spending cap enforced at the SDK and Airwallex API layer. Any SaaS accepting Visa is instantly PQSafe-compatible. Every authorization is signed with **ML-DSA-65** (NIST FIPS 204) — quantum-safe from day one.
+Your agent is mid-task and needs Perplexity Pro. It presents its **SpendEnvelope** — a cryptographically signed mandate (cap, payee scope, expiry, revocable, auditable) — PQSafe verifies the authorization, and a licensed rail (Airwallex) executes the transfer. PQSafe authorizes and audits; licensed rails move the money. No human logs in. Spending cap enforced at the SDK layer before any rail call. Every authorization is signed with **ML-DSA-65** (NIST FIPS 204) — quantum-safe from day one.
 
 > **LIVE** — open letter to [FIDO Alliance Payments TWG](/fido-pq-letter/) · post-quantum profile contribution
 
@@ -109,13 +109,13 @@ console.log(result.txId)  // real Airwallex sandbox UUID
 
 ## Comparison
 
-| Feature | PQSafe AgentPay | Stripe Agent Toolkit | Google AP2 |
+| Feature | PQSafe | Stripe Agent Toolkit | Google AP2 |
 |---------|----------------|---------------------|-----------|
 | Spend cap enforcement | Cryptographic envelope | Per-token limit | Mandate-based |
 | Signature algorithm | ML-DSA-65 (FIPS 204) | ECDSA | ECDSA |
 | Post-quantum safe | Yes | No | No |
 | 7-year audit-grade receipt | Signed SpendEnvelope | Stripe-hosted log | No standard |
-| Multi-rail routing | Airwallex · Wise · Stripe · USDC | Stripe only | Google Pay only |
+| Multi-rail authorization | Airwallex · Wise · Stripe · USDC | Stripe only | Google Pay only |
 | Open source | Apache-2.0, self-host | Stripe SDK | Google Cloud required |
 | Framework plugins | LangChain · CrewAI · Mastra | Stripe SDK | Vertex AI |
 
@@ -192,7 +192,7 @@ Every payment can be anchored on-chain by committing the SpendEnvelope hash to t
 
 - [FIDO Alliance open letter](https://pqsafe.xyz/fido-pq-letter/) — proposing AP2-PQ profile for post-quantum mandate signatures (published 2026-05-02)
 - [AP2-PQ Profile RFC](https://pqsafe.xyz/ap2-pq-rfc/) — full JOSE header parameter specification, proposed to FIDO Alliance Payments TWG via open letter (May 2026)
-- [OpenClaw Skill](https://pqsafe.xyz/openclaw-skill/) — `pqsafe.pay.v1` listed in OpenClaw (367K stars, 50K+ tools, 180K devs)
+- [OpenClaw Skill](https://pqsafe.xyz/openclaw-skill/) — `pqsafe.pay.v1` open-source OpenClaw-compatible skill (self-hostable; clone from GitHub, not published on ClawHub)
 
 ---
 

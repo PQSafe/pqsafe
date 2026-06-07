@@ -85,7 +85,7 @@ print(result["output"])
 1. A human operator issues a **signed SpendEnvelope** using `pqsafe-agent-pay` (or the PQSafe Chrome extension). The envelope encodes: agent ID, max amount, allowed recipients, currency, and validity window — all bound by an ML-DSA-65 post-quantum signature.
 2. The envelope is passed to the LangChain agent as prompt context (or tool input). It travels with the agent's context, not stored in the tool.
 3. When the LLM decides to pay, it calls the `pqsafe_pay` tool with `envelope_json`, `recipient`, `amount`, and optional `memo`.
-4. `PQSafePaymentTool` verifies the post-quantum signature server-side, enforces all policy constraints, and routes the payment to the cheapest available rail (Airwallex, Wise, Stripe, USDC/Base, or x402).
+4. `PQSafePaymentTool` verifies the post-quantum signature server-side, enforces all policy constraints, and dispatches the authorization to a licensed rail (Airwallex, Wise, Stripe, USDC/Base, or x402) — PQSafe authorizes and audits; the licensed rail moves the money.
 5. The tool returns a string: `Payment successful. txId=<id> status=<status> rail=<rail>` — which the LLM can include in its final answer.
 
 ---
@@ -95,7 +95,7 @@ print(result["output"])
 - **One-line integration** — `tools=[PQSafePaymentTool()]` is all it takes
 - **FIPS 204 ML-DSA-65 enforcement** — every payment is quantum-resistant by default
 - **Policy guardrails** — amount ceiling, recipient allowlist, and time window enforced before dispatch; the LLM cannot overspend
-- **Multi-rail routing** — Airwallex (live sandbox), Wise, Stripe, USDC on Base, x402
+- **Multi-rail support** — authorizes via Airwallex (live sandbox), Wise, Stripe, USDC on Base, or x402; licensed rails move the funds
 - **No credentials in agent code** — only the short-lived signed envelope is required at runtime
 - **Compatible with any LangChain agent** — ReAct, OpenAI Functions, Structured Chat, and custom agent types
 

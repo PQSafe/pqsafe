@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PQSafe AgentPay — The signed permission slip for AI agents spending money</title>
-  <meta name="description" content="Your AI agent needs Perplexity Pro mid-task? PQSafe issues a virtual Visa via Airwallex — capped, signed with post-quantum ML-DSA-65, and auditable. Spend delegation for AI agents. Multi-rail: Airwallex, Wise, Stripe, USDC-Base.">
+  <title>PQSafe — Post-quantum authorization for AI agent payments</title>
+  <meta name="description" content="The algorithm-agile post-quantum authorization layer for AI agent payments. PQSafe signs and verifies the payment mandate; licensed rails move the money. ML-DSA-65 (NIST FIPS 204), auditable, ready for post-quantum migration.">
   <meta name="keywords" content="AI agent payments, agent payment infrastructure, post-quantum cryptography, spend envelope, ML-DSA, NIST FIPS 204, agent SDK, Airwallex, Wise, USDC, x402">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="PQSafe AgentPay — The signed permission slip for AI agents spending money">
-  <meta property="og:description" content="Cryptographic spend authorization for AI agents. ML-DSA-65 signed (NIST FIPS 204), multi-rail (Airwallex / Wise / Stripe / USDC-Base / x402), open-source SDK + Verifier API. Engaging with FIDO Alliance Payments TWG.">
+  <meta property="og:title" content="PQSafe — Post-quantum authorization for AI agent payments">
+  <meta property="og:description" content="Post-quantum authorization & audit for AI agent payments. PQSafe signs and verifies payment mandates (ML-DSA-65, NIST FIPS 204) above existing rails — open-source SDK + Verifier API. Contributing the post-quantum profile to the AP2 agent-payment standard (issue #250).">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://pqsafe.xyz">
   <meta property="og:image" content="https://pqsafe.xyz/og/home.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PQSafe AgentPay — The signed permission slip for AI agents spending money">
+  <meta name="twitter:title" content="PQSafe — Post-quantum authorization for AI agent payments">
   <meta name="twitter:description" content="Post-quantum signed spend envelopes. Multi-rail. Open letter to FIDO Alliance Payments TWG.">
   <meta name="twitter:image" content="https://pqsafe.xyz/og/home.png">
 
@@ -410,7 +410,7 @@
     "name": "PQSafe",
     "url": "https://pqsafe.xyz",
     "logo": "https://pqsafe.xyz/og/home.png",
-    "description": "PQSafe AgentPay — The signed permission slip for AI agents spending money",
+    "description": "PQSafe — Post-quantum authorization for AI agent payments. Signs and verifies payment mandates (ML-DSA-65, NIST FIPS 204) above existing rails.",
     "contactPoint": {
       "@type": "ContactPoint",
       "email": "raymond@pqsafe.xyz",
@@ -429,7 +429,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "@pqsafe/agent-pay",
-    "description": "Cryptographic spend authorization for AI agents. ML-DSA-65 signed (NIST FIPS 204), multi-rail (Airwallex / Wise / Stripe / USDC-Base / x402), open-source SDK + Verifier API. Engaging with FIDO Alliance Payments TWG.",
+    "description": "Post-quantum authorization and audit for AI agent payments. ML-DSA-65 signed mandates (NIST FIPS 204), open-source SDK + Verifier API. Contributing the post-quantum profile to the AP2 agent-payment standard (issue #250).",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Cross-platform",
     "url": "https://pqsafe.xyz",
@@ -544,9 +544,9 @@
 
       <!-- Main heading -->
       <h1 class="hero-headline fade-in-up delay-100">
-        <span class="text-white">The signed permission slip</span><br>
-        <span class="gradient-text-warm">for AI agents</span><br>
-        <span class="text-white" style="font-size: 0.72em">spending money.</span>
+        <span class="text-white">The post-quantum</span><br>
+        <span class="gradient-text-warm">authorization layer</span><br>
+        <span class="text-white" style="font-size: 0.72em">for AI agent payments.</span>
       </h1>
 
       <!-- FIDO contribution badge -->
@@ -595,9 +595,8 @@
       </div>
 
       <p class="mt-8 text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed fade-in-up delay-200">
-        Your agent is mid-task and needs Perplexity Pro. It checks its <strong class="text-emerald-400">SpendEnvelope</strong> — a cryptographically signed budget —
-        <strong class="text-cyan-400">PQSafe issues a virtual Visa</strong> via Airwallex, the agent pays, and resumes. No human logs in. Spending cap enforced at the SDK and Airwallex API layer.
-        Any SaaS accepting Visa is instantly PQSafe-compatible.
+        Your agent is mid-task and needs Perplexity Pro. It signs a <strong class="text-emerald-400">SpendEnvelope</strong> — a cryptographically signed mandate with a cap, payee scope, and expiry —
+        and <strong class="text-cyan-400">PQSafe verifies the authorization</strong> before any licensed rail moves the money. No human logs in; nothing spends without a valid, revocable, auditable mandate.
         Every authorization is signed with <strong class="text-emerald-400">ML-DSA-65</strong> (NIST FIPS 204) — quantum-safe from day one, ready for the post-quantum mandate every regulated institution eventually faces.
       </p>
 
@@ -628,7 +627,7 @@
 
       <!-- Sub-badges -->
       <div class="mt-8 flex flex-wrap items-center justify-center gap-3 fade-in-up delay-400">
-        <span class="badge badge-cyan">Virtual Visa via Airwallex</span>
+        <span class="badge badge-cyan">Verify authorization before any rail moves money</span>
         <span class="badge badge-emerald">Signed Spend Envelopes</span>
         <span class="badge badge-blue">Airwallex · Wise · Stripe · USDC</span>
         <span class="badge badge-violet">Spend Cap via SDK &amp; Airwallex API</span>
@@ -858,7 +857,7 @@
           </div>
           <p class="text-gray-400 text-sm leading-relaxed">
             <code class="text-cyan-400 bg-black/40 px-1.5 py-0.5 rounded text-xs">executeAgentPayment(signed, { recipient, amount })</code>
-            routes the payment through <strong class="text-cyan-400">Airwallex, Wise, Stripe, or USDC-Base</strong>, returns a real transfer UUID, and writes a signed receipt your auditor can verify seven years from now.
+            hands the verified mandate to a licensed payment rail (<strong class="text-cyan-400">Airwallex, Wise, Stripe, or USDC-Base</strong>), records the transfer reference the rail returns, and writes a signed receipt your auditor can verify seven years from now. PQSafe authorizes and audits; the licensed rail moves the money.
           </p>
           <div class="mt-5">
             <div class="w-full h-1 rounded-full bg-gray-800 overflow-hidden">
@@ -2142,16 +2141,16 @@
   <section id="zh" class="py-24 max-w-5xl mx-auto px-6 fade-in-up" lang="zh-Hans">
     <div class="section-label" style="font-family: sans-serif;">中文介绍</div>
     <h2 class="text-4xl sm:text-5xl font-black text-white mb-3" style="letter-spacing:-0.03em; line-height:1.1;">
-      全球首个 <span class="gradient-text">AI 代理支付基础设施</span>
+      AI 代理支付的 <span class="gradient-text">后量子授权与审计层</span>
     </h2>
     <p class="text-lg text-emerald-400 font-semibold mb-8" style="font-family: sans-serif;">使用后量子密码签名</p>
 
     <div class="grid md:grid-cols-2 gap-10 mb-12">
       <p class="text-gray-300 leading-relaxed" style="font-family: sans-serif; font-size: 1rem;">
-        PQSafe AgentPay 讓 AI 代理真正能夠付款 — 通過 NIST FIPS 204 標準的 ML-DSA-65
-        數字簽名授權一個「支出信封（SpendEnvelope）」：設定金額上限、收款人白名單、
-        有效期，AI 代理在此範圍內可自動完成跨境匯款（Airwallex、Wise、Stripe）或
-        穩定幣結算（USDC-Base）。
+        PQSafe 為 AI 智能體支付提供後量子授權與審計層 — 通過 NIST FIPS 204 標準的 ML-DSA-65
+        數字簽名授權一個「支出信封（SpendEnvelope）」：設定金額上限、收款人白名單、有效期。
+        在任何持牌支付通道（Airwallex、Wise、Stripe、USDC-Base）轉移資金之前，PQSafe 驗證該
+        授權是否真實、在範圍內、未被篡改、可撤銷、可審計。PQSafe 本身不經手、不託管、不結算資金。
       </p>
       <p class="text-gray-400 leading-relaxed" style="font-family: sans-serif; font-size: 1rem;">
         當其他代理支付方案還在使用即將被量子計算機破解的 ECDSA 時，PQSafe 已經領先
@@ -2174,8 +2173,8 @@
         <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25);">
           <svg width="20" height="20" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
         </div>
-        <h3 class="font-bold text-white mb-2" style="font-family: sans-serif;">多轨道自动路由</h3>
-        <p class="text-gray-400 text-sm leading-relaxed" style="font-family: sans-serif;">一次 API 调用，自动选择最便宜的支付通道：Airwallex · Wise · Stripe · USDC-Base</p>
+        <h3 class="font-bold text-white mb-2" style="font-family: sans-serif;">多轨道连接器</h3>
+        <p class="text-gray-400 text-sm leading-relaxed" style="font-family: sans-serif;">授权验证后，将已签发的 mandate 交给持牌支付通道执行：Airwallex · Wise · Stripe · USDC-Base（PQSafe 不经手资金）</p>
       </div>
 
       <div class="bg-[#0f0f1a] rounded-2xl p-6 card-glow" style="border: 1px solid rgba(16,185,129,0.15);">

@@ -75,7 +75,7 @@ Revoke if the agent goes off-script:
 | Surface | Use when |
 |---|---|
 | **This Claude Code plugin** | Builder is using Claude Code to write/audit agent code |
-| `@pqsafe/openclaw` | Builder ships an OpenClaw agent (the `pqsafe-pay` skill on ClawHub) |
+| `@pqsafe/openclaw` | Builder ships an OpenClaw-compatible agent (open-source `pqsafe-pay` skill — clone/self-host) |
 | `langchain-pqsafe` (PyPI) | LangChain-based agent runtime |
 | `crewai-pqsafe` | CrewAI multi-agent orchestration |
 | `@pqsafe/mcp-server` | Production runtime — universal MCP tool, works in any MCP-aware client |
@@ -86,7 +86,6 @@ All surfaces wrap the same core `@pqsafe/agent-pay` library. Same signatures, sa
 
 - License: **Apache-2.0** (this plugin and the PQSafe monorepo). OpenClaw itself is MIT — they coexist; the cookbook PR contributes content under MIT to OpenClaw docs while the plugin code stays Apache-2.0
 - ML-DSA-65 signature: **3,309 bytes** (NIST FIPS 204 Level 3)
-- Use `clawhub.ai` (the `.dev` is broken TLS)
 - Don't claim "global first" — Alipay AI Pay (Apr 21 2026) shipped first; PQSafe's edge is PQ + jurisdictional trust + audit-grade ledger
 - AP2 is FIDO-housed since Apr 28 2026 — say "AP2-PQ profile" / "AP2-compatible," not "AP2 standard"
 

@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PQSafe vs JWT, AP2, Stripe Issuing, OAuth — agent payment authorization compared</title>
-<meta name="description" content="Fair comparison of PQSafe AgentPay against raw JWT, Google AP2, Stripe Issuing, OAuth scopes, and plain ECDSA mandates. Where each one wins. When post-quantum matters." />
+<title>PQSafe — Post-quantum authorization for AI agent payments · vs JWT, AP2, Stripe Issuing, OAuth compared</title>
+<meta name="description" content="Fair comparison of PQSafe AgentPay (post-quantum authorization layer) against raw JWT, Google AP2, Stripe Issuing, OAuth scopes, and classical ECC mandates. Where each one wins. When post-quantum matters." />
 <link rel="canonical" href="https://pqsafe.xyz/compare" />
-<meta property="og:title" content="PQSafe vs JWT, AP2, Stripe Issuing — agent payment authorization compared" />
-<meta property="og:description" content="Fair comparison of PQSafe AgentPay against raw JWT, Google AP2, Stripe Issuing, OAuth scopes, and plain ECDSA mandates." />
+<meta property="og:title" content="PQSafe - Post-quantum authorization for AI agent payments · vs JWT, AP2, Stripe Issuing compared" />
+<meta property="og:description" content="Fair comparison of PQSafe AgentPay (post-quantum authorization layer) against raw JWT, Google AP2, Stripe Issuing, OAuth scopes, and classical ECC mandates." />
 <meta property="og:url" content="https://pqsafe.xyz/compare" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="PQSafe" />
@@ -64,7 +64,7 @@
           <th class="p-3 solcol">Raw AP2 (Google)</th>
           <th class="p-3 solcol">Stripe Issuing</th>
           <th class="p-3 solcol">OAuth 2.0 scopes</th>
-          <th class="p-3 solcol">Plain ECDSA mandates</th>
+          <th class="p-3 solcol">Classical ECC mandates (ES256/Ed25519, no PQ)</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 text-center text-sm">
@@ -180,7 +180,7 @@
     </table>
     <div class="mt-3 text-xs text-slate-500 space-y-1">
       <div>Legend: <span class="yes">✓</span> supported · <span class="part">◐</span> partial / requires extension · <span class="no">✗</span> not supported.</div>
-      <div id="fn1"><strong>1.</strong> Google's AP2 is signature-agnostic by spec; current reference impls ship ECDSA-only. PQSafe's AP2-PQ profile extends AP2 with FIPS 204.</div>
+      <div id="fn1"><strong>1.</strong> Google's AP2 is signature-agnostic by spec; current reference impls use classical ECC (ES256/Ed25519) with no post-quantum option. PQSafe's AP2-PQ profile extends AP2 with FIPS 204 ML-DSA-65.</div>
       <div id="fn2"><strong>2.</strong> Open letter at <a href="/fido-pq-letter" class="text-rose-600 hover:underline">/fido-pq-letter</a>; Internet-Draft package staged for IETF filing.</div>
     </div>
   </section>
@@ -205,8 +205,8 @@
         <p class="text-slate-600">Wins for delegated human access to APIs. Mature ecosystem, every major platform supports it. Trade-off: scopes are coarse permissions, not transaction-bound spend authorizations; replay and audit are out of scope.</p>
       </div>
       <div class="p-5 bg-white border border-slate-200 rounded">
-        <div class="font-semibold mb-1">Plain ECDSA mandates</div>
-        <p class="text-slate-600">Wins when you fully understand cryptographic systems and want zero dependencies. You write the canonicalization, replay registry, revocation, audit trail, and key rotation yourself &mdash; equivalent to building PQSafe from scratch.</p>
+        <div class="font-semibold mb-1">Classical ECC mandates (ES256/Ed25519)</div>
+        <p class="text-slate-600">Wins when you fully understand cryptographic systems and want zero dependencies. You write the canonicalization, replay registry, revocation, audit trail, and key rotation yourself &mdash; equivalent to building PQSafe from scratch, but without a post-quantum upgrade path.</p>
       </div>
       <div class="p-5 bg-rose-50 border border-rose-300 rounded">
         <div class="font-semibold mb-1">PQSafe AgentPay</div>
@@ -220,7 +220,7 @@
     <ol class="space-y-3 text-sm text-slate-700 list-decimal ml-5">
       <li><strong>Post-quantum from day one.</strong> FIPS 204 ML-DSA-65 dual-signed alongside ECDSA P-256. No migration ceremony in 2030 when CRQC becomes plausible &mdash; signatures issued today remain verifiable through 2033 and beyond.</li>
       <li><strong>Cryptographic spend envelopes for autonomous agents.</strong> Mandates carry per-transaction amount caps, recipient allowlists, currency constraints, time windows, and replay nonces &mdash; all signed, all verified, all enforceable at any rail. JWT and OAuth model sessions, not bounded spend.</li>
-      <li><strong>Standards body engagement.</strong> First public post-quantum proposal to the FIDO Alliance Payments TWG (chaired by Mastercard and Visa). Open letter at <a href="/fido-pq-letter" class="text-rose-600 hover:underline">/fido-pq-letter</a>. Vendor-neutral path, not a proprietary moat.</li>
+      <li><strong>Standards body engagement.</strong> Among the first (as far as we can find, as of 2026-06) to submit a post-quantum proposal to the FIDO Alliance Payments TWG (chaired by Mastercard and Visa). Open letter at <a href="/fido-pq-letter" class="text-rose-600 hover:underline">/fido-pq-letter</a>. Vendor-neutral path, not a proprietary moat.</li>
     </ol>
   </section>
 
@@ -243,7 +243,7 @@
       <li>Not a payment processor. We sign the authorization envelope; rails (Airwallex, Wise, Stripe, USDC) move the money.</li>
       <li>Not a hosted ledger. <code class="mono">ledger.pqsafe.xyz</code> is in pilot for Jun 2026 launch. No live transaction data shown there yet.</li>
       <li>Not a fraud-detection system. PQSafe enforces policy at the cryptographic layer; behavioral fraud detection is complementary, not replaced.</li>
-      <li>Not a card issuer. We wrap card issuance through partners (Airwallex Borderless is the default rail).</li>
+      <li>Not a card issuer. PQSafe authorizes and audits the spend envelope; a licensed partner rail (Airwallex Borderless is the default) handles card mechanics and fund movement.</li>
     </ul>
   </section>
 
@@ -263,7 +263,7 @@
         <p class="text-slate-600">Replace the JWT's <code class="mono text-xs">payload</code> with a PQSafe SpendEnvelope. Both verify in your existing middleware path. The migration adds policy bounds + replay + audit at the same place you were doing JWT validation.</p>
       </div>
       <div class="p-5 bg-white border border-slate-200 rounded">
-        <div class="font-semibold mb-1">From plain ECDSA mandates</div>
+        <div class="font-semibold mb-1">From classical ECC mandates (ES256/Ed25519)</div>
         <p class="text-slate-600">Hardest migration to do alone, easiest to adopt PQSafe for: your codebase already canonicalizes, signs, and verifies. PQSafe gives you the post-quantum layer, the policy DSL, the replay registry, and the audit chain &mdash; without re-inventing each one.</p>
       </div>
     </div>

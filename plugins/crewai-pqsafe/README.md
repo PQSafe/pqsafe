@@ -92,7 +92,7 @@ print(result)
 1. A human operator issues a **signed SpendEnvelope** using `pqsafe-agent-pay` (or the PQSafe Chrome extension). The envelope encodes: agent ID, max amount, allowed recipients, currency, and validity window — all bound by an ML-DSA-65 post-quantum signature.
 2. The envelope is passed into the crew as an input variable. It travels with the task context, not stored in the tool.
 3. When the agent decides to pay, it calls the `pqsafe_pay` tool with `envelope_json`, `recipient`, `amount`, and optional `memo`.
-4. `PQSafePaymentTool` verifies the post-quantum signature server-side, enforces all policy constraints, and routes the payment to the cheapest available rail (Airwallex, Wise, Stripe, USDC/Base, or x402).
+4. `PQSafePaymentTool` verifies the post-quantum signature server-side, enforces all policy constraints, and — once authorized — dispatches the mandate to a licensed payment rail (Airwallex, Wise, Stripe, USDC/Base, or x402) which moves the funds. PQSafe authorizes and audits; the licensed rail moves the money.
 5. The tool returns a string: `Payment successful. txId=<id> status=<status> rail=<rail>` — included in the task output.
 
 ---
@@ -102,7 +102,7 @@ print(result)
 - **One-line integration** — `tools=[PQSafePaymentTool()]` on any CrewAI `Agent`
 - **FIPS 204 ML-DSA-65 enforcement** — every payment is quantum-resistant by default
 - **Policy guardrails** — amount ceiling, recipient allowlist, and time window enforced before dispatch; the agent cannot overspend
-- **Multi-rail routing** — Airwallex (live sandbox), Wise, Stripe, USDC on Base, x402
+- **Multi-rail dispatch** — PQSafe authorizes; a licensed rail (Airwallex sandbox, Wise, Stripe, USDC on Base, x402) moves the funds
 - **No credentials in crew code** — only the short-lived signed envelope is required at runtime
 - **Compatible with any CrewAI crew** — hierarchical, sequential, or custom process types
 

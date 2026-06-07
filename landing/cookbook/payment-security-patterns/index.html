@@ -216,7 +216,7 @@ Crew(agents=[billing_agent], tasks=[billing_task]).kickoff()</pre>
 
   <!-- Recipe 3: OpenClaw -->
   <h2 class="text-2xl font-bold mb-4 mt-10">Recipe 3: OpenClaw Skill with pqsafe-pay</h2>
-  <p class="text-slate-600 mb-4 text-sm">Install via <code class="mono text-xs bg-slate-100 px-1 py-0.5 rounded">clawhub install pqsafe-pay</code> or <code class="mono text-xs bg-slate-100 px-1 py-0.5 rounded">npm install @pqsafe/openclaw</code></p>
+  <p class="text-slate-600 mb-4 text-sm">Open-source — install via <code class="mono text-xs bg-slate-100 px-1 py-0.5 rounded">npm install @pqsafe/openclaw</code> or clone/self-host from GitHub</p>
 
 <pre class="code"><span class="k">import</span> { OpenClawAgent } <span class="k">from</span> <span class="s">"@openclaw/sdk"</span>;
 <span class="k">import</span> { pqsafePay, SpendEnvelope } <span class="k">from</span> <span class="s">"@pqsafe/openclaw"</span>;
@@ -276,7 +276,7 @@ agent.on(<span class="s">"authorizePayment"</span>, <span class="k">async</span>
   <ul class="space-y-2 text-sm text-slate-700 mb-12">
     <li><a href="https://www.npmjs.com/package/@pqsafe/openclaw" class="underline text-blue-600">npm: @pqsafe/openclaw</a></li>
     <li><a href="https://pypi.org/project/langchain-pqsafe/" class="underline text-blue-600">PyPI: langchain-pqsafe</a></li>
-    <li><a href="https://clawhub.ai/skills/pqsafe-pay" class="underline text-blue-600">ClawHub skill: pqsafe-pay</a></li>
+    <li><a href="https://github.com/rayc0/pqsafe-openclaw" class="underline text-blue-600">Open-source: @pqsafe/openclaw (clone/self-host)</a></li>
     <li><a href="https://pqsafe.xyz/spec" class="underline text-blue-600">Spec: draft-chau-ap2-pq-spend-envelope-00</a></li>
     <li><a href="https://fidoalliance.org/fido-alliance-agentic-authentication-technical-working-group/" class="underline text-blue-600">FIDO Agentic Authentication TWG</a></li>
     <li><a href="https://github.com/rayc0/docs/tree/cookbook/payment-security-patterns" class="underline text-blue-600">Fork branch (GitHub): rayc0/docs@cookbook/payment-security-patterns</a></li>

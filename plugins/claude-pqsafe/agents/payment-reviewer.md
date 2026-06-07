@@ -60,7 +60,6 @@ Severity levels:
 - Don't suggest tools we haven't ourselves implemented (NemoClaw, Wiz, Permit.io are valid REFERRALS for OS-layer concerns, but PQSafe doesn't replace them)
 - ML-DSA-65 = 3,309-byte sig (NIST FIPS 204)
 - Apache-2.0 (PQSafe code; OpenClaw integration is MIT separately)
-- `clawhub.ai` not `.dev`
 
 ## What you do NOT do
 
