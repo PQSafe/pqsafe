@@ -14,7 +14,7 @@ Published: Saturday, May 2, 2026
 
 ## Overview
 
-**SpendEnvelopes** are cryptographically bounded spend authorizations that cap what an agent may spend, on which rail, within a specific time window — signed with ML-DSA-65 (NIST FIPS 204) so that authorizations committed to an audit ledger today remain unforgeable as cryptographic capabilities advance. The `pqsafe.pay.v1` skill brings them to [OpenClaw](https://docs.openclaw.ai) — one of GitHub's top open-source projects with over 367K stars and 50,000+ tools in its ClawHub registry (MIT-licensed) — letting any developer issue, verify, and revoke tamper-evident spend authorizations without changing an agent's existing workflow logic.
+**SpendEnvelopes** are cryptographically bounded spend authorizations that cap what an agent may spend, on which rail, within a specific time window — signed with ML-DSA-65 (NIST FIPS 204) so that authorizations committed to an audit ledger today remain unforgeable as cryptographic capabilities advance. The `pqsafe.pay.v1` skill brings them to [OpenClaw](https://docs.openclaw.ai) — an open-source AI agent framework (MIT-licensed) — letting any developer issue, verify, and revoke tamper-evident spend authorizations without changing an agent's existing workflow logic.
 
 ---
 
@@ -150,4 +150,4 @@ LIVE sandbox = validated end-to-end with sandbox rails; real test transfers conf
 
 ---
 
-© 2026 PQSafe AgentPay — Licensed under [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) — Contact: [raymond@pqsafe.xyz](mailto:raymond@pqsafe.xyz)
+© 2026 PQSafe — Licensed under [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) — Contact: [raymond@pqsafe.xyz](mailto:raymond@pqsafe.xyz)

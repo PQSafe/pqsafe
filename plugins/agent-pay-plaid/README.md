@@ -148,5 +148,5 @@ Plaid Node SDK (`plaid` npm package) is MIT licensed — compatible with Apache-
 
 - [PQSafe docs](https://docs.pqsafe.xyz/agent-pay-plaid)
 - [Plaid Transfer API](https://plaid.com/docs/api/products/transfer/)
-- [clawhub.ai](https://clawhub.ai) — OpenClaw agent marketplace
+- [OpenClaw-compatible skill](https://github.com/pqsafe/agent-pay-plaid) — open-source, clone/self-host
 - [NIST FIPS 204 (ML-DSA)](https://csrc.nist.gov/publications/detail/fips/204/final)

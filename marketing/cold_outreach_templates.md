@@ -64,7 +64,7 @@ Personalization cue: Mention CrewAI specifically. Reference the crew structure i
 
 **Template A-4: For a Mastra builder**
 
-> Hi [RAYMOND TO FILL: first name] — your work on [RAYMOND TO FILL: their specific Mastra workflow] looks interesting. I'm building a spend delegation layer for AI agents — so agents can pay for things within a bounded, signed budget without a human logging in each time. Honest question before I assume I know the problem: is the payment wall actually painful for you, or do you route around it some other way?
+> Hi [RAYMOND TO FILL: first name] — your work on [RAYMOND TO FILL: their specific Mastra workflow] looks interesting. I'm building an authorization layer for AI agent payments — agents get a bounded, signed spending mandate, and a licensed rail moves the money, without a human logging in each time. Honest question before I assume I know the problem: is the payment wall actually painful for you, or do you route around it some other way?
 
 Character count: ~410. Safe.
 
@@ -148,7 +148,7 @@ Subject: Agent payment use cases on Wise — are you tracking this?
 
 > Hi [RAYMOND TO FILL: first name],
 >
-> I'm building PQSafe AgentPay — a signed spend envelope SDK that routes agent-triggered payments across Airwallex today, with Wise next in our rail roadmap.
+> I'm building PQSafe AgentPay — a signed spend envelope SDK that authorizes and audits agent-triggered payments; licensed rails (Airwallex today, Wise next on our roadmap) move the money.
 >
 > Question: is Wise seeing developer interest in using the API from AI agent workflows? We've shipped sandbox transfers and the Agent Payments Handbook — and are trying to understand which developers on the Wise platform are hitting the same payment-authorization gap.
 >
@@ -291,7 +291,7 @@ Character count: ~480. Safe.
 
 **Template C-2: Ex-Stripe Backend Engineer**
 
-> Hi [RAYMOND TO FILL: first name] — your infra background at Stripe looks directly relevant to what I'm building. PQSafe AgentPay is a payment SDK for AI agents — signed spend envelopes, multi-rail (Airwallex live, Wise + Stripe next), post-quantum signing (ML-DSA-65). Applying to YC S26 May 4.
+> Hi [RAYMOND TO FILL: first name] — your infra background at Stripe looks directly relevant to what I'm building. PQSafe AgentPay is the authorization and audit layer for AI agent payments — signed SpendEnvelopes with post-quantum signing (ML-DSA-65); licensed rails (Airwallex live, Wise + Stripe next) move the money. Applying to YC S26 May 4.
 >
 > Looking for one co-founder: payments or rails depth, willing to go through YC with me if accepted. Everything is public — demo.pqsafe.xyz, pqsafe.xyz/handbook, github.com/PQSafe/pqsafe.
 >
@@ -381,9 +381,9 @@ Character count: ~495. Safe.
 ```
 Hi [NAME] — saw your post about [SPECIFIC AGENT PROJECT].
 
-I'm shipping an open-source SDK that lets AI agents execute real payments under signed capped budgets (Airwallex live, MCP-native, MIT license).
+I'm shipping an open-source SDK that authorizes AI agent payments under signed, capped SpendEnvelopes — Airwallex handles the actual money movement (live, MCP-native, MIT license).
 
-I'll cover $50 of your agent's real-world spend this month if you route through @pqsafe/agent-pay and give me a 1-minute video testimonial after.
+I'll cover $50 of your agent's real-world spend this month if you use PQSafe to authorize and audit the payment through Airwallex and give me a 1-minute video testimonial after.
 
 Demo: demo.pqsafe.xyz
 Docs: pqsafe.xyz/handbook
@@ -399,7 +399,7 @@ Docs: pqsafe.xyz/handbook
 
 **The offer:**
 - Raymond sends $50 via Airwallex to the developer's chosen recipient (API provider, freelancer, cloud invoice)
-- Agent routes the payment through PQSafe SDK
+- Agent authorizes the payment through PQSafe SDK; Airwallex executes the transfer
 - Transaction is verifiable on Airwallex production dashboard
 - Developer records 60-second video: "I'm [name], I build [agent], I used PQSafe to pay [recipient] for $[amount]. It worked. Here's the receipt."
 

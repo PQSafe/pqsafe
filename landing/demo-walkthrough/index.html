@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>PQSafe demo walkthrough — what the live demo proves</title>
-<meta name="description" content="A 10-step narrated walkthrough of demo.pqsafe.xyz: AI agent autonomously pays its own SaaS bills using PQSafe-signed envelopes. Real card, real charge, real audit." />
+<meta name="description" content="A 10-step narrated walkthrough of demo.pqsafe.xyz: AI agent autonomously authorizes its own SaaS bills using PQSafe-signed SpendEnvelopes. PQSafe signs and audits; a licensed rail (Airwallex) moves the money." />
 <link rel="canonical" href="https://pqsafe.xyz/demo-walkthrough" />
 <meta property="og:title" content="PQSafe demo walkthrough — what the live demo proves" />
 <meta property="og:description" content="10-step narrated walkthrough of demo.pqsafe.xyz." />
@@ -48,7 +48,7 @@
   <section class="mb-10">
     <h1 class="text-3xl font-semibold tracking-tight">What the demo proves.</h1>
     <p class="mt-2 text-slate-600 max-w-3xl">
-      <a href="https://demo.pqsafe.xyz" class="text-rose-600 hover:underline font-semibold">demo.pqsafe.xyz</a> runs an AI agent that pays its own SaaS bills using PQSafe-signed envelopes. Real virtual card, real charges, real audit trail. This page narrates the ten steps that happen end-to-end &mdash; what you see, what the agent is doing under the hood, and why each step matters.
+      <a href="https://demo.pqsafe.xyz" class="text-rose-600 hover:underline font-semibold">demo.pqsafe.xyz</a> runs an AI agent that authorizes its own SaaS bills using PQSafe-signed SpendEnvelopes. PQSafe signs and audits; a licensed rail (Airwallex) moves the money. This page narrates the ten steps that happen end-to-end &mdash; what you see, what the agent is doing under the hood, and why each step matters.
     </p>
     <div class="mt-4 flex flex-wrap gap-3">
       <a href="https://demo.pqsafe.xyz" class="px-4 py-2 bg-rose-600 text-white rounded text-sm font-medium hover:bg-rose-700">Open the live demo →</a>
@@ -57,7 +57,7 @@
   </section>
 
   <section class="mb-10 p-6 bg-amber-50 border border-amber-200 rounded text-sm text-amber-900">
-    <strong>What you'll see.</strong> A dashboard view of a single agent, its monthly SaaS bill stack ($26 Sentry · $19 Resend · $20 OpenAI · $20 Vercel), the PQSafe-signed envelopes the agent generated for each charge, and the Airwallex virtual card transactions that actually moved the money. Numbers are real; the agent in this demo is operated by Raymond personally.
+    <strong>What you'll see.</strong> A dashboard view of a single agent, its monthly SaaS bill stack ($26 Sentry · $19 Resend · $20 OpenAI · $20 Vercel), the PQSafe-signed SpendEnvelopes the agent generated for each authorization, and the Airwallex transfers that moved the money on the licensed rail. The agent in this demo is operated by Raymond personally.
   </section>
 
   <!-- Steps -->
@@ -160,7 +160,7 @@
       <li><strong>Spend authorization is cryptographic, not procedural.</strong> The amount, recipient, currency, and time window are bound to the signature. A leaked envelope can't be repurposed.</li>
       <li><strong>The post-quantum signature is on the hot path.</strong> Every transaction in the demo carries an ML-DSA-65 signature alongside ECDSA. The verifier checks both.</li>
       <li><strong>The audit trail is verifiable by anyone.</strong> Envelopes are public artifacts (minus signatures). Anyone can re-verify any historical transaction at <a href="/verify" class="text-rose-600 hover:underline">/verify</a> using the published issuer pubkey.</li>
-      <li><strong>The rail is real, not simulated.</strong> Airwallex Borderless is a regulated card issuer; the captured charges show up on a real card statement. The demo runs on Raymond's own account.</li>
+      <li><strong>The rail is licensed, not invented.</strong> Airwallex is a regulated payment provider; transfers are issued through their API on Raymond's own account. The demo currently runs in Airwallex sandbox mode — verify status in the repo README before treating any specific charge figure as a live capture.</li>
       <li><strong>Policy failure is observable.</strong> Step 10 shows the same machinery rejecting an attack &mdash; the absence of an envelope is also a verifiable signal.</li>
     </ul>
   </section>
@@ -183,7 +183,7 @@
       <a href="https://pqsafe.xyz/quickstart" class="hover:underline">Quickstart</a>
       <a href="https://pqsafe.xyz/openclaw-cookbook" class="hover:underline">OpenClaw cookbook</a>
     </div>
-    <div>Apache-2.0 · PQSafe AgentPay · <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a></div>
+    <div>Apache-2.0 · PQSafe — Post-quantum authorization for AI agent payments · <a href="mailto:raymond@pqsafe.xyz" class="hover:underline">raymond@pqsafe.xyz</a></div>
   </footer>
 </main>
 </body>

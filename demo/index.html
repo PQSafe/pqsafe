@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PQSafe AgentPay — Live Demo</title>
-  <meta name="description" content="Watch an AI agent pay $199 with post-quantum cryptography. No install needed — runs entirely in your browser.">
+  <title>PQSafe — Post-quantum authorization for AI agent payments | Live Demo</title>
+  <meta name="description" content="Watch an AI agent get a PQSafe SpendEnvelope signed with ML-DSA-65, then a licensed rail (Airwallex sandbox) moves the funds. No install needed — runs entirely in your browser.">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="PQSafe AgentPay — Watch a live post-quantum payment">
-  <meta property="og:description" content="ML-DSA-65 keypair generated in your browser. Real signature. Recorded sandbox transfer. No install.">
+  <meta property="og:title" content="PQSafe — Post-quantum authorization for AI agent payments">
+  <meta property="og:description" content="ML-DSA-65 SpendEnvelope signed in your browser. PQSafe authorizes and audits; Airwallex sandbox moves the money. No install.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://demo.pqsafe.xyz">
 
@@ -356,11 +356,11 @@
 
   <!-- Hero -->
   <div class="badge"><span class="dot"></span> Live browser demo</div>
-  <h1>AI agent needs a tool.<br>It <em>buys it itself.</em></h1>
+  <h1>AI agent needs a tool.<br>PQSafe <em>authorizes the spend.</em></h1>
   <p class="sub">
-    Research agent hits a Perplexity paywall mid-task. It checks its PQSafe budget,
-    pays <strong>$20 autonomously</strong>, and continues — no human logs in.
-    ML-DSA-65 post-quantum signing runs <strong>in your browser</strong>. No install. No account. ~12 seconds.
+    Research agent hits a Perplexity paywall mid-task. PQSafe signs a <strong>SpendEnvelope</strong>
+    (cap, payee scope, expiry) with ML-DSA-65 — a licensed rail then moves the $20 — no human logs in.
+    Post-quantum signing runs <strong>in your browser</strong>. No install. No account. ~12 seconds.
   </p>
 
   <button id="run-btn" onclick="runDemo()">
@@ -404,11 +404,11 @@
           The ML-DSA-65 keypair generation and signing above are <strong style="color:var(--text)">100% real</strong>
           — powered by <a href="https://github.com/paulmillr/noble-post-quantum" target="_blank" rel="noopener">@noble/post-quantum</a>
           (NIST FIPS 204, running in your browser via WebAssembly-free pure JS).
-          The Airwallex charge is a <strong style="color:var(--text)">recorded sandbox receipt</strong>
+          The Airwallex transfer is a <strong style="color:var(--text)">recorded sandbox receipt</strong>
           (UUID <code style="font-size:11px; color:var(--em)">38873dbc-abfa-4ab5-be25-050496d4a0c3</code>).
-          The virtual card issuance uses the Airwallex Issuing API shape — in the CLI demo
-          (<code style="font-size:11px;">npx tsx demo-saas/demo.ts</code>) the same flow runs against a real
-          sandbox and returns a live transaction ID every time.
+          PQSafe authorizes and audits via the signed SpendEnvelope; the Airwallex sandbox rail moves the money
+          — in the CLI demo (<code style="font-size:11px;">npx tsx demo-saas/demo.ts</code>) the same flow runs
+          against a real sandbox and returns a live transaction ID every time.
           See <a href="https://github.com/PQSafe/pqsafe/blob/main/agent-pay/DEMO_RECEIPTS.md" target="_blank" rel="noopener">DEMO_RECEIPTS.md</a>
           for verified sandbox UUIDs. Every developer building an AI agent has hit this exact moment — their agent needed a paid API and they had to manually top it up. PQSafe removes that friction permanently.
         </p>
@@ -418,7 +418,7 @@
 
   <!-- Footer -->
   <footer>
-    <span>PQSafe AgentPay · ML-DSA-65 (NIST FIPS 204) · <a href="https://pqsafe.xyz">pqsafe.xyz</a></span>
+    <span>PQSafe · Post-quantum authorization for AI agent payments · ML-DSA-65 (NIST FIPS 204) · <a href="https://pqsafe.xyz">pqsafe.xyz</a></span>
     <span><a href="https://github.com/PQSafe/pqsafe" target="_blank" rel="noopener">GitHub</a></span>
   </footer>
 
@@ -454,7 +454,7 @@ const stepDefs = [
   { id: 's1', label: 'Research agent requires Perplexity Pro — $20/month',  duration: 1800 },
   { id: 's2', label: 'Checking envelope budget… (ML-DSA-65 keypair + $50 research cap)', duration: 2200 },
   { id: 's3', label: 'Signing autonomous payment with post-quantum ML-DSA-65…',           duration: 2000 },
-  { id: 's4', label: 'Routing to Airwallex — issuing virtual card + charging perplexity.ai…', duration: 3000 },
+  { id: 's4', label: 'PQSafe authorization complete — Airwallex sandbox rail moves $20 to perplexity.ai…', duration: 3000 },
   { id: 's5', label: 'Agent now has Perplexity API access. Task resumed.',   duration: 0    },
 ]
 
@@ -675,7 +675,7 @@ async function runDemo() {
   tcRows.innerHTML = `
     <div class="tc-row"><span class="tc-row-k">Transaction ID</span><span class="tc-row-v">${TRANSFER_ID}</span></div>
     <div class="tc-row"><span class="tc-row-k">Service purchased</span><span class="tc-row-v">Perplexity Pro — perplexity.ai</span></div>
-    <div class="tc-row"><span class="tc-row-k">Virtual card</span><span class="tc-row-v">**** **** **** ${vcLast4} (Visa, Airwallex Issuing)</span></div>
+    <div class="tc-row"><span class="tc-row-k">Payment ref</span><span class="tc-row-v">Simulated-${vcLast4} (Airwallex sandbox transfer)</span></div>
     <div class="tc-row"><span class="tc-row-k">Rail</span><span class="tc-row-v">Airwallex sandbox</span></div>
     <div class="tc-row"><span class="tc-row-k">Authorized by</span><span class="tc-row-v">ML-DSA-65 spend envelope · agent: research-agent-v1</span></div>
     <div class="tc-row"><span class="tc-row-k">Issuer address</span><span class="tc-row-v">${pqAddr}</span></div>

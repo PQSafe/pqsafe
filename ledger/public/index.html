@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PQSafe AgentPay Ledger</title>
+  <title>PQSafe — Authorization &amp; Audit Ledger for AI Agent Payments</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -53,7 +53,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
         </svg>
       </div>
-      <span class="font-semibold tracking-tight text-white">PQSafe <span class="text-brand-400">AgentPay</span> Ledger</span>
+      <span class="font-semibold tracking-tight text-white">PQSafe <span class="text-brand-400">Authorization</span> Ledger</span>
     </div>
     <div class="flex items-center gap-6 text-sm text-gray-400">
       <a href="https://pqsafe.xyz" class="hover:text-white transition-colors">pqsafe.xyz</a>
@@ -68,7 +68,7 @@
   <!-- Hero -->
   <div class="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
     <div class="inline-flex items-center gap-2 bg-brand-500/10 border border-brand-500/20 rounded-full px-4 py-1.5 text-xs text-brand-400 font-medium mb-8 uppercase tracking-widest">
-      Post-Quantum Agent Payments
+      Post-Quantum Agent Payment Authorization &amp; Audit
     </div>
 
     <h1 class="text-5xl sm:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">
@@ -76,7 +76,7 @@
       <span class="text-brand-400">verified on-chain</span>
     </h1>
     <p class="text-gray-400 text-lg max-w-xl mx-auto mb-14">
-      Anonymized transfer log for PQSafe AgentPay. Opt-in. Zero PII. ML-DSA-65 signed envelopes only.
+      Anonymized authorization &amp; audit log. PQSafe signs each SpendEnvelope mandate (cap, payee scope, expiry); a licensed rail moves the money. Opt-in. Zero PII. ML-DSA-65 signed envelopes only.
     </p>
 
     <!-- Live counters -->
@@ -87,7 +87,7 @@
       </div>
       <div class="glow bg-gray-900/80 border border-gray-700/50 rounded-2xl p-6">
         <div class="text-3xl font-bold counter text-white" id="stat-usd">—</div>
-        <div class="text-sm text-gray-500 mt-1">USD routed (est.)</div>
+        <div class="text-sm text-gray-500 mt-1">USD authorized (est.)</div>
       </div>
       <div class="glow bg-gray-900/80 border border-gray-700/50 rounded-2xl p-6">
         <div class="text-3xl font-bold counter text-white" id="stat-agents">—</div>
@@ -133,7 +133,7 @@
   <footer class="border-t border-gray-800/60 py-10 px-6">
     <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
       <div>
-        <span class="text-gray-400 font-medium">PQSafe AgentPay</span> — Post-quantum payments for AI agents
+        <span class="text-gray-400 font-medium">PQSafe</span> — Post-quantum authorization &amp; audit for AI agent payments
       </div>
       <div class="flex gap-6">
         <a href="/api" class="hover:text-gray-400 transition-colors">API docs</a>
@@ -198,8 +198,8 @@
             </div>
             <div>
               <div class="text-sm text-white">
-                Agent paid <span class="font-semibold text-brand-400">$${tx.amountBucket}</span>
-                via <span class="font-medium">${RAIL_LABELS[tx.rail] ?? tx.rail}</span>
+                PQSafe authorized <span class="font-semibold text-brand-400">$${tx.amountBucket}</span>
+                · settled via <span class="font-medium">${RAIL_LABELS[tx.rail] ?? tx.rail}</span>
               </div>
               <div class="text-xs text-gray-600 hash-mono mt-0.5">${truncateHash(tx.envelopeHash)}</div>
             </div>

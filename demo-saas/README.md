@@ -25,8 +25,8 @@ AIRWALLEX_CLIENT_ID=your_id AIRWALLEX_API_KEY=your_key npx tsx ../demo-saas/demo
    `agent: "research-agent-v1"`, `maxAmount: 50 USD`, `allowedRecipients: ["perplexity.ai"]`, `ttl: 30 days`
 2. Agent runs mid-task, hits Perplexity 402 paywall
 3. Agent verifies envelope (sig + schema + time + allowlist + amount ceiling — all autonomous)
-4. PQSafe issues a virtual Visa card bound to the envelope (spend cap = $50, expiry = envelope TTL)
-5. Agent pays $20 for Perplexity Pro — transaction receipt UUID returned
+4. PQSafe authorizes the payment: verifies the envelope is valid, unrevoked, within cap and allowlist, then signals the licensed rail (Airwallex) to proceed — PQSafe moves no funds
+5. Airwallex executes the $20 charge to Perplexity Pro; transaction receipt UUID returned to the agent
 6. Agent receives API key, resumes task
 7. Log: `"Agent successfully purchased Perplexity Pro subscription. Remaining budget: $30/month."`
 

@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PQSafe Pay — OpenClaw 后量子支付安全层</title>
-  <meta name="description" content="PQSafe 为 OpenClaw AI 代理提供 ML-DSA-65 签名授权层，防御 ClawHavoc 级供应链攻击，满足金融监管合规要求。Apache-2.0 开源。" />
+  <title>PQSafe — OpenClaw 后量子授权层</title>
+  <meta name="description" content="PQSafe 为 OpenClaw AI 代理提供 ML-DSA-65 签名授权层，防御 ClawHavoc 级供应链攻击，满足金融监管合规要求。Apache-2.0 开源，可克隆自托管。" />
   <link rel="canonical" href="https://pqsafe.xyz/zh-CN/openclaw-skill/" />
   <link rel="alternate" hreflang="en" href="https://pqsafe.xyz/openclaw-skill/" />
   <link rel="alternate" hreflang="zh-CN" href="https://pqsafe.xyz/zh-CN/openclaw-skill/" />
-  <meta property="og:title" content="PQSafe Pay — OpenClaw 后量子支付安全层" />
+  <meta property="og:title" content="PQSafe — OpenClaw 后量子授权层" />
   <meta property="og:description" content="首批对齐 FIDO AP2-PQ profile 的 AI 代理支付授权中间件。ML-DSA-65 签名，3,309 字节，验证 &lt; 5 ms。" />
   <meta property="og:image" content="https://pqsafe.xyz/og/openclaw-skill.png" />
   <meta property="og:url" content="https://pqsafe.xyz/zh-CN/openclaw-skill/" />
@@ -119,7 +119,7 @@
       <a href="#operations">功能</a>
       <a href="#quickstart">快速开始</a>
       <a href="#security">安全模型</a>
-      <a href="https://clawhub.ai/skills/pqsafe-pay">ClawHub</a>
+      <a href="https://github.com/pqsafe-inc/openclaw-pqsafe">GitHub</a>
       <a href="/openclaw-skill/" class="lang-toggle">EN</a>
     </div>
   </div>
@@ -138,7 +138,7 @@
     </p>
     <div class="cta-group">
       <a href="#quickstart" class="btn btn-primary">5 分钟接入</a>
-      <a href="https://clawhub.ai/skills/pqsafe-pay" class="btn btn-outline">ClawHub 技能市场</a>
+      <a href="https://github.com/pqsafe-inc/openclaw-pqsafe" class="btn btn-outline">GitHub 开源</a>
       <a href="https://npmjs.com/package/@pqsafe/openclaw" class="btn btn-outline">npm 安装</a>
     </div>
     <div class="stats">
@@ -408,7 +408,7 @@ const { envelope } = await pqsafe.issueMandate({
 <section>
   <div class="container">
     <div class="section-label">获取技能</div>
-    <h2>五个发行渠道</h2>
+    <h2>四个发行渠道</h2>
     <div class="card-grid">
       <div class="card">
         <div class="icon">📦</div>
@@ -417,16 +417,10 @@ const { envelope } = await pqsafe.issueMandate({
         <p style="margin-top:0.5rem;"><a href="https://npmjs.com/package/@pqsafe/openclaw">npmjs.com/package/@pqsafe/openclaw</a></p>
       </div>
       <div class="card">
-        <div class="icon">🛒</div>
-        <h4>ClawHub 技能市场</h4>
-        <p><a href="https://clawhub.ai/skills/pqsafe-pay">clawhub.ai/skills/pqsafe-pay</a></p>
-        <p style="margin-top:0.5rem; font-size:0.85rem;">一键安装，适合非技术团队快速接入</p>
-      </div>
-      <div class="card">
         <div class="icon">🐙</div>
-        <h4>GitHub</h4>
+        <h4>GitHub 开源（克隆 / 自托管）</h4>
         <p><a href="https://github.com/pqsafe-inc/openclaw-pqsafe">github.com/pqsafe-inc/openclaw-pqsafe</a></p>
-        <p style="margin-top:0.5rem; font-size:0.85rem;">Apache-2.0，可 fork 自托管</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;">Apache-2.0，OpenClaw 兼容技能，可 fork 自托管，无需依赖第三方市场</p>
       </div>
       <div class="card">
         <div class="icon">☁️</div>
@@ -465,7 +459,7 @@ const { envelope } = await pqsafe.issueMandate({
   <div class="footer-links">
     <a href="https://pqsafe.xyz">pqsafe.xyz</a>
     <a href="https://pqsafe.xyz/openclaw-skill/">技术文档（EN）</a>
-    <a href="https://clawhub.ai/skills/pqsafe-pay">ClawHub</a>
+    <a href="https://github.com/pqsafe-inc/openclaw-pqsafe">GitHub</a>
     <a href="https://npmjs.com/package/@pqsafe/openclaw">npm</a>
     <a href="mailto:dev@pqsafe.xyz">dev@pqsafe.xyz</a>
   </div>

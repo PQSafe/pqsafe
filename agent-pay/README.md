@@ -13,7 +13,7 @@
 
 `@pqsafe/agent-pay` lets a human operator issue a cryptographically-bound **SpendEnvelope** to an AI agent. The envelope defines exactly what the agent can spend, to whom, via which payment rail, and for how long — enforced by an ML-DSA-65 (NIST FIPS 204) signature that no current or near-future adversary can forge.
 
-The agent calls `executeAgentPayment(signedEnvelope, request)` and the SDK verifies the post-quantum signature, validates the envelope's policy constraints (amount ceiling, recipient allowlist, time window), and routes the payment across the configured rail. No centralized server. No API key stored in the SDK. The envelope **is** the authorization — it travels with the agent and is self-contained.
+The agent calls `executeAgentPayment(signedEnvelope, request)` and the SDK verifies the post-quantum signature, validates the envelope's policy constraints (amount ceiling, recipient allowlist, time window), and hands off to the configured licensed rail (Airwallex, Wise, Stripe, USDC-Base) to move the funds. PQSafe authorizes and audits; the licensed rail moves the money. No centralized server. No API key stored in the SDK. The envelope **is** the authorization — it travels with the agent and is self-contained.
 
 ## Why use it
 
@@ -72,7 +72,7 @@ console.log(result.rail)    // "airwallex"
 - **FIPS 204 ML-DSA-65 signing** — 128-bit post-quantum security; envelopes are quantum-resistant by default
 - **Policy enforcement** — amount ceiling, recipient allowlist, and validity window checked before any payment is dispatched
 - **Replay protection** — 128-bit random nonce per envelope; no envelope can be reused
-- **Multi-rail routing** — Airwallex (live sandbox), Wise, Stripe, USDC on Base, and x402 (stubs ready)
+- **Multi-rail dispatch** — PQSafe authorizes; licensed rails (Airwallex live sandbox, Wise, Stripe, USDC on Base, x402) move the money (stubs ready for all except Airwallex)
 - **Arbitrum audit anchoring** — optional on-chain commitment of envelope hash + signature fingerprint for immutable audit trails
 - **Zero key storage** — the SDK never persists private keys; caller injects them per-call
 - **13 guardrail tests** — sign/verify, tamper detection, policy enforcement, temporal expiry

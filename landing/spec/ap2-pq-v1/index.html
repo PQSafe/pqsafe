@@ -706,7 +706,7 @@
     </p>
     <ul>
       <li><strong>Post-quantum security:</strong> Security rests on the hardness of Module-LWE and Module-SIS lattice problems; no efficient quantum algorithm is known for these.</li>
-      <li><strong>NIST finalized standard:</strong> FIPS 204 was published July 2024 — this is a finalized federal standard, not a candidate.</li>
+      <li><strong>NIST finalized standard:</strong> FIPS 204 was published August 2024 — this is a finalized federal standard, not a candidate.</li>
       <li><strong>Operational balance:</strong> Signature size (3,309 bytes / 6,618 hex chars) and public key size (1,952 bytes / 3,904 hex chars) are practical for payment envelope payloads typically well under 32 KB.</li>
       <li><strong>Non-malleable:</strong> FIPS 204 verification validates the full internal polynomial structure; no low-S normalization class of issues exists.</li>
       <li><strong>Ecosystem coverage:</strong> TypeScript (@noble/post-quantum), Python (pqcrypto, pyca/cryptography), Go (CIRCL), Rust (ml-dsa crate).</li>
@@ -1368,8 +1368,9 @@ pubkey_hex    = hex(publicKey) // 3,904 lowercase hex chars</code></pre></div>
       <li>
         <span class="ref-tag">[CLAWHAVOC]</span>
         PQSafe Inc. "ClawHavoc CSA: Post-quantum payment guardrails for OpenClaw agent skill registries."
-        <a href="https://clawhub.ai">clawhub.ai</a>. April 2026. (PQSafe pqsafe-pay skill referenced
-        in ClawHavoc incident analysis as cryptographic guardrail defense.)
+        April 2026. (PQSafe pqsafe-pay is an open-source OpenClaw-compatible skill, self-hostable;
+        it is not published on ClawHub. Used as a cryptographic guardrail reference in OpenClaw
+        agent payment security analysis.)
       </li>
     </ul>
   </section>

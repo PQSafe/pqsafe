@@ -1,6 +1,6 @@
 # pqsafe-openclaw
 
-**Post-quantum spend delegation for AI agents, available in Python via OpenClaw / ClawHub.**
+**Post-quantum spend delegation for AI agents — open-source Python skill for OpenClaw-compatible runtimes (self-hostable).**
 
 [![PyPI](https://img.shields.io/pypi/v/pqsafe-openclaw)](https://pypi.org/project/pqsafe-openclaw/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
@@ -10,9 +10,9 @@
 
 ## What this is
 
-`pqsafe-openclaw` is a Python skill for the [OpenClaw](https://docs.openclaw.ai) / [ClawHub](https://clawhub.ai) AI agent runtime. It wraps the [PQSafe AgentPay](https://pqsafe.xyz) Python SDK and exposes four actions — `pay`, `set_envelope`, `query`, `verify_received` — as an OpenClaw-compatible skill that emits JSON responses the ClawHub TypeScript runtime can relay.
+`pqsafe-openclaw` is an open-source Python skill for [OpenClaw](https://docs.openclaw.ai)-compatible AI agent runtimes. It wraps the [PQSafe AgentPay](https://pqsafe.xyz) Python SDK and exposes four actions — `pay`, `set_envelope`, `query`, `verify_received` — as an OpenClaw-compatible skill that emits JSON responses any OpenClaw-compatible TypeScript runtime can relay. Clone and self-host from the PQSafe GitHub repository.
 
-OpenClaw's [100+ skill catalog](https://clawhub.ai) primarily uses TypeScript. Python users who prefer the `pqsafe-agent-pay` Python SDK (42/42 tests passing) can use this package directly in LangChain, CrewAI, or AutoGen pipelines. For pure OpenClaw deployments, this package is invoked by the companion TypeScript bridge skill as a subprocess (`python -m pqsafe_openclaw <action> <json-args>`), following the cross-language bridge pattern documented in the OpenClaw skill format spec.
+OpenClaw-compatible runtimes primarily use TypeScript skills. Python users who prefer the `pqsafe-agent-pay` Python SDK (42/42 tests passing) can use this package directly in LangChain, CrewAI, or AutoGen pipelines. For pure OpenClaw deployments, this package is invoked by the companion TypeScript bridge skill as a subprocess (`python -m pqsafe_openclaw <action> <json-args>`), following the cross-language bridge pattern documented in the OpenClaw skill format spec.
 
 ### Why SpendEnvelopes address the AI payment tool-call risk vector
 
@@ -242,6 +242,5 @@ Apache-2.0. See [LICENSE](LICENSE).
 - PQSafe GitHub: https://github.com/PQSafe/pqsafe
 - AP2 PQ extension RFC: https://pqsafe.xyz/ap2-pq-rfc
 - OpenClaw docs: https://docs.openclaw.ai
-- ClawHub registry: https://clawhub.ai
 - PyPI: https://pypi.org/project/pqsafe-openclaw/
 - Contact: raymond@pqsafe.xyz

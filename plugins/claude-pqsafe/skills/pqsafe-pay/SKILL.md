@@ -110,7 +110,7 @@ PQSafe addresses 2 of the 5 vectors in the China-cited OpenClaw threat model (to
 
 ## Truth-guards (apply on EVERY mention)
 
-- Use `clawhub.ai` not `clawhub.dev` (the .dev TLS is broken)
+- Do NOT claim PQSafe is published on ClawHub — as of 2026-06 it is NOT listed there (0 results). Reference the GitHub source instead for self-hosting.
 - ML-DSA-65 sig = **3,309 bytes** (NOT 3,293)
 - License = **Apache-2.0** (NOT MIT — separate from OpenClaw which IS MIT)
 - Don't claim "global first" / 全球首个 — Alipay AI Pay shipped Apr 21 2026
@@ -123,7 +123,7 @@ PQSafe addresses 2 of the 5 vectors in the China-cited OpenClaw threat model (to
 | Resource | URL |
 |---|---|
 | Skill homepage | https://pqsafe.xyz/claude-skill |
-| OpenClaw skill | https://clawhub.ai/skills/pqsafe-pay |
+| OpenClaw skill (open-source, clone/self-host) | https://github.com/PQSafe/pqsafe/tree/main/plugins/claude-pqsafe |
 | API base | https://api.pqsafe.xyz/v1 |
 | Test vectors | https://pqsafe.xyz/spec/ap2-pq-test-vectors-v1.json |
 | AP2-PQ RFC | https://pqsafe.xyz/ap2-pq-rfc |

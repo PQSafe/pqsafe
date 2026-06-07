@@ -6,7 +6,6 @@ author: PQSafe Inc
 license: Apache-2.0
 homepage: https://pqsafe.xyz/openclaw-skill
 repository: https://github.com/pqsafe-inc/openclaw-pqsafe
-clawhub: https://clawhub.ai/skills/pqsafe-pay
 tags:
   - payments
   - security
@@ -210,10 +209,7 @@ runtime.use(
 npm install @pqsafe/openclaw
 ```
 
-**ClawHub 技能市场：**
-[clawhub.ai/skills/pqsafe-pay](https://clawhub.ai/skills/pqsafe-pay)
-
-**GitHub 仓库：**
+**GitHub 仓库（开源，支持自行部署）：**
 [github.com/pqsafe-inc/openclaw-pqsafe](https://github.com/pqsafe-inc/openclaw-pqsafe)
 
 **API 文档：**
