@@ -167,7 +167,7 @@ const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const hex = u8 => Array.from(u8, b=>b.toString(16).padStart(2,'0')).join('');
 const u8FromHex = h => new Uint8Array(h.match(/.{1,2}/g).map(b=>parseInt(b,16)));
 function tline(html, cls=''){ const s=document.createElement('span'); s.className='l '+cls; s.innerHTML=html; term.appendChild(s); term.scrollTop=term.scrollHeight; }
-async function typeLine(html, cls='', d=3){ const s=document.createElement('span'); s.className='l '+cls; term.appendChild(s);
+async function typeLine(html, cls='', d=10){ const s=document.createElement('span'); s.className='l '+cls; term.appendChild(s);
   const tmp=document.createElement('div'); tmp.innerHTML=html; const txt=tmp.textContent;
   for(let i=0;i<txt.length;i++){ s.textContent=txt.slice(0,i+1); term.scrollTop=term.scrollHeight; if(d) await sleep(d);} s.innerHTML=html; }
 
@@ -248,12 +248,12 @@ async function runDemo(){
   term.innerHTML=''; jsonEl.innerHTML=''; $('#agentDot').classList.add('on');
   $('#stepLabel').textContent='running';
 
-  await typeLine('<span class="c-dim">$</span> <span class="c-ink">python3 agent_pay.py --autonomous</span>', '', 4);
-  await sleep(125);
+  await typeLine('<span class="c-dim">$</span> <span class="c-ink">python3 agent_pay.py --autonomous</span>', '', 12);
+  await sleep(250);
   await typeLine('<span class="c-mut">[agent]</span> polling invoice API …');
-  await sleep(175);
+  await sleep(350);
   await typeLine('<span class="c-mut">[agent]</span> found invoice <span class="c-blue">#2026-042</span> · <span class="c-warn">HKD 149.00</span> · payee <span class="c-blue">SeniorDeli-SaaS</span> · DUE TODAY');
-  await sleep(150);
+  await sleep(300);
   await typeLine('<span class="c-mut">[agent]</span> building SpendEnvelope (AP2-PQ) …');
 
   // build envelope (faithful to SpendEnvelopeSchema)
@@ -271,7 +271,7 @@ async function runDemo(){
   };
   renderJson(envelope);
   $('#envDot').classList.add('on'); $('#envState').textContent='unsigned';
-  await sleep(250);
+  await sleep(500);
 
   await typeLine('<span class="c-mut">[agent]</span> canonicalizing (RFC 8785 JCS) → signing with <span class="c-acc">ML-DSA-65</span> …');
   const msg=enc.encode(canon(envelope));
@@ -283,15 +283,15 @@ async function runDemo(){
   setMeta(pk, sig);
   $('#envState').textContent='signed';
   await typeLine(`<span class="c-mut">[agent]</span> signed in <span class="c-ink">${signMs} ms</span> · sig <span class="c-dim">${hex(sig).slice(0,24)}…</span> <span class="c-acc">[quantum-resistant]</span>`);
-  await sleep(125);
+  await sleep(250);
   await typeLine('<span class="c-mut">[agent]</span> dispatching envelope to counterparty …');
-  await sleep(175);
+  await sleep(350);
 
   // counterparty verify
   await typeLine('');
-  await typeLine('<span class="c-dim"># COUNTERPARTY</span> <span class="c-ink">pqsafe verify --envelope spend_2026042.json</span>', '', 4);
+  await typeLine('<span class="c-dim"># COUNTERPARTY</span> <span class="c-ink">pqsafe verify --envelope spend_2026042.json</span>', '', 12);
   const ok=DSA.verify(sig, msg, pk);
-  await sleep(150);
+  await sleep(300);
   if(ok){
     await typeLine('<span class="c-acc">✓ VALID</span> · ML-DSA-65 · FIPS 204 · agent <span class="c-blue">raymond-ai-coo-v1</span> · <span class="c-warn">HKD 149.00</span>');
     setVerdict('ok','VALID · signature verified',
@@ -308,18 +308,18 @@ async function tamper(){
   tamperBtn.disabled=true;
   $('#stepLabel').textContent='under attack';
   await typeLine('');
-  await typeLine('<span class="c-bad"># ATTACKER</span> <span class="c-ink">tamper.py --field maxAmount --to 9999</span>', '', 4);
+  await typeLine('<span class="c-bad"># ATTACKER</span> <span class="c-ink">tamper.py --field maxAmount --to 9999</span>', '', 12);
   // mutate the rendered envelope ONLY (signature stays the same — that's the point)
   const mutated=JSON.parse(JSON.stringify(signed.envelope));
   mutated.maxAmount=9999;
   renderJson(mutated, 'maxAmount');
   $('#envState').textContent='TAMPERED';
   await typeLine('<span class="c-bad">[tamper]</span> maxAmount <span class="c-warn">149</span> → <span class="c-bad">9999</span> · signature left unchanged');
-  await sleep(200);
-  await typeLine('<span class="c-dim"># COUNTERPARTY</span> <span class="c-ink">pqsafe verify --envelope spend_TAMPERED.json</span>', '', 4);
+  await sleep(400);
+  await typeLine('<span class="c-dim"># COUNTERPARTY</span> <span class="c-ink">pqsafe verify --envelope spend_TAMPERED.json</span>', '', 12);
   const msg=enc.encode(canon(mutated));
   const ok=DSA.verify(signed.sig, msg, signed.pk);   // real verify against original signature
-  await sleep(175);
+  await sleep(350);
   if(!ok){
     await typeLine('<span class="c-bad">✕ INVALID</span> · signature verification <span class="c-bad">FAILED</span> · payload hash mismatch');
     setVerdict('bad','INVALID · tamper detected',
@@ -337,10 +337,10 @@ async function restore(){
   if(busy||!signed) return; busy=true; restoreBtn.disabled=true;
   renderJson(signed.envelope);
   $('#envState').textContent='signed';
-  await typeLine('<span class="c-dim"># COUNTERPARTY</span> <span class="c-ink">pqsafe verify --envelope spend_2026042.json</span>', '', 4);
+  await typeLine('<span class="c-dim"># COUNTERPARTY</span> <span class="c-ink">pqsafe verify --envelope spend_2026042.json</span>', '', 12);
   const msg=enc.encode(canon(signed.envelope));
   const ok=DSA.verify(signed.sig, msg, signed.pk);
-  await sleep(150);
+  await sleep(300);
   await typeLine(ok?'<span class="c-acc">✓ VALID</span> · original envelope still verifies — tamper-evident by design'
                    :'<span class="c-bad">✕ unexpected</span>');
   setVerdict('ok','VALID · original restored',['the untouched envelope verifies again','only the exact signed bytes pass — nothing else']);
