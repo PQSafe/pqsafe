@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PQSafe — Authorization Firewall for Minds Wallets</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#0f1628; --ink:#eaf0ff; --mut:#8a97b8; --line:#1e2942;
+    --acc:#4f8cff; --acc2:#7af0c8; --warn:#ff6b6b; --gold:#ffc24b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#05070d;color:var(--ink);font-family:-apple-system,"Segoe UI",Inter,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .slide{
+    position:relative;width:1280px;height:720px;margin:0 auto;
+    background:radial-gradient(1200px 600px at 80% -10%,rgba(79,140,255,.13),transparent 60%),linear-gradient(160deg,var(--bg),var(--bg2));
+    padding:64px 72px;overflow:hidden;border-bottom:1px solid #000;
+  }
+  .slide::before{content:"";position:absolute;inset:0;background:
+    linear-gradient(transparent 39px,rgba(255,255,255,.012) 40px),
+    linear-gradient(90deg,transparent 39px,rgba(255,255,255,.012) 40px);
+    background-size:40px 40px;pointer-events:none}
+  .kicker{font:600 13px/1 "SF Mono",ui-monospace,Menlo,monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--acc2);margin-bottom:18px;position:relative}
+  h1{font-size:64px;line-height:1.04;letter-spacing:-.02em;font-weight:800;position:relative}
+  h2{font-size:42px;line-height:1.08;letter-spacing:-.02em;font-weight:800;position:relative;margin-bottom:8px}
+  .sub{font-size:22px;color:var(--mut);font-weight:500;line-height:1.4;position:relative}
+  .pagenum{position:absolute;bottom:30px;right:40px;font:600 12px/1 "SF Mono",ui-monospace,monospace;color:var(--mut);letter-spacing:.1em}
+  .brandfoot{position:absolute;bottom:28px;left:72px;font:600 12px/1 "SF Mono",ui-monospace,monospace;color:var(--mut);letter-spacing:.12em}
+  .lead{font-size:26px;line-height:1.45;font-weight:600;position:relative;max-width:1000px}
+  ul{list-style:none;position:relative;margin-top:26px}
+  li{font-size:22px;line-height:1.5;color:#d7e0ف7;color:#d7e0f7;margin:16px 0;padding-left:34px;position:relative}
+  li::before{content:"▸";position:absolute;left:0;color:var(--acc);font-size:20px}
+  li b{color:#fff}
+  .grid{display:grid;gap:18px;margin-top:30px;position:relative}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:14px;padding:24px}
+  .card h3{font-size:19px;color:var(--acc2);margin-bottom:10px;font-weight:700}
+  .card p{font-size:17px;line-height:1.45;color:#cdd7ef}
+  .big{font-size:46px;font-weight:800;letter-spacing:-.02em}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,monospace}
+  .tag{display:inline-block;font:600 13px/1 "SF Mono",monospace;letter-spacing:.08em;padding:8px 14px;border:1px solid var(--line);border-radius:999px;color:var(--acc2);margin:6px 8px 0 0;background:rgba(122,240,200,.05)}
+  .flow{display:flex;align-items:center;gap:14px;margin-top:34px;position:relative;flex-wrap:wrap}
+  .step{flex:1;min-width:150px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:18px 16px;text-align:center}
+  .step .n{font:700 12px/1 "SF Mono",monospace;color:var(--acc);letter-spacing:.1em}
+  .step .t{font-size:16px;margin-top:8px;color:#e7eeff;line-height:1.3}
+  .arrow{color:var(--acc);font-size:24px;flex:0 0 auto}
+  .ok{color:var(--acc2)}.no{color:var(--warn)}
+  .titlewrap{position:absolute;top:50%;transform:translateY(-50%)}
+  .logos{position:relative;margin-top:40px;display:flex;gap:14px;flex-wrap:wrap}
+  .hl{color:var(--gold)}
+  .note{position:relative;margin-top:22px;font-size:15px;color:var(--mut);line-height:1.4}
+  @media print{
+    @page{size:1280px 720px;margin:0}
+    html,body{background:#05070d}
+    .slide{margin:0;page-break-after:always;break-after:page}
+    .slide:last-child{page-break-after:auto}
+  }
+</style>
+</head>
+<body>
+
+<!-- 1 TITLE -->
+<section class="slide">
+  <div class="titlewrap">
+    <div class="kicker">PQSafe · Build East @ HKSTP × Minds by Animoca Brands</div>
+    <h1>The authorization firewall<br>for Minds wallets.</h1>
+    <p class="sub" style="margin-top:24px;max-width:920px">Post-quantum, non-custodial, on-chain audit — <span class="hl">before any agent moves value.</span></p>
+    <div class="logos">
+      <span class="tag">Asaptic (HK) Limited</span>
+      <span class="tag">pqsafe.xyz</span>
+      <span class="tag">Agentic-commerce infrastructure</span>
+    </div>
+  </div>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">01</div>
+</section>
+
+<!-- 2 PROBLEM -->
+<section class="slide">
+  <div class="kicker">The problem</div>
+  <h2>A Mind has its own on-chain wallet — and spends on its own.</h2>
+  <p class="sub">Nobody can prove what an autonomous agent was <i>authorized</i> to spend.</p>
+  <ul>
+    <li><b>No proof of authorization.</b> When an agent pays, there's no verifiable record of what the user actually permitted.</li>
+    <li><b>One mistake is irreversible.</b> A leaked key or a prompt-injection can drain an on-chain wallet — instantly, permanently.</li>
+    <li><b>Yesterday's auth doesn't fit.</b> OAuth / ES256 weren't built for long-horizon, multi-hop, autonomous spending — and they aren't post-quantum.</li>
+  </ul>
+  <p class="note">Animoca's own Web4 thesis: agents that "negotiate, collaborate and <b>transact</b> independently on behalf of their human stewards." Transacting safely is the missing primitive.</p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">02</div>
+</section>
+
+<!-- 3 SOLUTION -->
+<section class="slide">
+  <div class="kicker">The solution</div>
+  <h2>PQSafe verifies the authorization before any wallet moves value.</h2>
+  <p class="sub">An authorization &amp; audit layer for AI-agent payments. We custody nothing.</p>
+  <div class="grid g3">
+    <div class="card"><h3>Authorize</h3><p>Every spend is checked against the user's policy (budget, scope, recipient) and dual-signed into a tamper-evident <span class="mono">SpendEnvelope</span>.</p></div>
+    <div class="card"><h3>Verify</h3><p>Any party re-verifies independently. Tampered amount or recipient → <span class="no">INVALID</span>. Within policy → <span class="ok">VALID</span>.</p></div>
+    <div class="card"><h3>Audit</h3><p>A tamper-evident receipt is anchored <b>on-chain</b> (Arbitrum) — exportable proof of exactly what was authorized.</p></div>
+  </div>
+  <p class="note">Non-custodial by design: funds stay in the user's wallet / on licensed rails. PQSafe never holds, moves, or transfers value — it <b>authorizes and audits</b>.</p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">03</div>
+</section>
+
+<!-- 4 ON MINDS -->
+<section class="slide">
+  <div class="kicker">Built on Minds — not a wrapper</div>
+  <h2>A persistent payment-authorization Mind.</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Tool</h3><p><span class="mono">pqsafe_authorize_spend</span> — connects a Mind to PQSafe: generate / verify envelope, anchor receipt, tamper-check, policy-explain.</p></div>
+    <div class="card"><h3>Skill</h3><p>"<b>Safe Agent Payment Playbook</b>" — read policy from persistent memory → check limits → human-confirm high-risk → verify ECDSA + ML-DSA-65 → approve / block.</p></div>
+    <div class="card"><h3>Bazaar</h3><p>Published as a shareable Skill — any Mind installs spend-authorization in one click. Distribution across the ecosystem.</p></div>
+  </div>
+  <p class="note" style="margin-top:26px">Uses all three Minds primitives: <b>multi-agent workflow</b> (requester · finance · auditor) · <b>persistent memory</b> (limits, scopes, revocations) · <b>shareable agents</b> (Bazaar). Shipping within weeks — backend is our existing, tested verifier.</p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">04</div>
+</section>
+
+<!-- 5 DEMO -->
+<section class="slide">
+  <div class="kicker">Live demo · Telegram-native</div>
+  <h2>A Mind cannot spend unless PQSafe verifies first.</h2>
+  <div class="flow">
+    <div class="step"><div class="n">SET</div><div class="t">User: "max 10 USDC to tool X for a report"</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">AUTHORIZE</div><div class="t">Mind builds SpendEnvelope, PQSafe signs</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">VALID</div><div class="t"><span class="ok">✓ within policy — passes</span></div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">TAMPER</div><div class="t">Amount changed to 100 USDC</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">BLOCKED</div><div class="t"><span class="no">✗ PQSafe blocks</span> + on-chain receipt</div></div>
+  </div>
+  <p class="note" style="margin-top:40px">No custody, no transfer required to demonstrate. Live now: <span class="mono hl">pqsafe.xyz/mp</span> — real dual-signed envelope, generate → verify → tamper, Arbitrum receipt.</p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">05</div>
+</section>
+
+<!-- 6 MOAT -->
+<section class="slide">
+  <div class="kicker">Why it's defensible</div>
+  <h2>Post-quantum is the durable moat.</h2>
+  <div class="grid g4">
+    <div class="card"><div class="big ok">ML-DSA-65</div><p style="margin-top:8px">Crypto-agile: classical + post-quantum (NIST FIPS 204). 国密 / PQC ready.</p></div>
+    <div class="card"><div class="big">#250</div><p style="margin-top:8px">Filed Google <span class="mono">AP2</span> issue #250 — proposing PQ signatures for agent payment mandates.</p></div>
+    <div class="card"><div class="big">518</div><p style="margin-top:8px">Tests passing, across multiple byte-consistent implementations.</p></div>
+    <div class="card"><div class="big acc2" style="color:var(--acc2)">on-chain</div><p style="margin-top:8px">Tamper-evident audit receipts anchored on Arbitrum — verifiable by anyone.</p></div>
+  </div>
+  <p class="note" style="margin-top:28px">Sell agent-wallet authorization &amp; audit <b>now</b>; the post-quantum layer makes those authorizations durable past the quantum transition — receipts meant to live on-chain for years.</p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">06</div>
+</section>
+
+<!-- 7 WHY ANIMOCA -->
+<section class="slide">
+  <div class="kicker">Why Minds, why now</div>
+  <h2>PQSafe secures Minds' core primitive: the wallet.</h2>
+  <ul>
+    <li><b>Not adjacent — foundational.</b> Every Mind has an on-chain wallet; the moment it transacts, it needs exactly what PQSafe provides.</li>
+    <li><b>Distribution built-in.</b> One Bazaar Skill → spend-authorization for any Mind and across Animoca's <b>600+ Web3 portfolio</b> agents.</li>
+    <li><b>The winning pattern.</b> Superior.Trade won by making a sophisticated process <i>consumer-simple</i> with permissioned, constrained wallets. PQSafe is the same pattern for <i>spend</i>.</li>
+  </ul>
+  <p class="note">Makes Minds agents safe to give a wallet to — advancing the agentic-commerce thesis without competing with any rail or portfolio company.</p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">07</div>
+</section>
+
+<!-- 8 USE CASES -->
+<section class="slide">
+  <div class="kicker">Where it fits</div>
+  <h2>Any Mind that spends needs PQSafe.</h2>
+  <p class="sub">One authorization layer, every value-moving agent workflow.</p>
+  <div class="grid g4">
+    <div class="card"><h3>Agent trading</h3><p>Per-trade limits, allow-listed venues, daily caps — the Superior.Trade pattern, made provable.</p></div>
+    <div class="card"><h3>Subscriptions &amp; paid APIs</h3><p>Recurring charges, metered paid API / MCP calls, cloud spend — authorized within budget, audited.</p></div>
+    <div class="card"><h3>Gaming &amp; creator payouts</h3><p>In-game asset purchases and creator / player payouts across Animoca's gaming ecosystem.</p></div>
+    <div class="card"><h3>Treasury micro-actions</h3><p>Bounded, policy-gated treasury moves with an on-chain receipt for every action.</p></div>
+  </div>
+  <p class="note" style="margin-top:26px">Common thread: an agent trusted enough to <i>act</i>, not trusted enough to <i>spend</i> unchecked. PQSafe is the constraint that unlocks high-value agent commerce.</p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">08</div>
+</section>
+
+<!-- 9 BUSINESS MODEL -->
+<section class="slide">
+  <div class="kicker">Business model</div>
+  <h2>Developer-first, usage-priced.</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Developer tier</h3><p>Free authorization API + policy templates — make PQSafe the default safety Tool every Minds builder installs.</p></div>
+    <div class="card"><h3>Usage</h3><p>Priced per <b>authorization</b>, per <b>anchored receipt</b>, and per <b>active Mind-wallet policy</b> — revenue scales with agent spend volume.</p></div>
+    <div class="card"><h3>Enterprise</h3><p>Custom policy engines, compliance / audit exports, dedicated deployment for high-value treasuries.</p></div>
+  </div>
+  <p class="note" style="margin-top:26px">Land free in the Bazaar; monetize where audit volume and risk concentrate. The more agents spend, the more authorizations and receipts flow through PQSafe.</p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">09</div>
+</section>
+
+<!-- 10 TEAM -->
+<section class="slide">
+  <div class="kicker">Team</div>
+  <h2>Built by cryptographers.</h2>
+  <p class="sub">Founder–market fit in applied cryptography × agentic payments.</p>
+  <div class="grid g2">
+    <div class="card"><h3>Raymond Chau Yik-Chun — Founder</h3><p>Asaptic (HK) Limited. Built PQSafe end-to-end in weeks: live site, ML-DSA-65 sign/verify, SpendEnvelope authorization model, and a public AP2 post-quantum proposal. Prior ventures run with their own operating teams; now full-time on PQSafe.</p></div>
+    <div class="card"><h3>Prof. Yiu Siu-Ming — MSc supervisor</h3><p>Head of HKU's (School of Computing &amp; Data Science) <b>Cybersecurity, Fintech &amp; Blockchain</b> research group. <b>h-index 64 · Clarivate Highly Cited Researcher.</b> PQSafe originated as Raymond's <b>Fintech MSc graduation project</b> under his supervision.</p></div>
+  </div>
+  <p class="note" style="margin-top:24px">Research arc: <b>payments → AI-agent payments → post-quantum × AI-agent payments</b>, productized as PQSafe. Proof: 518 tests · multi-implementation byte-consistency · AP2 issue #250 (29 Apr 2026) · on-chain receipts on Arbitrum · live at <span class="mono">pqsafe.xyz/mp</span>.</p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">10</div>
+</section>
+
+<!-- 9 PLAN -->
+<section class="slide">
+  <div class="kicker">90 days on Minds</div>
+  <h2>From verifier to default authorization layer.</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Weeks 0–2</h3><p>Ship <span class="mono">pqsafe_authorize_spend</span> Tool + "Safe Agent Payment Playbook" Skill; publish to the Bazaar; live Telegram demo Mind.</p></div>
+    <div class="card"><h3>Weeks 3–8</h3><p>3 Minds-portfolio pilots where agent wallets must verify authorization before execution; usage-based verify/audit API.</p></div>
+    <div class="card"><h3>Weeks 9–12</h3><p>Harden hosted verifier (throughput, Web-Worker crypto); enterprise compliance tier; expand Bazaar adoption.</p></div>
+  </div>
+  <p class="note" style="margin-top:26px">North star: <b>a Mind cannot spend or invoke a value-moving tool unless PQSafe verifies the authorization envelope first.</b></p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">11</div>
+</section>
+
+<!-- 10 ASK -->
+<section class="slide">
+  <div class="kicker">The ask</div>
+  <h2>Become the authorization &amp; audit layer for Minds wallets.</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Investment</h3><p><span class="big" style="font-size:34px">US$150–500K</span><br>+ Cognition Credits + DevRel support.</p></div>
+    <div class="card"><h3>Partnership</h3><p>3 Minds-portfolio pilots where agent wallets must verify authorization before execution.</p></div>
+  </div>
+  <p class="lead" style="margin-top:34px">"Give Minds agents a wallet they can safely use —<br><span class="hl">PQSafe verifies the authorization before any value moves.</span>"</p>
+  <p class="note" style="margin-top:24px">Raymond Chau Yik-Chun · Founder, Asaptic (HK) Limited · <span class="mono">raymond@pqsafe.xyz</span> · <span class="mono">pqsafe.xyz/mp</span></p>
+  <div class="brandfoot">PQSAFE</div><div class="pagenum">12</div>
+</section>
+
+</body>
+</html>
