@@ -12,7 +12,7 @@
  * Note: signs raw JCS bytes — NOT SHA-256(JCS). This matches the live Worker.
  */
 
-import { ml_dsa65 } from '@noble/post-quantum/ml-dsa'
+import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import { readFileSync, writeFileSync, mkdirSync, chmodSync, existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
@@ -120,8 +120,8 @@ export function loadKeypair(name = 'v1'): IssuerKeypair {
  */
 export function signMessage(messageBytes: Uint8Array, secretKeyHex: string): Uint8Array {
   const sk = hexToBytes(secretKeyHex)
-  // noble/post-quantum 0.2.x API: sign(secretKey, message) → signature
-  const sig = ml_dsa65.sign(sk, messageBytes)
+  // noble/post-quantum 0.6.x API: sign(message, secretKey) → signature
+  const sig = ml_dsa65.sign(messageBytes, sk)
 
   if (sig.length !== ML_DSA65_SIG_BYTES) {
     throw new Error(
@@ -148,8 +148,8 @@ export function verifySignature(
   try {
     const pk = hexToBytes(publicKeyHex)
     const sig = hexToBytes(signatureHex)
-    // noble/post-quantum 0.2.x API: verify(publicKey, message, signature) → boolean
-    return ml_dsa65.verify(pk, messageBytes, sig)
+    // noble/post-quantum 0.6.x API: verify(signature, message, publicKey) → boolean
+    return ml_dsa65.verify(sig, messageBytes, pk)
   } catch {
     return false
   }
