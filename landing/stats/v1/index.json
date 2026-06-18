@@ -1,17 +1,17 @@
 {
-  "updated": "2026-06-17T04:05:03.044Z",
+  "updated": "2026-06-18T03:56:05.462Z",
   "npm": {
     "@pqsafe/openclaw": {
       "last_day": 0,
-      "last_week": 1,
-      "last_month": 23,
+      "last_week": 0,
+      "last_month": 22,
       "published": true,
       "version": "0.1.0"
     },
     "@pqsafe/mcp-server": {
       "last_day": 0,
-      "last_week": 2,
-      "last_month": 18,
+      "last_week": 1,
+      "last_month": 17,
       "published": true,
       "version": "0.1.0"
     },
@@ -46,7 +46,7 @@
     "@pqsafe/conformance": {
       "last_day": 0,
       "last_week": 2,
-      "last_month": 21,
+      "last_month": 20,
       "published": true,
       "version": "0.1.0"
     },
@@ -61,23 +61,21 @@
   "pypi": {
     "langchain-pqsafe": {
       "last_day": 2,
-      "last_week": 10,
-      "last_month": 87,
+      "last_week": 12,
+      "last_month": 82,
       "published": true
     },
     "crewai-pqsafe": {
-      "last_day": 0,
-      "last_week": 0,
-      "last_month": 0,
-      "published": false,
-      "error": true
+      "last_day": 3,
+      "last_week": 7,
+      "last_month": 77,
+      "published": true
     },
     "pqsafe-agent-pay": {
-      "last_day": 0,
-      "last_week": 0,
-      "last_month": 0,
-      "published": false,
-      "error": true
+      "last_day": 2,
+      "last_week": 5,
+      "last_month": 63,
+      "published": true
     }
   },
   "github": {
@@ -87,14 +85,14 @@
     "url": "https://github.com/PQSafe/pqsafe"
   },
   "totals": {
-    "npm_total_last_month": 134,
-    "npm_total_last_week": 9,
+    "npm_total_last_month": 131,
+    "npm_total_last_week": 7,
     "npm_total_last_day": 0,
-    "pypi_total_last_month": 87,
-    "pypi_total_last_week": 10,
-    "pypi_total_last_day": 2,
-    "combined_last_month": 221,
-    "combined_last_week": 19,
-    "combined_last_day": 2
+    "pypi_total_last_month": 222,
+    "pypi_total_last_week": 24,
+    "pypi_total_last_day": 7,
+    "combined_last_month": 353,
+    "combined_last_week": 31,
+    "combined_last_day": 7
   }
 }
