@@ -69,6 +69,32 @@ def active_backend() -> str:
     return _BACKEND
 
 
+def generate_keypair() -> tuple[bytes, bytes]:
+    """Generate a keypair for the active signing backend."""
+    if _PQ_AVAILABLE:
+        public_key, secret_key = _ml_dsa_generate()
+        return bytes(public_key), bytes(secret_key)
+
+    private_key = Ed25519PrivateKey.generate()  # type: ignore[name-defined]
+    public_key = private_key.public_key()
+    public_bytes = public_key.public_bytes(Encoding.Raw, PublicFormat.Raw)  # type: ignore[name-defined]
+    secret_bytes = private_key.private_bytes(  # type: ignore[name-defined]
+        Encoding.Raw,
+        PrivateFormat.Raw,
+        NoEncryption(),
+    )
+    return public_bytes, secret_bytes
+
+
+def sign_bytes(message: bytes, secret_key: bytes) -> bytes:
+    """Sign bytes with the active signing backend."""
+    if _PQ_AVAILABLE:
+        return bytes(_ml_dsa_sign(secret_key, message))
+
+    private_key = Ed25519PrivateKey.from_private_bytes(secret_key)  # type: ignore[name-defined]
+    return private_key.sign(message)
+
+
 def verify_bytes(message: bytes, signature: bytes, public_key: bytes) -> bool:
     """
     Verify a signature against a message and public key.

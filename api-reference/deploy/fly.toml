@@ -18,7 +18,8 @@ primary_region = "sin"  # Singapore — closest to HK / APAC
   APP_PORT = "8000"
   LOG_LEVEL = "info"
   AIRWALLEX_MODE = "sandbox"
-  PQSAFE_MOCK_MODE = "false"
+  PQSAFE_MOCK_MODE = "true"
+  CORS_ORIGINS = "[\"https://minds.com\",\"https://build.minds.com\",\"http://localhost:3000\"]"
 
 [[services]]
   internal_port = 8000

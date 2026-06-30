@@ -12,7 +12,9 @@ requires-python = ">=3.11"
 authors = [{ name = "PQSafe", email = "dev@pqsafe.xyz" }]
 
 dependencies = [
-    "fastapi>=0.111.0",
+    # Cap below 0.116: fastapi 0.116+ pulls starlette 1.x, which breaks
+    # prometheus-fastapi-instrumentator's route walk (_IncludedRouter has no .path).
+    "fastapi>=0.111.0,<0.116",
     "uvicorn[standard]>=0.29.0",
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
@@ -45,3 +47,9 @@ include = ["app*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+filterwarnings = [
+    # pydantic false-positive: emits UnsupportedFieldAttributeWarning for a
+    # validation_alias on an Optional[...] field even though the alias works
+    # (verified: the Minds adapter `_tamper_amount` wire key triggers tamper).
+    "ignore:.*validation_alias.*:UserWarning",
+]
