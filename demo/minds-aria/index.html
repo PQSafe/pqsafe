@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PQSafe × Minds — Aria, Guild Treasury Mind</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ── Header ────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-mark">
+      <div class="logo-hex">PQ</div>
+      <div class="logo-text">
+        <div class="logo-title">PQSafe × Minds</div>
+        <div class="logo-sub">Post-Quantum Authorization Layer</div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="adapter-row">
+        <span class="adapter-label">Adapter base URL</span>
+        <input
+          id="adapter-url"
+          class="adapter-input"
+          type="text"
+          value="http://localhost:8000"
+          spellcheck="false"
+          autocomplete="off"
+        />
+        <div id="status-dot" class="status-dot" title="Adapter connectivity"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Offline badge ──────────────────────────────────────── -->
+<div id="offline-badge" class="offline-badge">
+  offline fallback — decisions normally computed live by the PQSafe adapter
+</div>
+
+<!-- ── Beat bar ───────────────────────────────────────────── -->
+<nav class="beat-bar">
+  <button class="beat-btn" data-beat="0">0 Policy</button>
+  <button class="beat-btn" data-beat="1">1 Pay</button>
+  <button class="beat-btn" data-beat="2">2 Meter</button>
+  <button class="beat-btn" data-beat="3">3 Inject</button>
+  <button class="beat-btn" data-beat="4">4 Tamper</button>
+  <button class="beat-btn" data-beat="5">5 Human</button>
+  <button class="beat-btn" data-beat="6">6 Moat</button>
+  <button class="beat-btn" data-beat="7">7 Distrib</button>
+</nav>
+
+<!-- ── Main layout ───────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Left — chat column -->
+  <section class="chat-col">
+    <div class="chat-header">
+      <div class="chat-avatar">🤖</div>
+      <div class="chat-identity">
+        <div class="chat-name">Aria</div>
+        <div class="chat-role">Guild Treasury Mind · PQSafe Authorization Guard</div>
+      </div>
+      <div class="online-pill">● online</div>
+    </div>
+
+    <div id="chat-thread" class="chat-thread">
+      <!-- Intro system message -->
+      <div class="system-note">
+        Click a beat button above to run the demo. Beats execute live against the adapter (or offline fallback).
+      </div>
+    </div>
+  </section>
+
+  <!-- Right — PQSafe panel -->
+  <aside class="panel-col">
+    <div class="panel-header">
+      <span style="font-size:16px">🔐</span>
+      <span class="panel-title">PQSafe Panel</span>
+      <span id="panel-badge" class="panel-badge idle">idle</span>
+    </div>
+    <div id="panel-body" class="panel-body">
+      <!-- Rendered by app.js renderPanel() -->
+    </div>
+  </aside>
+
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
+<footer class="footer">
+  Arbitrum Sepolia testnet · no real funds · PQSafe never custodies or settles · authorization + audit layer
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

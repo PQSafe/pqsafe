@@ -22,7 +22,7 @@ from fastapi.responses import JSONResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.crypto.envelope import active_backend
-from app.routers import auth, envelopes, minds, pay, rails
+from app.routers import auth, envelopes, pay, rails
 from app.settings import settings
 
 # ---------------------------------------------------------------------------
@@ -91,7 +91,6 @@ app.include_router(auth.router)
 app.include_router(envelopes.router)
 app.include_router(pay.router)
 app.include_router(rails.router)
-app.include_router(minds.router)
 
 
 # ---------------------------------------------------------------------------

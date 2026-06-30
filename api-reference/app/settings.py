@@ -35,16 +35,6 @@ class Settings(BaseSettings):
     """
 
     # ------------------------------------------------------------------
-    # Minds adapter
-    # ------------------------------------------------------------------
-    minds_adapter_public_key_hex: str = ""
-    minds_adapter_secret_key_hex: str = ""
-    """
-    Optional fixed issuer keypair for /api/minds/authorize-spend.
-    If either value is absent, the adapter generates an ephemeral keypair at startup.
-    """
-
-    # ------------------------------------------------------------------
     # Airwallex
     # ------------------------------------------------------------------
     airwallex_client_id: str = ""

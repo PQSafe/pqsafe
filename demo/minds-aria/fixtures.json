@@ -1,0 +1,23 @@
+{
+  "seed_policy": {
+    "whitelist": [
+      "0xCA5F3a2D8B1e94cD6F72A03bE5d9c0F82A4D87eF",
+      "0xVE93b7c4E0aD12F5e89C417bA36d2E8F5B09dc21",
+      "0xA176d3E50cF2b1A9d47e28Bc03F9a5D62E80Cb03"
+    ],
+    "per_tx_limit": 500,
+    "currency": "USDC",
+    "human_approval_threshold": 500,
+    "valid_secs": 3600
+  },
+  "wallets": {
+    "caster":  { "address": "0xCA5F3a2D8B1e94cD6F72A03bE5d9c0F82A4D87eF", "label": "caster",  "whitelisted": true  },
+    "venue":   { "address": "0xVE93b7c4E0aD12F5e89C417bA36d2E8F5B09dc21", "label": "venue",   "whitelisted": true  },
+    "vendorA": { "address": "0xA176d3E50cF2b1A9d47e28Bc03F9a5D62E80Cb03", "label": "vendorA", "whitelisted": true  },
+    "unknown": { "address": "0xUNKNOWN3f7B2e1a4C9D6F0bE8A5c3D2E1F4B7000", "label": "unknown", "whitelisted": false }
+  },
+  "ids": {
+    "mind_id":  "mind_pqsafe_demo_001",
+    "agent_id": "agent_aria_v1_demo"
+  }
+}
