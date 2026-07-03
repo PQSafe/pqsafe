@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-02T03:32:06.768Z",
+  "updated": "2026-07-03T02:54:36.786Z",
   "npm": {
     "@pqsafe/openclaw": {
       "last_day": 2,
@@ -60,21 +60,23 @@
   },
   "pypi": {
     "langchain-pqsafe": {
-      "last_day": 2,
-      "last_week": 11,
-      "last_month": 100,
-      "published": true
+      "last_day": 0,
+      "last_week": 0,
+      "last_month": 0,
+      "published": false,
+      "error": true
     },
     "crewai-pqsafe": {
-      "last_day": 2,
-      "last_week": 13,
-      "last_month": 85,
-      "published": true
+      "last_day": 0,
+      "last_week": 0,
+      "last_month": 0,
+      "published": false,
+      "error": true
     },
     "pqsafe-agent-pay": {
-      "last_day": 2,
+      "last_day": 0,
       "last_week": 10,
-      "last_month": 68,
+      "last_month": 65,
       "published": true
     }
   },
@@ -88,11 +90,11 @@
     "npm_total_last_month": 138,
     "npm_total_last_week": 25,
     "npm_total_last_day": 9,
-    "pypi_total_last_month": 253,
-    "pypi_total_last_week": 34,
-    "pypi_total_last_day": 6,
-    "combined_last_month": 391,
-    "combined_last_week": 59,
-    "combined_last_day": 15
+    "pypi_total_last_month": 65,
+    "pypi_total_last_week": 10,
+    "pypi_total_last_day": 0,
+    "combined_last_month": 203,
+    "combined_last_week": 35,
+    "combined_last_day": 9
   }
 }
