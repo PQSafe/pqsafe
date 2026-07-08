@@ -11,3 +11,6 @@ __pycache__/
 *.egg-info/
 **/*.egg-info/
 .pytest_cache/
+.venv-test/
+api-reference/.venv-test/
+.venv-test/
