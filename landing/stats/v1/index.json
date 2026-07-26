@@ -1,15 +1,15 @@
 {
-  "updated": "2026-07-25T02:33:55.459Z",
+  "updated": "2026-07-26T02:42:33.500Z",
   "npm": {
     "@pqsafe/openclaw": {
-      "last_day": 1,
+      "last_day": 0,
       "last_week": 2,
       "last_month": 17,
       "published": true,
       "version": "0.1.0"
     },
     "@pqsafe/mcp-server": {
-      "last_day": 1,
+      "last_day": 0,
       "last_week": 3,
       "last_month": 18,
       "published": true,
@@ -17,15 +17,15 @@
     },
     "@pqsafe/agent-pay": {
       "last_day": 0,
-      "last_week": 2,
+      "last_week": 0,
       "last_month": 39,
       "published": true,
       "version": "0.1.1"
     },
     "@pqsafe/mastra": {
-      "last_day": 0,
+      "last_day": 1,
       "last_week": 3,
-      "last_month": 27,
+      "last_month": 28,
       "published": true,
       "version": "0.1.1"
     },
@@ -44,11 +44,11 @@
       "version": null
     },
     "@pqsafe/conformance": {
-      "last_day": 1,
+      "last_day": 0,
       "last_week": 2,
       "last_month": 22,
       "published": true,
-      "version": "0.1.0"
+      "version": null
     },
     "@pqsafe/cli": {
       "last_day": 0,
@@ -75,10 +75,9 @@
     },
     "pqsafe-agent-pay": {
       "last_day": 0,
-      "last_week": 0,
-      "last_month": 0,
-      "published": false,
-      "error": true
+      "last_week": 11,
+      "last_month": 28,
+      "published": true
     }
   },
   "github": {
@@ -88,14 +87,14 @@
     "url": "https://github.com/PQSafe/pqsafe"
   },
   "totals": {
-    "npm_total_last_month": 123,
-    "npm_total_last_week": 12,
-    "npm_total_last_day": 3,
-    "pypi_total_last_month": 0,
-    "pypi_total_last_week": 0,
+    "npm_total_last_month": 124,
+    "npm_total_last_week": 10,
+    "npm_total_last_day": 1,
+    "pypi_total_last_month": 28,
+    "pypi_total_last_week": 11,
     "pypi_total_last_day": 0,
-    "combined_last_month": 123,
-    "combined_last_week": 12,
-    "combined_last_day": 3
+    "combined_last_month": 152,
+    "combined_last_week": 21,
+    "combined_last_day": 1
   }
 }
