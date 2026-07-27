@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-26T02:42:33.500Z",
+  "updated": "2026-07-27T02:50:56.658Z",
   "npm": {
     "@pqsafe/openclaw": {
       "last_day": 0,
@@ -48,7 +48,7 @@
       "last_week": 2,
       "last_month": 22,
       "published": true,
-      "version": null
+      "version": "0.1.0"
     },
     "@pqsafe/cli": {
       "last_day": 0,
@@ -61,17 +61,15 @@
   "pypi": {
     "langchain-pqsafe": {
       "last_day": 0,
-      "last_week": 0,
-      "last_month": 0,
-      "published": false,
-      "error": true
+      "last_week": 15,
+      "last_month": 43,
+      "published": true
     },
     "crewai-pqsafe": {
       "last_day": 0,
-      "last_week": 0,
-      "last_month": 0,
-      "published": false,
-      "error": true
+      "last_week": 15,
+      "last_month": 43,
+      "published": true
     },
     "pqsafe-agent-pay": {
       "last_day": 0,
@@ -81,7 +79,7 @@
     }
   },
   "github": {
-    "stars": 0,
+    "stars": 1,
     "forks": 0,
     "open_issues": 2,
     "url": "https://github.com/PQSafe/pqsafe"
@@ -90,11 +88,11 @@
     "npm_total_last_month": 124,
     "npm_total_last_week": 10,
     "npm_total_last_day": 1,
-    "pypi_total_last_month": 28,
-    "pypi_total_last_week": 11,
+    "pypi_total_last_month": 114,
+    "pypi_total_last_week": 41,
     "pypi_total_last_day": 0,
-    "combined_last_month": 152,
-    "combined_last_week": 21,
+    "combined_last_month": 238,
+    "combined_last_week": 51,
     "combined_last_day": 1
   }
 }
