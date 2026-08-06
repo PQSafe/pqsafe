@@ -10,8 +10,8 @@
  * Worker protocol as implemented in agent-pay/src/envelope.ts.
  */
 
-import { sha256 } from '@noble/hashes/sha256'
-import { keccak_256 } from '@noble/hashes/sha3'
+import { sha256 } from '@noble/hashes/sha2.js'
+import { keccak_256 } from '@noble/hashes/sha3.js'
 import { jcsCanonicalBytes, jcsStringify } from './jcs.js'
 import type { SpendEnvelope, SignedEnvelope } from '../types.js'
 
