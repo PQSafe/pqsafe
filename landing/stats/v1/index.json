@@ -1,31 +1,31 @@
 {
-  "updated": "2026-08-07T02:36:32.307Z",
+  "updated": "2026-08-08T01:27:37.736Z",
   "npm": {
     "@pqsafe/openclaw": {
-      "last_day": 0,
-      "last_week": 1,
-      "last_month": 12,
+      "last_day": 1,
+      "last_week": 2,
+      "last_month": 13,
       "published": true,
       "version": "0.1.0"
     },
     "@pqsafe/mcp-server": {
-      "last_day": 0,
-      "last_week": 1,
-      "last_month": 15,
+      "last_day": 1,
+      "last_week": 2,
+      "last_month": 16,
       "published": true,
       "version": "0.1.0"
     },
     "@pqsafe/agent-pay": {
-      "last_day": 0,
-      "last_week": 4,
-      "last_month": 14,
+      "last_day": 2,
+      "last_week": 6,
+      "last_month": 16,
       "published": true,
       "version": "0.1.1"
     },
     "@pqsafe/mastra": {
-      "last_day": 0,
-      "last_week": 2,
-      "last_month": 17,
+      "last_day": 2,
+      "last_week": 4,
+      "last_month": 19,
       "published": true,
       "version": "0.1.1"
     },
@@ -61,15 +61,17 @@
   "pypi": {
     "langchain-pqsafe": {
       "last_day": 0,
-      "last_week": 3,
-      "last_month": 34,
-      "published": true
+      "last_week": 0,
+      "last_month": 0,
+      "published": false,
+      "error": true
     },
     "crewai-pqsafe": {
-      "last_day": 2,
-      "last_week": 4,
-      "last_month": 29,
-      "published": true
+      "last_day": 0,
+      "last_week": 0,
+      "last_month": 0,
+      "published": false,
+      "error": true
     },
     "pqsafe-agent-pay": {
       "last_day": 0,
@@ -86,14 +88,14 @@
     "url": "https://github.com/PQSafe/pqsafe"
   },
   "totals": {
-    "npm_total_last_month": 72,
-    "npm_total_last_week": 10,
-    "npm_total_last_day": 0,
-    "pypi_total_last_month": 63,
-    "pypi_total_last_week": 7,
-    "pypi_total_last_day": 2,
-    "combined_last_month": 135,
-    "combined_last_week": 17,
-    "combined_last_day": 2
+    "npm_total_last_month": 78,
+    "npm_total_last_week": 16,
+    "npm_total_last_day": 6,
+    "pypi_total_last_month": 0,
+    "pypi_total_last_week": 0,
+    "pypi_total_last_day": 0,
+    "combined_last_month": 78,
+    "combined_last_week": 16,
+    "combined_last_day": 6
   }
 }
