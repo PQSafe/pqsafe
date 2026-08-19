@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-18T01:09:12.494Z",
+  "updated": "2026-08-19T01:10:38.153Z",
   "npm": {
     "@pqsafe/openclaw": {
       "last_day": 0,
@@ -60,8 +60,8 @@
   },
   "pypi": {
     "langchain-pqsafe": {
-      "last_day": 0,
-      "last_week": 2,
+      "last_day": 1,
+      "last_week": 3,
       "last_month": 24,
       "published": true
     },
@@ -90,10 +90,10 @@
     "npm_total_last_week": 13,
     "npm_total_last_day": 1,
     "pypi_total_last_month": 45,
-    "pypi_total_last_week": 4,
-    "pypi_total_last_day": 0,
+    "pypi_total_last_week": 5,
+    "pypi_total_last_day": 1,
     "combined_last_month": 112,
-    "combined_last_week": 17,
-    "combined_last_day": 1
+    "combined_last_week": 18,
+    "combined_last_day": 2
   }
 }
