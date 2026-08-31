@@ -1,29 +1,29 @@
 {
-  "updated": "2026-08-30T03:50:29.977Z",
+  "updated": "2026-08-31T03:52:59.226Z",
   "npm": {
     "@pqsafe/openclaw": {
-      "last_day": 4,
+      "last_day": 0,
       "last_week": 6,
       "last_month": 13,
       "published": true,
       "version": "0.1.0"
     },
     "@pqsafe/mcp-server": {
-      "last_day": 4,
+      "last_day": 0,
       "last_week": 6,
       "last_month": 16,
       "published": true,
       "version": "0.1.0"
     },
     "@pqsafe/agent-pay": {
-      "last_day": 3,
-      "last_week": 6,
+      "last_day": 0,
+      "last_week": 4,
       "last_month": 17,
       "published": true,
       "version": "0.1.1"
     },
     "@pqsafe/mastra": {
-      "last_day": 4,
+      "last_day": 0,
       "last_week": 8,
       "last_month": 16,
       "published": true,
@@ -44,7 +44,7 @@
       "version": null
     },
     "@pqsafe/conformance": {
-      "last_day": 5,
+      "last_day": 0,
       "last_week": 6,
       "last_month": 17,
       "published": true,
@@ -61,10 +61,9 @@
   "pypi": {
     "langchain-pqsafe": {
       "last_day": 0,
-      "last_week": 0,
-      "last_month": 0,
-      "published": false,
-      "error": true
+      "last_week": 1,
+      "last_month": 16,
+      "published": true
     },
     "crewai-pqsafe": {
       "last_day": 0,
@@ -74,8 +73,8 @@
       "error": true
     },
     "pqsafe-agent-pay": {
-      "last_day": 1,
-      "last_week": 6,
+      "last_day": 0,
+      "last_week": 4,
       "last_month": 17,
       "published": true
     }
@@ -88,13 +87,13 @@
   },
   "totals": {
     "npm_total_last_month": 79,
-    "npm_total_last_week": 32,
-    "npm_total_last_day": 20,
-    "pypi_total_last_month": 17,
-    "pypi_total_last_week": 6,
-    "pypi_total_last_day": 1,
-    "combined_last_month": 96,
-    "combined_last_week": 38,
-    "combined_last_day": 21
+    "npm_total_last_week": 30,
+    "npm_total_last_day": 0,
+    "pypi_total_last_month": 33,
+    "pypi_total_last_week": 5,
+    "pypi_total_last_day": 0,
+    "combined_last_month": 112,
+    "combined_last_week": 35,
+    "combined_last_day": 0
   }
 }
