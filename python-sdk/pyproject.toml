@@ -30,7 +30,7 @@ classifiers = [
     "Topic :: Security :: Cryptography",
 ]
 dependencies = [
-    "pqcrypto>=0.4.0",
+    "pqcrypto>=1.0.0",
     "requests>=2.31.0",
     "pydantic>=2.0.0",
     "canonicaljson>=2.0.0",
