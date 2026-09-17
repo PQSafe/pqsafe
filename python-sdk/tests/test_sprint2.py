@@ -46,7 +46,7 @@ from pqsafe.sprint2.issuer import (
 
 def _run(coro):
     """Helper to run an async coroutine synchronously in tests."""
-    return asyncio.get_event_loop().run_until_complete(coro)
+    return asyncio.run(coro)
 
 # ---------------------------------------------------------------------------
 # SpendPolicyMode enum

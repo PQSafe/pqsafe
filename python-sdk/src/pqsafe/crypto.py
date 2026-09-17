@@ -34,10 +34,14 @@ _BACKEND = "none"
 
 try:
     from pqcrypto.sign.ml_dsa_65 import (  # type: ignore[import]
-        generate_keypair as _ml_dsa_generate,
         sign as _ml_dsa_sign,
         verify as _ml_dsa_verify,
     )
+    # pqcrypto >=1.0.0 renamed generate_keypair → keygen
+    try:
+        from pqcrypto.sign.ml_dsa_65 import keygen as _ml_dsa_generate  # type: ignore[import]
+    except ImportError:
+        from pqcrypto.sign.ml_dsa_65 import generate_keypair as _ml_dsa_generate  # type: ignore[import]
     _PQ_AVAILABLE = True
     _BACKEND = "ml-dsa-65 (pqcrypto)"
 except ImportError:
@@ -71,7 +75,7 @@ if not _PQ_AVAILABLE:
 if not _PQ_AVAILABLE and not _ED25519_AVAILABLE:
     raise ImportError(
         "PQSafe: no cryptographic backend found. "
-        "Install pqcrypto>=0.4.0 for ML-DSA-65 (recommended) "
+        "Install pqcrypto>=1.0.0 for ML-DSA-65 (recommended) "
         "or `cryptography` for the classical Ed25519 fallback."
     )
 
@@ -194,11 +198,8 @@ def verify_bytes(message: bytes, signature: bytes, public_key: bytes) -> bool:
     """
     if _PQ_AVAILABLE:
         try:
-            result = _ml_dsa_verify(public_key, message, signature)
-            # pqcrypto.sign.ml_dsa_65.verify() returns True/False
-            if isinstance(result, bool):
-                return result
-            # Some versions raise on failure, return None on success
+            _ml_dsa_verify(public_key, message, signature)
+            # pqcrypto >=1.0.0: raises InvalidSignatureError on failure, returns None on success
             return True
         except Exception:
             return False
