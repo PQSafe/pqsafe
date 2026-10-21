@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-20T03:34:04.348Z",
+  "updated": "2026-10-21T03:27:38.152Z",
   "npm": {
     "@pqsafe/openclaw": {
       "last_day": 1,
@@ -72,7 +72,7 @@
       "published": true
     },
     "pqsafe-agent-pay": {
-      "last_day": 0,
+      "last_day": 1,
       "last_week": 14,
       "last_month": 19,
       "published": true
@@ -90,9 +90,9 @@
     "npm_total_last_day": 3,
     "pypi_total_last_month": 65,
     "pypi_total_last_week": 57,
-    "pypi_total_last_day": 3,
+    "pypi_total_last_day": 4,
     "combined_last_month": 118,
     "combined_last_week": 71,
-    "combined_last_day": 6
+    "combined_last_day": 7
   }
 }
